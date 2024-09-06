@@ -2,6 +2,14 @@ plugins {
     id 'com.android.application'
 }
 
+task wrapper(type: Wrapper){
+    gradleVersion = '8.7'
+}
+
+task prepareKotlinBuildScriptModel {
+
+}
+
 android {
     namespace 'com.example.androidexample'
     compileSdk 33
