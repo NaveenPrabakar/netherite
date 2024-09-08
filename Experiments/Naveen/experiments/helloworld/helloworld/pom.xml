@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>coms309</groupId>
   <artifactId>helloworld</artifactId>
   <version>1.0.0</version>
 
-  <!-- To make it a spring boot project -->
+  <!-- To make it a Spring Boot project -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -18,21 +18,24 @@
   <name>helloworld</name>
 
   <properties>
-
     <!-- Generic properties -->
+    <java.version>17</java.version> <!-- Ensure this matches your Java version -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
   </properties>
 
   <dependencies>
-
-    <!-- Spring Boot Web dependencies -->
+    <!-- Spring Boot Web dependency -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
+    <!-- Thymeleaf dependency for HTML templates -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -43,6 +46,5 @@
       </plugin>
     </plugins>
   </build>
-  
-
 </project>
+
