@@ -21,8 +21,9 @@
         android:id="@+id/but1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="button"
+        android:text="Press Me"
         android:layout_gravity="center"
+        android:onClick="goToHome"
         />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -23,9 +23,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);             // link to Main activity XML
 
         /* initialize UI elements */
-        messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Hello World Deez Nuts");
-        b1 = (Button)findViewById(R.id.but1);
+        /*b1 = (Button)findViewById(R.id.but1);*/
 
+    }
+    public void goToHome(View view) {
+        messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
+        messageText.setText("Deez Nuts");
     }
 }
