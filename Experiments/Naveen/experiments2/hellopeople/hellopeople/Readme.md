@@ -12,8 +12,9 @@
 ### To Run the project 
 1. Command Line (Make sure that you are in the folder containing pom.xml)</br>
 <code> mvn package</code></br>
-<code>java -jar target/helloworld-1.0.0.jar</code>
+<code>java -jar target/hellopeople-1.0.0.jar</code>
 2. IDE : Right click on Application.java and run as Java Application
+
 
 ### Avaiable End points : 
 1. GET : Can be run on the Browser Directly
