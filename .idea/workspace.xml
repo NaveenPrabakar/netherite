@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/second.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_second.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_second.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_second.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
