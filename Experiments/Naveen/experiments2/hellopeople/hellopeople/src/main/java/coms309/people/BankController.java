@@ -32,7 +32,56 @@ public class BankController {
 
     @PostMapping("/accounts")
     public String createAccount(@RequestBody Bank account) {
+
         accounts.put(account.getFullname(), account);
         return "Account: " + account.getFullname() + " has been added";
+
+    }
+
+    @PutMapping("/deposit/{name}")
+    public String deposit(@PathVariable String name, @RequestBody int cre){
+        Bank account = accounts.get(name);
+
+        if(account == null){
+            return "Account does not exist";
+        }
+
+        account.setCredit(cre); //deposits money to account
+        //put back new deposit
+        accounts.replace(name, account);
+
+        return "Money deposited: " + cre + "\n Total Money: " + account.getCredit();
+
+    }
+
+    @PutMapping("/withdraw/{name}")
+    public String withdraw(@PathVariable String name, @RequestBody int minus){
+        Bank account = accounts.get(name);
+
+        if(account  == null){
+            return "Account does not exist";
+        }
+
+        if(minus > account.getCredit()){
+            return "You do not have the funds";
+        }
+
+        account.minusCredit(minus);
+        accounts.replace(name, account);
+
+        return "Money has been withdraw: " + minus;
+    }
+
+    @DeleteMapping("delete/{name}")
+    public String end(@PathVariable String name){
+        Bank account = accounts.get(name);
+
+        if(account == null){
+            return "The account doesn't exist";
+        }
+
+        accounts.remove(name);
+
+        return "The account, " + name + ", has been removed";
     }
 }

@@ -3,50 +3,45 @@ package coms309.people;
 public class Bank {
 
     private String fullname;
-    private int debit;
     private int credit;
 
     public Bank() {
     }
 
-
-    public Bank(String fullname, int debit, int credit) {
+    public Bank(String fullname, int credit) {
         this.fullname = fullname;
-        this.debit = debit;
         this.credit = credit;
     }
 
 
+    //gets name
     public String getFullname() {
         return fullname;
     }
 
-
+   //sets name
     public void setFullname(String fullname) {
         this.fullname = fullname;
     }
 
 
-    public int getDebit() {
-        return debit;
-    }
-
-
-    public void setDebit(int debit) {
-        this.debit = debit;
-    }
-
-
+    //gets credit
     public int getCredit() {
         return credit;
     }
 
-
-    public void setCredit(int credit) {
-        this.credit = credit;
+    //sets credit
+    public void setCredit(int cre) {
+        this.credit += cre;
     }
 
+    //withdraws
+    public void minusCredit(int minus){
+        this.credit -= minus;
+    }
+
+    //gets account info
     public String account() {
-        return "Credit: " + credit + "\nDebit: " + debit;
+        return "Credit: " + credit ;
     }
 }
