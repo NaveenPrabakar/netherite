@@ -25,14 +25,24 @@
         android:layout_gravity="center"
         android:onClick="goToHome"
         />
-
     <EditText
         android:id="@+id/userInputText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="50dp"
         android:ems="10"
         android:hint="Name"
         android:inputType="text" />
+    <Button
+        android:id="@+id/counterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="Go To Counter"
+        android:layout_gravity="center"
+        android:onClick="goToHome"
+        />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

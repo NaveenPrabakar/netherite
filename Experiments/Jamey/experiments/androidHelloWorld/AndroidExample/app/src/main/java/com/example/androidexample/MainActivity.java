@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;   // define message textview variable
     Button b1;
+    private Button counterBut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);             // link to Main activity XML
         /* initialize UI elements */
         /*b1 = (Button)findViewById(R.id.but1);*/
+        counterBut = findViewById(R.id.counterButton);
+
+        counterBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, CounterActivity.class);
+                startActivity(i);
+            }
+        });
 
     }
     public void goToHome(View view) {
@@ -31,4 +41,5 @@ public class MainActivity extends AppCompatActivity {
         EditText name = findViewById(R.id.userInputText); // Links to .xml file
         messageText.setText("Hello " + name.getText().toString());
     }
+
 }
