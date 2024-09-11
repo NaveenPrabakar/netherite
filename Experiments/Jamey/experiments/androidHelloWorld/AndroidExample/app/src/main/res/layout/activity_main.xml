@@ -26,4 +26,13 @@
         android:onClick="goToHome"
         />
 
+    <EditText
+        android:id="@+id/userInputText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="text" />
+
+
 </androidx.appcompat.widget.LinearLayoutCompat>

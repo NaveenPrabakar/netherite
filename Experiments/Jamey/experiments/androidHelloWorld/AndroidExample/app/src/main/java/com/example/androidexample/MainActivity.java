@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
 
 import org.w3c.dom.Text;
 
@@ -21,13 +22,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);             // link to Main activity XML
-
         /* initialize UI elements */
         /*b1 = (Button)findViewById(R.id.but1);*/
 
     }
     public void goToHome(View view) {
-        messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Deez Nuts");
+        TextView messageText = findViewById(R.id.main_msg_txt); // link to message textview in the Main activity XML
+        EditText name = findViewById(R.id.userInputText); // Links to .xml file
+        messageText.setText("Hello " + name.getText().toString());
     }
 }
