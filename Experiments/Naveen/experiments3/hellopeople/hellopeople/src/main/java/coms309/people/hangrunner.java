@@ -2,6 +2,7 @@ package coms309.people;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ public class hangrunner {
     @PostMapping("/StartGame")
     public String createGame(@RequestBody hangman h){
         players.put(h.name(), h);
-        return "Player " + h.name() + " has been added to the lobby.";
+        return "Player " + h.name() + " has been added to the lobby." + h.board();
     }
 
     // Guess a letter for a specific player
@@ -48,6 +49,21 @@ public class hangrunner {
             return "Player " + playerName + " not found!";
         }
         return "Player " + playerName + " has been removed from the game.";
+    }
+
+    @PutMapping("/Reset/{playerName}")
+    public String reset(@PathVariable String playerName){
+        hangman player = players.get(playerName);
+
+        if(player == null){
+            return "Player" + playerName + "not found!";
+        }
+
+        player.reset();
+
+        players.replace(playerName, player);
+
+        return "Game was reset" + player.board();
     }
 
 
