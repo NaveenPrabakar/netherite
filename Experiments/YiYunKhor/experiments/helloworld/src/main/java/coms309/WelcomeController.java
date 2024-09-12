@@ -9,7 +9,7 @@ class WelcomeController {
 
     @GetMapping("/")
     public String welcome() {
-        return "Hello and welcome to COMS 309";
+        return "<html><body><p style='font-size:200px;'>Hello and welcome to COMS 309</p></body></html>";
     }
 
     @GetMapping("/{name}")
