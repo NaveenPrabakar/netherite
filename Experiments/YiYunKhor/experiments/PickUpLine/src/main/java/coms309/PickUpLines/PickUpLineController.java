@@ -84,10 +84,5 @@ public class PickUpLineController {
         }
     }
 
-
-
-    
-    
-
 }
 
