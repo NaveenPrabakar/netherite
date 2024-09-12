@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView messageText;   // define message textview variable
     Button b1;
     private Button counterBut;
+    private Button loginBut;
+    private Button signupBut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         /* initialize UI elements */
         /*b1 = (Button)findViewById(R.id.but1);*/
         counterBut = findViewById(R.id.counterButton);
+        loginBut = findViewById(R.id.loginButton);
+        signupBut = findViewById(R.id.SignupButton);
 
         counterBut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,6 +39,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        loginBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(i);
+            }
+        });
+
+        signupBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(MainActivity.this, SignupActivity.class);
+                startActivity(i);
+            }
+        });
     }
     public void goToHome(View view) {
         TextView messageText = findViewById(R.id.main_msg_txt); // link to message textview in the Main activity XML

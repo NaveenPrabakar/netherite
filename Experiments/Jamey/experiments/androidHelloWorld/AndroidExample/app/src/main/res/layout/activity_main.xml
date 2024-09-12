@@ -44,5 +44,22 @@
         android:onClick="goToHome"
         />
 
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go To Login"
+        android:layout_gravity="center"
+        />
+
+    <Button
+        android:id="@+id/SignupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Signup Here"
+        android:layout_gravity="center"/>
+
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
