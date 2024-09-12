@@ -84,4 +84,15 @@ public class BankController {
 
         return "The account, " + name + ", has been removed";
     }
+
+    @GetMapping("history/{name}")
+    public String hist(@PathVariable String name){
+        Bank account = accounts.get(name);
+
+        if(account == null){
+            return "The account doesn't exist";
+        }
+
+        return account.history();
+    }
 }
