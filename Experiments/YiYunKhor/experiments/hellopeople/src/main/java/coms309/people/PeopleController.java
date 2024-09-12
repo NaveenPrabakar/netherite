@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Controller used to showcase Create and Read from a LIST
@@ -62,6 +64,21 @@ public class PeopleController {
     public Person getPerson(@PathVariable String firstName) {
         Person p = peopleList.get(firstName);
         return p;
+    }
+
+//get by using the phone
+    @GetMapping("/people/telephone/{telephone}")
+    public Person getPersonTelephone(@PathVariable String telephone) {
+        for (Map.Entry<String,Person>entry:peopleList.entrySet()){
+
+            Person p=entry.getValue();
+
+            if(p.getTelephone().equals(telephone)){
+
+                return p;
+            }
+        }
+    return null;
     }
 
     // THIS IS THE UPDATE OPERATION

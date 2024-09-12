@@ -17,7 +17,7 @@ public class Person {
 
     private String telephone;
 
-    public Person(){
+    public Person() {
         
     }
 
