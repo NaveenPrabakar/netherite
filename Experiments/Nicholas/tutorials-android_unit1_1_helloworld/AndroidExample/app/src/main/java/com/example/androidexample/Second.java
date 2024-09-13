@@ -23,8 +23,9 @@ public class Second extends AppCompatActivity {
         setContentView(R.layout.activity_second);             // link to Main activity XML
 
         /* initialize UI elements */
-        messageText = findViewById(R.id.main_msg);      // link to message textview in the Main activity XML
+        messageText = findViewById(R.id.main_msg2);      // link to message textview in the Main activity XML
         messageText.setText("Hello Intent");
+        editText = findViewById(R.id.editTextText);
 
         button1 = findViewById(R.id.big_button);
         button1.setOnClickListener(new View.OnClickListener() {

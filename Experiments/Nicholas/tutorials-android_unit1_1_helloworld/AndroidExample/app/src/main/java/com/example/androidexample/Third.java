@@ -14,9 +14,9 @@ public class Third extends AppCompatActivity {
     private TextView messageText;
     private String newString;
     private TextView calculate;
-    private Double operand1;
-    private Double operand2;
-    private String currentOperation;
+    private Double operand1 = 0.0;
+    private Double operand2 = 0.0;
+    private String currentOperation = "?";
     private Button nine, eight, seven, six, five, four, three, two, one, zero;
     private Button clear, plusminus, percent, divide, multiply, minus, plus, equals, point;
     @Override
@@ -41,22 +41,24 @@ public class Third extends AppCompatActivity {
         equals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                operand2 = Double.parseDouble(calculate.getText().toString());
-                if (currentOperation.equals("+")) {
-                    Double result = operand1 + operand2;
-                    calculate.setText(result.toString());
-                } else if (currentOperation.equals("-")) {
-                    Double result = operand1 - operand2;
-                    calculate.setText(result.toString());
-                } else if (currentOperation.equals("*")) {
-                    Double result = operand1 * operand2;
-                    calculate.setText(result.toString());
-                } else if (currentOperation.equals("/")) {
-                    if (operand2 != 0) {
-                        Double result = operand1 / operand2;
+                if (calculate.getText().toString().length() != 0 && !currentOperation.equals("?")) {
+                    operand2 = Double.parseDouble(calculate.getText().toString());
+                    if (currentOperation.equals("+")) {
+                        Double result = operand1 + operand2;
                         calculate.setText(result.toString());
-                    } else {
-                        calculate.setText("Error"); // Handle division by zero
+                    } else if (currentOperation.equals("-")) {
+                        Double result = operand1 - operand2;
+                        calculate.setText(result.toString());
+                    } else if (currentOperation.equals("*")) {
+                        Double result = operand1 * operand2;
+                        calculate.setText(result.toString());
+                    } else if (currentOperation.equals("/")) {
+                        if (operand2 != 0) {
+                            Double result = operand1 / operand2;
+                            calculate.setText(result.toString());
+                        } else {
+                            calculate.setText("Error"); // Handle division by zero
+                        }
                     }
                 }
             }
@@ -65,8 +67,10 @@ public class Third extends AppCompatActivity {
         percent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Double result = Double.parseDouble(calculate.getText().toString()) / 100;
-                calculate.setText(result.toString());
+                if (calculate.getText().toString().length() != 0) {
+                    Double result = Double.parseDouble(calculate.getText().toString()) / 100;
+                    calculate.setText(result.toString());
+                }
             }
         });
 
@@ -74,13 +78,14 @@ public class Third extends AppCompatActivity {
         plusminus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (calculate.getText().toString().charAt(0) != '-'){
-                    calculate.setText("-"+calculate.getText().toString());
+                if (calculate.getText().toString().length() != 0){
+                    if (calculate.getText().toString().charAt(0) != '-'){
+                        calculate.setText("-"+calculate.getText().toString());
+                    }
+                    else{
+                        calculate.setText(calculate.getText().toString().substring(1));
+                    }
                 }
-                else{
-                    calculate.setText(calculate.getText().toString().substring(1));
-                }
-
             }
         });
 
