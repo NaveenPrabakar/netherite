@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private Button counterBut;
     private Button loginBut;
     private Button signupBut;
+    private Button portfolioBut;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         counterBut = findViewById(R.id.counterButton);
         loginBut = findViewById(R.id.loginButton);
         signupBut = findViewById(R.id.SignupButton);
+        portfolioBut = findViewById(R.id.portfolioButton);
 
         counterBut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        portfolioBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, PortfolioActivity.class);
+                startActivity(i);
+            }
+        });
+
     }
     public void goToHome(View view) {
         TextView messageText = findViewById(R.id.main_msg_txt); // link to message textview in the Main activity XML

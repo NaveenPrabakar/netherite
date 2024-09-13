@@ -45,6 +45,13 @@
         />
 
     <Button
+        android:id="@+id/portfolioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Go To Portfolio" />
+
+    <Button
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,8 +65,6 @@
         android:layout_height="wrap_content"
         android:text="Signup Here"
         android:layout_gravity="center"/>
-
-
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

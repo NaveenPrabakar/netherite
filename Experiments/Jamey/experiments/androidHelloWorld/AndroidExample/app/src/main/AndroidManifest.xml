@@ -22,6 +22,15 @@
             android:name=".SignupActivity"
             android:exported="false"/>
         <activity
+            android:name=".PortfolioActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".SkillsActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ProjectsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
