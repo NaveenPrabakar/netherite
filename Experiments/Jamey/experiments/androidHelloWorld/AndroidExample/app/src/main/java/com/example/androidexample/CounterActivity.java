@@ -15,7 +15,8 @@ public class CounterActivity extends AppCompatActivity {
     private Button decreaseBtn; // define decrease button variable
     private Button backBtn;     // define back button variable
 
-    private int counter = 0;    // counter variable
+    private Integer counter;    // counter variable
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,19 @@ public class CounterActivity extends AppCompatActivity {
 
         /* initialize UI elements */
         numberTxt = findViewById(R.id.number);
+        Bundle extras = getIntent().getExtras();
+        if(extras == null || extras.getInt("COUNTER") == 0) {
+            counter = 0;
+            numberTxt.setText(counter.toString());
+        } else {
+            counter = extras.getInt("COUNTER");
+            numberTxt.setText(counter.toString());
+        }
         increaseBtn = findViewById(R.id.counter_increase_btn);
         decreaseBtn = findViewById(R.id.counter_decrease_btn);
         backBtn = findViewById(R.id.counter_back_btn);
+
+
 
         /* when increase btn is pressed, counter++, reset number textview */
         increaseBtn.setOnClickListener(new View.OnClickListener() {
@@ -49,7 +60,7 @@ public class CounterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CounterActivity.this, MainActivity.class);
-                // intent.putExtra("NUM", String.valueOf(counter));  // key-value to pass to the MainActivity
+                intent.putExtra("NUM", Integer.valueOf(counter));  // key-value to pass to the MainActivity
                 startActivity(intent);
             }
         });

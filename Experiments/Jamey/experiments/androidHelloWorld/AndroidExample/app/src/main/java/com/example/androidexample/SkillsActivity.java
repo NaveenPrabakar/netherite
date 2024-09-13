@@ -54,6 +54,11 @@ public class SkillsActivity extends AppCompatActivity {
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                int visibility = isChecked ? View.VISIBLE :
+                        View.GONE;skillsText.setVisibility(visibility);
+                        interestsText.setVisibility(visibility);
+                /*
                 if (isChecked) {
                     skillsText.setVisibility(View.VISIBLE);
                     interestsText.setVisibility(View.VISIBLE);
@@ -61,6 +66,7 @@ public class SkillsActivity extends AppCompatActivity {
                     skillsText.setVisibility(View.GONE);
                     interestsText.setVisibility(View.GONE);
                 }
+                 */
             }
         });
     }
