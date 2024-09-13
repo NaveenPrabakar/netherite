@@ -40,11 +40,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        switchbutton = findViewById(R.id.switchbutton);
+        switchbutton = findViewById(R.id.switch1);
         switchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, second.class);
+                Intent intent = new Intent(MainActivity.this, Second.class);
                 startActivity(intent);
             }
         });

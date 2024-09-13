@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class second extends AppCompatActivity {
+public class Second extends AppCompatActivity {
 
     private TextView messageText;
     private TextView messageText2;// define message textview variable
@@ -40,11 +40,11 @@ public class second extends AppCompatActivity {
             }
         });
 
-        switchbutton = findViewById(R.id.switchbutton);
+        switchbutton = findViewById(R.id.switch2);
         switchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(second.this, MainActivity.class);
+                Intent intent = new Intent(Second.this, third.class);
                 startActivity(intent);
             }
         });
