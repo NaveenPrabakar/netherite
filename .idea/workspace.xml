@@ -5,14 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/CalculatorApp.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/Second.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/Second.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/third.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/java/com/example/androidexample/Third.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_second.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/Nicholas/tutorials-android_unit1_1_helloworld/AndroidExample/app/src/main/res/layout/activity_second.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/androidTest/java/com/example/androidexample/ExampleInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/java/com/example/androidexample/LoginActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/java/com/example/androidexample/MainActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/java/com/example/androidexample/SignupActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/drawable/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/layout/activity_login.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/layout/activity_signup.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/values-night/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/xml/backup_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/xml/data_extraction_rules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/test/java/com/example/androidexample/ExampleUnitTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/gradle.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/Nicholas/loginExp/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +56,11 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -34,18 +72,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/asian/4_rasel_2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "nicholasproj2",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/wang/ISU/COMS-309/4_rasel_2/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/layout"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/res/layout" />
+      <recent name="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/java/com/example/androidexample" />
+      <recent name="$PROJECT_DIR$/Experiments/Nicholas" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
