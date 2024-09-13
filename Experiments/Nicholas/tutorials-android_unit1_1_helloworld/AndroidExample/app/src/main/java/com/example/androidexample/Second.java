@@ -28,9 +28,6 @@ public class Second extends AppCompatActivity {
         messageText.setText("Hello Intent");
         messageText2 = findViewById(R.id.textView2);
 
-
-        editText = findViewById(R.id.editTextText);
-
         button1 = findViewById(R.id.big_button);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +41,7 @@ public class Second extends AppCompatActivity {
         switchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Second.this, third.class);
+                Intent intent = new Intent(Second.this, MainActivity.class);
                 startActivity(intent);
             }
         });

@@ -18,16 +18,13 @@
         <activity
         android:name=".Second"
         android:exported="false" />
-
-        <activity android:name=".CalculatorApp" />
-        <activity android:name=".third" />
+        <activity android:name=".Third" />
 
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

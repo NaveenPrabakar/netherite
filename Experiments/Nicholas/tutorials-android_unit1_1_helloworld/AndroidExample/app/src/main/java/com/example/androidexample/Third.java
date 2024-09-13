@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import java.lang.invoke.MethodHandles;
+public class Third extends AppCompatActivity {
 
-public class third extends AppCompatActivity {
-
+    private Button switchbutton;
     private TextView messageText;
     private String newString;
     private TextView calculate;
@@ -131,6 +129,15 @@ public class third extends AppCompatActivity {
         point = findViewById(R.id.point);
         point.setOnClickListener(view -> onNumberButtonClick("."));
 
+        switchbutton = findViewById(R.id.switchbutton3);
+        switchbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Third.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
     private void onNumberButtonClick(java.lang.String number) {
@@ -148,4 +155,5 @@ public class third extends AppCompatActivity {
         calculate.setText(" ");
 
     }
+
 }
