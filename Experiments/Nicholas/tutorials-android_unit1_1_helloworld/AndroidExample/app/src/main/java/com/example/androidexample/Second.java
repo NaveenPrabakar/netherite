@@ -11,8 +11,7 @@ import android.widget.TextView;
 
 public class Second extends AppCompatActivity {
 
-    private TextView messageText;
-    private TextView messageText2;// define message textview variable
+    private TextView messageText;// define message textview variable
     private Button button1;
     private EditText editText;
     private String newString;
@@ -26,14 +25,13 @@ public class Second extends AppCompatActivity {
         /* initialize UI elements */
         messageText = findViewById(R.id.main_msg);      // link to message textview in the Main activity XML
         messageText.setText("Hello Intent");
-        messageText2 = findViewById(R.id.textView2);
 
         button1 = findViewById(R.id.big_button);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 newString = editText.getText().toString();
-                messageText2.setText("Hello "+ newString);
+                messageText.setText("Hello "+ newString);
             }
         });
 
