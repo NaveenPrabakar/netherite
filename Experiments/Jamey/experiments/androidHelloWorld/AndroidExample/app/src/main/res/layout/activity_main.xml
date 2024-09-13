@@ -17,5 +17,54 @@
         android:textSize="50dp"
         android:textColor="#000000" >
     </TextView>
+    <Button
+        android:id="@+id/but1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press Me"
+        android:layout_gravity="center"
+        android:onClick="goToHome"
+        />
+    <EditText
+        android:id="@+id/userInputText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="50dp"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="text" />
+    <Button
+        android:id="@+id/counterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="Go To Counter"
+        android:layout_gravity="center"
+        android:onClick="goToHome"
+        />
+
+    <Button
+        android:id="@+id/portfolioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Go To Portfolio" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go To Login"
+        android:layout_gravity="center"
+        />
+
+    <Button
+        android:id="@+id/SignupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Signup Here"
+        android:layout_gravity="center"/>
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
