@@ -21,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private Button loginBut;
     private Button signupBut;
     private Button portfolioBut;
+    private int number;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);             // link to Main activity XML
+        messageText = findViewById(R.id.main_msg_txt);     // link to message textview in the Main activity XML
         /* initialize UI elements */
         /*b1 = (Button)findViewById(R.id.but1);*/
         counterBut = findViewById(R.id.counterButton);
@@ -34,11 +36,21 @@ public class MainActivity extends AppCompatActivity {
         signupBut = findViewById(R.id.SignupButton);
         portfolioBut = findViewById(R.id.portfolioButton);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras == null) {
+            messageText.setText("Hello");
+        } else {
+            number = extras.getInt("NUM");  // this will come from LoginActivity
+            messageText.setText("Hello " + number);
+        }
+
+
         counterBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, CounterActivity.class);
-                startActivity(i);
+                Intent intent = new Intent(MainActivity.this, CounterActivity.class);
+                intent.putExtra("COUNTER", Integer.valueOf(number));
+                startActivity(intent);
             }
         });
 
