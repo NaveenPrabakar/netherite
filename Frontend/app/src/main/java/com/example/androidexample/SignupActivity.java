@@ -74,6 +74,10 @@ public class SignupActivity extends AppCompatActivity {
 
                 if (password.equals(confirm)){
                     Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                    intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
+                    intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
+                    startActivity(intent);  // go to MainActivity with the key-value data
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();

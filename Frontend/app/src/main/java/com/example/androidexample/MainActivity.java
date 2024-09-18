@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private String newString;
     private Button loginButt;
     private Button signupButt;
+    private TextView usernameDisplay;
+    private TextView passwordDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,18 @@ public class MainActivity extends AppCompatActivity {
         messageText = findViewById(R.id.main_msg);      // link to message textview in the Main activity XML
         messageText.setText("Hello World");
 
+        usernameDisplay = findViewById(R.id.usernameDisplay);
+        passwordDisplay = findViewById(R.id.passwordDisplay);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras != null){
+            String username = extras.getString("USERNAME");
+            String password = extras.getString("PASSWORD");
+            usernameDisplay.setText(username);
+            passwordDisplay.setText(password);
+
+        }
 
         loginButt = findViewById(R.id.loginButt);
         loginButt.setOnClickListener(new View.OnClickListener() {
