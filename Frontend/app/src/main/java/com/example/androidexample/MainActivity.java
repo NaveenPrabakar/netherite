@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button signupButt;
     private TextView usernameDisplay;
     private TextView passwordDisplay;
+    private Button makeFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        makeFile = findViewById(R.id.makeFile);
+        makeFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(MainActivity.this, TextActivity.class);
+                startActivity(i);
+            }
+        });
+
         signupButt = findViewById(R.id.signupButt);
         signupButt.setOnClickListener(new View.OnClickListener() {
             @Override
