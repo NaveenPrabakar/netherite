@@ -20,13 +20,4 @@ class Main {
         SpringApplication.run(Main.class, args);
     }
 
-    // Create 3 users with their machines
-    @Bean
-    CommandLineRunner initUser() {
-        return args -> {
-            System.out.println("Hello there")
-
-        };
-    }
-
 }
