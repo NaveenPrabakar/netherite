@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="misc.xml">
+      <change afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/SignUp/SignUp/src/main/java/com/example/SignUp/Users/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/SignUp/SignUp/src/main/java/com/example/SignUp/Users/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/SignUp/SignUp/src/main/java/com/example/SignUp/Users/UserSignUpController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/SignUp/SignUp/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/SignUp/SignUp/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +60,9 @@
       <recent name="$PROJECT_DIR$/Experiments/Nicholas/loginExp/AndroidExample/app/src/main/java/com/example/androidexample" />
       <recent name="$PROJECT_DIR$/Experiments/Nicholas" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2" />
+    </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -73,7 +80,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1725636537641</updated>
-      <workItem from="1727040304322" duration="12209000" />
+      <workItem from="1727040304322" duration="15747000" />
     </task>
     <task id="LOCAL-00001" summary="misc.xml">
       <option name="closed" value="true" />
