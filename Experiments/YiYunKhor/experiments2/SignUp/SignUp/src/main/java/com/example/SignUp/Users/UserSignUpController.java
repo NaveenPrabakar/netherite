@@ -13,15 +13,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping(path="user")
 public class UserController{
 
- //  create the user
-    @PostMapping(path = "/save")
-    String createUser(@RequestBody User user){
+    @Autowired
+    private UserService userService;
+
+    //  create the user
+    @PostMapping (path="/save")
+    public String createUser(@RequestBody User user) {
         if (user == null)
             return failure;
-        userRepository.save(user);
+        userService.save(user);
         return success;
     }
 }

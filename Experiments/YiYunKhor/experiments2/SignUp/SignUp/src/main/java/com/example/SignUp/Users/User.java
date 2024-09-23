@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 //An entity represents a table in a database. Each instance of the entity corresponds to a row in that table.
 //Entities are simple Java objects (also called POJOs) that are annotated to map them to a database table.
 @Entity
+@Table(name="users")
 public class User {
 
     /*
@@ -21,14 +22,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column  (name="username")
     @NotEmpty(message = "Username is required")
     private String name;
 
+    @Column  (name="email")
     @NotEmpty(message = "Email is required")
     private String emailId;
 
+    @Column  (name="password")
     @NotEmpty(message = "Password is required")
     private String password;
+
     private boolean ifActive;
 
 
