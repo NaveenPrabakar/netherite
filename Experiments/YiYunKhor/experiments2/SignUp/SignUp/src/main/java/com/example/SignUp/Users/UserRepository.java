@@ -6,7 +6,7 @@ package com.example.SignUp.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface UserRepository extends JpaRepository<User, int> {
+public interface UserRepository extends JpaRepository<User, String> {
     User findByEmail(String email);
 
 }

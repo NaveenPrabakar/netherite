@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path="user")
-public class UserController{
+public class UserSignUpController{
 
     @Autowired
     private UserService userService;
@@ -23,8 +24,8 @@ public class UserController{
     @PostMapping (path="/save")
     public String createUser(@RequestBody User user) {
         if (user == null)
-            return failure;
+            return "User registered fail";
         userService.save(user);
-        return success;
+        return"User registered successfully!";
     }
 }
