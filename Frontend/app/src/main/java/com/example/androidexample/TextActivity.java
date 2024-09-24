@@ -5,19 +5,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TextActivity extends AppCompatActivity {
 
-    private EditText usernameEditText;  // define username edittext variable
-    private EditText passwordEditText;  // define password edittext variable
-    private Button loginButton;         // define login button variable
-    private Button signupButton;
-    private TextView err_msg;// define signup button variable
     private Button back2main;
-
+    private Button saveButt;
+    private EditText mainText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,5 +34,37 @@ public class TextActivity extends AppCompatActivity {
                 startActivity(intent);  // go to SignupActivity
             }
         });
+
+
+        saveButt = findViewById(R.id.saveButt);
+        saveButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    // Define the file path and name
+                    File file = new File("Readme.md");
+
+                    // Create the file
+                    if (file.createNewFile()) {
+                        System.out.println("File created: " + file.getName());
+                    } else {
+                        System.out.println("File already exists.");
+                    }
+
+                    // Write content to the file
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(mainText.getText().toString());
+                    writer.close();
+
+
+
+                    System.out.println("Successfully wrote to the file.");
+
+                } catch (IOException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
+
+            }});
     }
 }
