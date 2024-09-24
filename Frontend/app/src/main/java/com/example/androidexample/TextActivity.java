@@ -5,8 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -23,6 +29,7 @@ public class TextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_file);
 
         // link to Login activity XML
+        mainText = findViewById(R.id.editTextTextMultiLine4);
 
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
@@ -40,31 +47,47 @@ public class TextActivity extends AppCompatActivity {
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    // Define the file path and name
-                    File file = new File("Readme.md");
-
-                    // Create the file
-                    if (file.createNewFile()) {
-                        System.out.println("File created: " + file.getName());
-                    } else {
-                        System.out.println("File already exists.");
-                    }
-
-                    // Write content to the file
-                    FileWriter writer = new FileWriter(file);
-                    writer.write(mainText.getText().toString());
-                    writer.close();
-
-
-
-                    System.out.println("Successfully wrote to the file.");
-
-                } catch (IOException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
-                }
-
+                writeToFile();
+                readFromFile("Readme.md");
             }});
     }
+
+    public void writeToFile() {
+        File path = getApplicationContext().getFilesDir();
+
+        try {
+            File file = new File(path,"Readme.md");
+            // Create the file
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+            FileOutputStream writer = new FileOutputStream(file);
+            writer.write(mainText.getText().toString().getBytes());
+            writer.close();
+            Toast.makeText(getApplicationContext(), "File saved", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void readFromFile(String fileKey) {
+        String fileName = fileKey;
+        try  {
+            FileInputStream fis = openFileInput(fileName);
+            InputStreamReader inputStreamReader = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            String fileContents = stringBuilder.toString();
+            System.out.println(fileContents);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
