@@ -1,4 +1,4 @@
-package Users;
+package onetoone.Users;
 
 import java.util.List;
 
@@ -9,16 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
-@RequestMapping(path="user")
+@RequestMapping("/user")
 public class UserSignUpController{
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @GetMapping(path = "/users")
     List<User> getAllUsers(){
@@ -26,7 +25,7 @@ public class UserSignUpController{
     }
 
     //  create the user
-    @PostMapping (path="/save")
+    @PostMapping ("/save")
     public String createUser(@RequestBody User user) {
         if (user == null)
             return "User registered fail";

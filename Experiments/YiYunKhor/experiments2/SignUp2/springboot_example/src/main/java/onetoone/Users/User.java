@@ -1,4 +1,4 @@
-package Users;
+package com.example.SignUp.Users;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
