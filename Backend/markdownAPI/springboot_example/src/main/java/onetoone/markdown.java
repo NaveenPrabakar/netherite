@@ -8,8 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.StandardCopyOption;
-
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +21,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/files")
-public class markdown{
+public class markdown {
 
     //Main directory for the files
     private final Path location = Paths.get("uploads");
@@ -27,8 +30,8 @@ public class markdown{
     private FileRepository fileRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> store (@RequestParam("file") MultipartFile file){
-        try{
+    public ResponseEntity<String> store(@RequestParam("file") MultipartFile file) {
+        try {
 
             if (!Files.exists(location)) {//Creates Directory if it doesn't exist
                 Files.createDirectory(location);
@@ -40,9 +43,8 @@ public class markdown{
 
             FileEntity fileEntity = new FileEntity(fileName);
             fileRepository.save(fileEntity);
-        }
 
-        catch(IOException e){
+        } catch (IOException e) {
             System.out.println("Could Not save the file");
         }
 
@@ -50,4 +52,30 @@ public class markdown{
 
     }
 
+    @GetMapping("/{name}")
+    public ResponseEntity<Resource> store(@PathVariable String name) {
+        FileEntity fileEntity = fileRepository.findByFileName(name);
+
+        if (fileEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path filePath = location.resolve(name);
+            Resource resource = new FileSystemResource(filePath.toFile());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + name + "\"");
+
+            return ResponseEntity.ok().headers(headers).body(resource);
+            //Returns in JSON format
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
