@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/user")
@@ -23,7 +23,6 @@ public class UserSignUpController{
     List<User> getAllUsers(){
         return userRepository.findAll();
     }
-
     //  create the user
     @PostMapping ("/save")
     public String createUser(@RequestBody User user) {

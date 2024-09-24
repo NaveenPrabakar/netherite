@@ -1,4 +1,4 @@
-package com.example.SignUp.Users;
+package onetoone.Users;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
