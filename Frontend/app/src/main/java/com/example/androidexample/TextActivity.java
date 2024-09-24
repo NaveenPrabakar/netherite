@@ -8,13 +8,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +22,8 @@ public class TextActivity extends AppCompatActivity {
     private Button back2main;
     private Button saveButt;
     private EditText mainText;
+    private String newFileName;
+    private EditText fileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +31,8 @@ public class TextActivity extends AppCompatActivity {
 
         // link to Login activity XML
         mainText = findViewById(R.id.editTextTextMultiLine4);
+        fileName = findViewById(R.id.fileName);
+
 
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
@@ -47,8 +50,14 @@ public class TextActivity extends AppCompatActivity {
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                writeToFile();
-                readFromFile("Readme.md");
+                if (fileName.getText().toString().isEmpty()){
+                    System.out.println("file name is empty");
+                }else{
+                    writeToFile();
+                    listFiles();
+                    readFromFile(fileName.getText().toString()+".md");
+                }
+
             }});
     }
 
@@ -56,7 +65,7 @@ public class TextActivity extends AppCompatActivity {
         File path = getApplicationContext().getFilesDir();
 
         try {
-            File file = new File(path,"Readme.md");
+            File file = new File(path,fileName.getText().toString()+".md");
             // Create the file
             if (file.createNewFile()) {
                 System.out.println("File created: " + file.getName());
@@ -84,10 +93,25 @@ public class TextActivity extends AppCompatActivity {
                 stringBuilder.append(line);
             }
             String fileContents = stringBuilder.toString();
-            System.out.println(fileContents);
+            System.out.println("Contents of file: " + fileContents);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String[] listFiles(){
+        File directory = getApplicationContext().getFilesDir();  // Internal storage directory
+        File[] files = directory.listFiles();  // List all files in the directory
+        String[] fileKeys = new String[files.length];
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                fileKeys[i] = files[i].getName();
+                System.out.println("File: " + files[i].getName());
+            }
+        } else {
+            System.out.println("no files found");;
+        }
+        return fileKeys;
     }
 
 }
