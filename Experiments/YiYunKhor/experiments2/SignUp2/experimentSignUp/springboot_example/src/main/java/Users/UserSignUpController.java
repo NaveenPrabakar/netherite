@@ -1,4 +1,4 @@
-package com.example.SignUp.Users;
+package Users;
 
 import java.util.List;
 
@@ -18,14 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserSignUpController{
 
     @Autowired
-    private UserService userService;
+    UserRepository userRepository;
+
+    @GetMapping(path = "/users")
+    List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
 
     //  create the user
     @PostMapping (path="/save")
     public String createUser(@RequestBody User user) {
         if (user == null)
             return "User registered fail";
-        userService.save(user);
+        userRepository.save(user);
         return"User registered successfully!";
     }
 }
