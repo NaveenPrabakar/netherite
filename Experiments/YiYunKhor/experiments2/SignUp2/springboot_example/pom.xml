@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>coms309</groupId>
-  <artifactId>SignUp2</artifactId>
+  <artifactId>onetoone</artifactId>
   <version>1.0.0</version>
 
   <!-- To make it a spring boot project -->

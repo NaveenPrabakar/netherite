@@ -14,8 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */ 
 
 @SpringBootApplication
-
-class SignUpApplication2{
+public class SignUpApplication2{
 
     public static void main(String[] args) {
         SpringApplication.run(SignUpApplication2.class, args);
