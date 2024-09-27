@@ -5,13 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+
+
 
 //An entity represents a table in a database. Each instance of the entity corresponds to a row in that table.
 //Entities are simple Java objects (also called POJOs) that are annotated to map them to a database table.
 @Entity
 
+@Table (name="Users")
 public class User {
 
     /*
@@ -19,11 +24,20 @@ public class User {
      * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
      */
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "username")
     private String name;
+
+    @Column(name = "email")
     private String emailId;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "ifActive")
     private boolean ifActive;
 
     public User(String name, String emailId, String password) {

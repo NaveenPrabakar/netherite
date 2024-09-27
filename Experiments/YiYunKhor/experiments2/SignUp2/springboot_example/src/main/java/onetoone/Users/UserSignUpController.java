@@ -22,6 +22,7 @@ public class UserSignUpController{
     //return the user by emailid
     @GetMapping(path = "/usersGetting/{emailId}")
     User getUserByEmailId( @PathVariable String emailId){
+
         return userRepository.findByEmailId(emailId);
     }
 
@@ -36,6 +37,11 @@ public class UserSignUpController{
     String createUser(@RequestBody User user) {
         if (user == null)
             return "User registered fail";
+
+        if(userRepository.findByEmailId(user.getEmailId()) != null){
+            return "User already exists";
+        }
+
         userRepository.save(user);
         return"User registered successfully!";
     }
