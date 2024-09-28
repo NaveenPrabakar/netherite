@@ -4,10 +4,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import android.net.Uri;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -17,7 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;
     private TextView err_msg;// define signup button variable
     private Button back2main;
-
+    private Boolean ApiStatus = false;
+    private final String URL_STRING_REQ = "https://4efc3913-a738-4f74-b964-b0290a1b0fe9.mock.pstmn.io/login1/sucess";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,10 +73,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 /* when login button is pressed, use intent to switch to Login Activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                startActivity(intent);  // go to MainActivity with the key-value data
+                makeStringReq(username, password);
+
+
             }
         });
 
@@ -87,4 +101,68 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void makeStringReq(String username, String password) {
+        Uri.Builder builder = Uri.parse("https://4efc3913-a738-4f74-b964-b0290a1b0fe9.mock.pstmn.io/login1/sucess").buildUpon();
+        builder.appendQueryParameter("username", username);
+        builder.appendQueryParameter("password", password);
+        String url = builder.build().toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        HashMap<String, String> responseMap = jsonToMap(response);
+                        Log.d("Volley Response", response);
+                        for (String key : responseMap.keySet()) {
+                            Log.d("Key", key);
+                            Log.d("Value", responseMap.get(key));
+                        }
+                        ApiStatus=true;
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
+                        intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
+                        startActivity(intent);  // go to MainActivity with the key-value data
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Volley Error", error.toString());
+                        ApiStatus=false;
+                        err_msg.setText("Failed to send request");
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    public HashMap<String, String> jsonToMap(String jsonString) {
+        HashMap<String, String> map = new HashMap<>();
+
+        try {
+            // Convert JSON string to JSONObject
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // Get the keys of the JSONObject
+            Iterator<String> keys = jsonObject.keys();
+
+            // Loop through the keys and put key-value pairs into the HashMap
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();  // Handle the exception
+        }
+
+        return map;
+    }
+
 }
