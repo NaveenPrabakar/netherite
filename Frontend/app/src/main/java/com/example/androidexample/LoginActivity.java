@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus;
-    private final String URL_STRING_REQ = "";
+    private final String URL_STRING_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
