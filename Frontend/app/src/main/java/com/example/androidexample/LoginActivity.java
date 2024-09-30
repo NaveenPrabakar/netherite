@@ -18,7 +18,6 @@ import com.android.volley.toolbox.StringRequest;
 import android.net.Uri;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus = false;
-    private final String URL_STRING_REQ = "https://4efc3913-a738-4f74-b964-b0290a1b0fe9.mock.pstmn.io/login1/sucess";
+    private final String URL_STRING_REQ = "https://localhost:8080/files/upload";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
