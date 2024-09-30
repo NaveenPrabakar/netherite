@@ -4,10 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -17,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;
     private TextView err_msg;// define signup button variable
     private Button back2main;
+    private Boolean ApiStatus;
+    private final String URL_STRING_REQ = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +70,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 /* when login button is pressed, use intent to switch to Login Activity */
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                makeStringReq(username, password);
+
                 intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
                 intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
                 startActivity(intent);  // go to MainActivity with the key-value data
@@ -86,5 +100,37 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);  // go to SignupActivity
             }
         });
+    }
+
+    private void makeStringReq(String username, String password) {
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                URL_STRING_REQ,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Handle the successful response here
+                        Log.d("Volley Response", response);
+                        ApiStatus = true;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", username);
+                params.put("password", password);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 }
