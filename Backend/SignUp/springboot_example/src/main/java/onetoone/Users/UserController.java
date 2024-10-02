@@ -10,70 +10,61 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import onetoone.Laptops.Laptop;
-import onetoone.Laptops.LaptopRepository;
-
-/**
- * 
- * @author Vivek Bengre
- * 
- */ 
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-public class UserController {
+@RequestMapping("/user")
+public class UserSignUpController{
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    LaptopRepository laptopRepository;
+    //return the user by emailid
+    @GetMapping(path = "/usersGetting/{emailId}")
+    User getUserByEmailId( @PathVariable String emailId){
 
-    private String success = "{\"message\":\"success\"}";
-    private String failure = "{\"message\":\"failure\"}";
+        return userRepository.findByEmailId(emailId);
+    }
 
+    //return list of user
     @GetMapping(path = "/users")
     List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
-    @GetMapping(path = "/users/{id}")
-    User getUserById( @PathVariable int id){
-        return userRepository.findById(id);
-    }
-
-    @PostMapping(path = "/users")
-    String createUser(@RequestBody User user){
+    //  create the user
+    @PostMapping ("/usersCreating")
+    String createUser(@RequestBody User user) {
         if (user == null)
-            return failure;
+            return "User registered fail";
+
+        if(userRepository.findByEmailId(user.getEmailId()) != null){
+            return "User already exists";
+        }
+
         userRepository.save(user);
-        return success;
+        return"User registered successfully!";
     }
 
-    @PutMapping("/users/{id}")
-    User updateUser(@PathVariable int id, @RequestBody User request){
-        User user = userRepository.findById(id);
-        if(user == null)
-            return null;
+    //update the users information
+    @PutMapping("/usersUpdating/{emailId}")
+    User updateUser(@PathVariable String emailId, @RequestBody User request){
+        User user = userRepository.findByEmailId(emailId);
+        if(user == null) {
+            throw new RuntimeException("Person email does not exist");
+        }
+        else if (user.getEmailId()!= emailId){
+            throw new RuntimeException("Person email does not match");
+        }
         userRepository.save(request);
-        return userRepository.findById(id);
-    }   
-    
-    @PutMapping("/users/{userId}/laptops/{laptopId}")
-    String assignLaptopToUser(@PathVariable int userId,@PathVariable int laptopId){
-        User user = userRepository.findById(userId);
-        Laptop laptop = laptopRepository.findById(laptopId);
-        if(user == null || laptop == null)
-            return failure;
-        laptop.setUser(user);
-        user.setLaptop(laptop);
-        userRepository.save(user);
-        return success;
+        return userRepository.findByEmailId(emailId);
     }
 
-    @DeleteMapping(path = "/users/{id}")
-    String deleteUser(@PathVariable int id){
-        userRepository.deleteById(id);
-        return success;
+    //delete the user
+    @DeleteMapping(path = "/usersDeleting/{emailId}")
+    String deleteUser(@PathVariable String emailId){
+        userRepository.deleteByEmailId(emailId);
+        return "User deleted successfully!";
     }
+
 }
