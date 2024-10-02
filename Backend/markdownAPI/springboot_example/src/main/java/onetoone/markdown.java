@@ -78,4 +78,24 @@ public class markdown {
             return ResponseEntity.status(500).build();
         }
     }
+
+    @PutMapping("/update/{name}")
+    public ResponseEntity<String> updateFile(@PathVariable String name, @RequestParam("file") MultipartFile file) {
+        FileEntity fileEntity = fileRepository.findByFileName(name);
+
+        if (fileEntity == null) {
+            return ResponseEntity.notFound().body("File not found");
+        }
+
+        try {
+            Path filePath = location.resolve(name);
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            fileRepository.save(fileEntity);
+
+            return ResponseEntity.ok("File updated successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
