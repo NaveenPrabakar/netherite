@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/java/onetoone/Laptops/Laptop.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/java/onetoone/Laptops/LaptopController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/java/onetoone/Laptops/LaptopRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/java/onetoone/Users/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/java/onetoone/Users/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/SignUp/springboot_example/src/main/resources/application.properties" afterDir="false" />
-    </list>
+    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,7 +39,8 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "10-login-signup-api-2",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/annabelle/Desktop/4_rasel_2/Backend/SignUp"
+    "last_opened_file_path": "/Users/annabelle/Desktop/4_rasel_2/Backend/SignUp",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
   <component name="RecentsManager">
