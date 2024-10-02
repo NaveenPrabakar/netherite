@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/user")
-public class UserSignUpController{
+public class UserController{
 
     @Autowired
     private UserRepository userRepository;
