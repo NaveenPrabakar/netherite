@@ -93,7 +93,6 @@ public class markdown {
             Path filePath = location.resolve(name);
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            fileRepository.save(fileEntity);
 
             return ResponseEntity.ok("File updated successfully");
         } catch (IOException e) {
