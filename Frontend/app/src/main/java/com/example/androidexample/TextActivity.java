@@ -1,7 +1,10 @@
 package com.example.androidexample;
 
+import static com.android.volley.Request.Method.POST;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,16 +16,21 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class TextActivity extends AppCompatActivity {
+import com.android.volley.NetworkResponse;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 
+public class TextActivity extends AppCompatActivity {
+    private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private Button back2main;
     private Button saveButt;
     private EditText mainText;
-    private String newFileName;
     private EditText fileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,7 @@ public class TextActivity extends AppCompatActivity {
                 }else{
                     writeToFile();
                     listFiles();
+                    sendFile();
                     readFromFile(fileName.getText().toString()+".md");
                 }
 
@@ -93,7 +102,7 @@ public class TextActivity extends AppCompatActivity {
                 stringBuilder.append(line);
             }
             String fileContents = stringBuilder.toString();
-            System.out.println("Contents of file: " + fileContents);
+            System.out.println("Contents of file: "+ fileName + ": " + fileContents);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,6 +121,40 @@ public class TextActivity extends AppCompatActivity {
             System.out.println("no files found");;
         }
         return fileKeys;
+    }
+
+    public void sendFile() {
+        File path = getApplicationContext().getFilesDir();
+        File file = new File(path, fileName.getText().toString() + ".md");
+
+        if (!file.exists()) {
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = URL_STRING_REQ;  // Replace with your server's URL
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("description", "This is a file upload");
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(POST, url, file,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        Toast.makeText(TextActivity.this, "File sent successfully!", Toast.LENGTH_SHORT).show();
+                        Log.d("VolleyResponse", new String(response.data));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(TextActivity.this, "File upload failed", Toast.LENGTH_SHORT).show();
+                        Log.e("VolleyError", error.toString());
+                    }
+                });
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(multipartRequest);
     }
 
 }

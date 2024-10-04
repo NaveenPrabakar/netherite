@@ -87,23 +87,32 @@
 
         <Button
             android:id="@+id/login_login_btn"
-            android:layout_width="150dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:text="Login"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
 
         <Button
             android:id="@+id/login_signup_btn"
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:text="Signup"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
+
+        <Button
+            android:id="@+id/forget_password"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Forgot"
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
 
     </LinearLayout>
 

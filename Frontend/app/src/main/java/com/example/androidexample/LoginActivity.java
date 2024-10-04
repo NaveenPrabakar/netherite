@@ -15,8 +15,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import android.net.Uri;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,11 +28,11 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;
+    private Button forgetPassword;
     private TextView err_msg;// define signup button variable
     private Button back2main;
-    private Boolean ApiStatus;
-    private final String URL_STRING_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
-
+    private Boolean ApiStatus = false;
+    private final String URL_STRING_REQ = "https://localhost:8080/files/upload";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
-
+        forgetPassword = findViewById(R.id.forget_password);
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,13 +73,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 /* when login button is pressed, use intent to switch to Login Activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
                 makeStringReq(username, password);
 
-                intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                startActivity(intent);  // go to MainActivity with the key-value data
+
             }
         });
 
@@ -103,16 +103,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void makeStringReq(String username, String password) {
+        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+        builder.appendQueryParameter("username", username);
+        builder.appendQueryParameter("password", password);
+        String url = builder.build().toString();
 
         StringRequest stringRequest = new StringRequest(
-                Request.Method.POST,
-                URL_STRING_REQ,
+                Request.Method.GET,
+                url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Handle the successful response here
+                        HashMap<String, String> responseMap = jsonToMap(response);
                         Log.d("Volley Response", response);
-                        ApiStatus = true;
+                        for (String key : responseMap.keySet()) {
+                            Log.d("Key", key);
+                            Log.d("Value", responseMap.get(key));
+                        }
+                        ApiStatus=true;
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
+                        intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
+                        startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 },
                 new Response.ErrorListener() {
@@ -120,17 +132,37 @@ public class LoginActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
+                        ApiStatus=false;
+                        err_msg.setText("Failed to send request");
                     }
                 }
-        ){
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                return params;
-            }
-        };
+        );
+
+        // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
+
+    public HashMap<String, String> jsonToMap(String jsonString) {
+        HashMap<String, String> map = new HashMap<>();
+
+        try {
+            // Convert JSON string to JSONObject
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // Get the keys of the JSONObject
+            Iterator<String> keys = jsonObject.keys();
+
+            // Loop through the keys and put key-value pairs into the HashMap
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();  // Handle the exception
+        }
+
+        return map;
+    }
+
 }
