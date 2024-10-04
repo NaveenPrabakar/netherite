@@ -3,6 +3,8 @@ package onetoone.loginAPI;
 import java.util.List;
 import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,20 +29,25 @@ public class login{
 
     //checking if the user email exist testing
     @PostMapping("/searchEmail")
-    String getUserByEmail(@RequestBody logs l ){
+    Map<String, String> getUserByEmail(@RequestBody logs l ){
+
+        HashMap<String, String> data = new HashMap<>();
 
         System.out.println(l.getUsername());
         signEntity temp = login.findByEmail(l.getUsername());
 
         if (temp == null) {
-            return "No";
+            data.put("response", "Email non-exist");
+            return data;
         }
 
         if(temp.getPassword().equals(l.getPassword())){
-            return "yes";
+            data.put("response", "Login Success");
+            return data;
         }
 
-        return "no";
+        data.put("response", "Login Fail");
+        return data;
     }
 
     //checking if the user email exist and also the password is correct (create)
