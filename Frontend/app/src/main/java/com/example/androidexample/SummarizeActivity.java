@@ -1,5 +1,10 @@
 package com.example.androidexample;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
@@ -9,17 +14,46 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import android.content.Context;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-public class StringFileActivity extends AppCompatActivity {
+public class SummarizeActivity extends AppCompatActivity {
 
-    private static Context ctx;
+    private Button back2main;
+    private Button saveButt;
+    private EditText mainText;
+    private String newFileName;
+    private EditText fileName;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_summarize);
 
-    private void StringFile(Context context)
-    {
-        ctx = context;
+
+        back2main = findViewById(R.id.backToHomeButt);
+        back2main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /* when signup button is pressed, use intent to switch to Signup Activity */
+                Intent intent = new Intent(SummarizeActivity.this, MainActivity.class);
+                startActivity(intent);  // go to SignupActivity
+            }
+        });
+
+
+        saveButt = findViewById(R.id.saveButt);
+        saveButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fileName.getText().toString().isEmpty()){
+                    System.out.println("file name is empty");
+                }else{
+                    writeToFile();
+                    listFiles();
+                    readFromFile(fileName.getText().toString()+".md");
+                }
+
+            }});
     }
 
     public void writeToFile() {
@@ -74,6 +108,5 @@ public class StringFileActivity extends AppCompatActivity {
         }
         return fileKeys;
     }
-
 
 }

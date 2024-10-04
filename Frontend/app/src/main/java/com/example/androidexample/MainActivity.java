@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView usernameDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
+    private Button summarizeButt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        summarizeButt = findViewById(R.id.summarizeButt);
+        summarizeButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(MainActivity.this, SummarizeActivity.class);
+                startActivity(i);
+            }
+        });
 
 
 

@@ -89,6 +89,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
+
+        <Button
+            android:id="@+id/summarizeButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="16dp"
+            android:text="Summarize File"
+            app:layout_constraintStart_toStartOf="@+id/signupButt"
+            app:layout_constraintTop_toBottomOf="@+id/signupButt" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
