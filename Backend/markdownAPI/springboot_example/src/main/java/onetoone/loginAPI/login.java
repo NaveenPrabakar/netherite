@@ -27,8 +27,8 @@ public class login{
 
     //checking if the user email exist testing
     @GetMapping("/searchEmail/{email}")
-    signEntity getUserByEmail( @PathVariable String email){
-       if ((loginRepository.findByEmail(email))==null){
+    String getUserByEmail( @PathVariable String email){
+       if ((login.findByEmail(email))==null){
            return "the user email non exist";
         }
        else{
@@ -38,10 +38,10 @@ public class login{
 
     //checking if the user email exist and also the password is correct (create)
     @PostMapping("/login/{email}/{password}")
-    signEntity searchUserByEmail(@PathVariable String email, @PathVariable String password){
+    String searchUserByEmail(@PathVariable String email, @PathVariable String password){
 
         //store in temp
-        signEntity temp = loginRepository.findByEmail(email);
+        signEntity temp = login.findByEmail(email);
 
         //check the email first if it exist
         if (temp == null) {
@@ -57,20 +57,23 @@ public class login{
                     return "Login Failed, wrong password. Attempt time:"+ chance;
                 }
             }
+
+        return "Reset Password";
         }
 
     //update the password with the email given (update)
     @PutMapping("/changePassword/{email}/{password}")
-    signEntity changeUserByEmail(@PathVariable String email, @PathVariable String password){
+    String changeUserByEmail(@PathVariable String email, @PathVariable String password){
 
         //store in temp
-        signEntity temp = loginRepository.findByEmailId(emailId);
+        signEntity temp = login.findByEmail(email);
 
             if (temp == null) {
                 return "Your Email Non-Exist\n";
             }
             else {
                 temp.setPassword(password);
+                return "Your email exists";
             }
     }
 }
