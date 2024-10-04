@@ -28,7 +28,7 @@ public class login{
     //checking if the user email exist testing
     @GetMapping("/searchEmail/{email}")
     signEntity getUserByEmail( @PathVariable String email){
-       if ((loginRepository.findByEmailId(emailId))==null){
+       if ((loginRepository.findByEmail(email))==null){
            return "the user email non exist";
         }
        else{
@@ -41,7 +41,7 @@ public class login{
     signEntity searchUserByEmail(@PathVariable String email, @PathVariable String password){
 
         //store in temp
-        signEntity temp = loginRepository.findByEmailId(emailId);
+        signEntity temp = loginRepository.findByEmail(email);
 
         //check the email first if it exist
         if (temp == null) {
@@ -54,7 +54,7 @@ public class login{
                 }
                 else {
                     chance--;
-                    return "Login Failed, wrong password, attempt time:"+ chance;
+                    return "Login Failed, wrong password. Attempt time:"+ chance;
                 }
             }
         }
