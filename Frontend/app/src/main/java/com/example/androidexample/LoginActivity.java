@@ -10,10 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus;
-    private final String URL_STRING_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
-
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchEmail";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +54,6 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                if (username.indexOf('@') == -1){
-                    err_msg.setText("Username must be an email");
-                    return;
-                }
                 if (password.length() < 8){
                     err_msg.setText("Password must be at least 8 characters");
                     return;
@@ -63,19 +62,12 @@ public class LoginActivity extends AppCompatActivity {
                     err_msg.setText("Password must contain at least one '!' ");
                     return;
                 }
-                if (username.contains(".com") == false){
-                    err_msg.setText("Password must be a valid email ");
-                    return;
-                }
 
                 /* when login button is pressed, use intent to switch to Login Activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
-                makeStringReq(username, password);
+                makeJsonObjReq(username, password);
 
-                intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                startActivity(intent);  // go to MainActivity with the key-value data
+
             }
         });
 
@@ -102,35 +94,56 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void makeStringReq(String username, String password) {
+    private void makeJsonObjReq(String username, String password) {
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("username", username);
+            requestBody.put("password", password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        StringRequest stringRequest = new StringRequest(
+        JsonObjectRequest jsonObjGet = new JsonObjectRequest(
                 Request.Method.POST,
-                URL_STRING_REQ,
-                new Response.Listener<String>() {
+                URL_JSON_OBJECT,
+                null, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        // Handle the successful response here
-                        Log.d("Volley Response", response);
-                        ApiStatus = true;
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Response", response.toString());
+                        err_msg.setText(response.toString());
+
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("USERNAME", username);
+                        intent.putExtra("PASSWORD", password);
+                        startActivity(intent);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
+                        err_msg.setText(error.toString());
                     }
                 }
-        ){
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+//                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+
             @Override
             protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
                 return params;
             }
         };
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
     }
 }

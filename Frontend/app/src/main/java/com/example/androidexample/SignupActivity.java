@@ -40,7 +40,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private TextView msgResponse;
     private static final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/user/create";
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/user/create";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchEmail";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
