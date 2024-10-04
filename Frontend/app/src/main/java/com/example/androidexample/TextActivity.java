@@ -1,5 +1,7 @@
 package com.example.androidexample;
 
+import static com.android.volley.Request.Method.POST;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,11 +27,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
 public class TextActivity extends AppCompatActivity {
-    private final String URL_STRING_REQ = "https://localhost:8080/files/upload";
+    private final String URL_STRING_REQ = "http://10.26.48.79:8080/files/upload";
     private Button back2main;
     private Button saveButt;
     private EditText mainText;
-    private String newFileName;
     private EditText fileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class TextActivity extends AppCompatActivity {
                 }else{
                     writeToFile();
                     listFiles();
+                    sendFile();
                     readFromFile(fileName.getText().toString()+".md");
                 }
 
@@ -100,7 +102,7 @@ public class TextActivity extends AppCompatActivity {
                 stringBuilder.append(line);
             }
             String fileContents = stringBuilder.toString();
-            System.out.println("Contents of file: " + fileContents);
+            System.out.println("Contents of file: "+ fileName + ": " + fileContents);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +137,7 @@ public class TextActivity extends AppCompatActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("description", "This is a file upload");
 
-        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(url, file, params,
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(POST, url, file,
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {

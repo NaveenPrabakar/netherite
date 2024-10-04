@@ -5,43 +5,105 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import java.io.InputStream;
+import java.io.FileInputStream;
+
+// VolleyMultipartRequest.java
 
 public class VolleyMultipartRequest extends Request<NetworkResponse> {
 
-    private final Response.Listener<NetworkResponse> mListener;
-    private final Response.ErrorListener mErrorListener;
-    private final File file;
-    private final Map<String, String> params;
 
-    public VolleyMultipartRequest(String url, File file, Map<String, String> params,
-                                  Response.Listener<NetworkResponse> listener, Response.ErrorListener errorListener) {
-        super(Method.POST, url, errorListener);
+    private final String twoHyphens = "--";
+    private final String lineEnd = "\r\n";
+    private final String boundary = "apiclient-" + System.currentTimeMillis();
+
+    private Response.Listener<NetworkResponse> mListener;
+    private Response.ErrorListener mErrorListener;
+    private Map<String, String> mHeaders;
+    private File file;
+
+
+    public VolleyMultipartRequest(int method, String url, File file,
+                                  Response.Listener<NetworkResponse> listener,
+                                  Response.ErrorListener errorListener) {
+        super(method, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
         this.file = file;
-        this.params = params;
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError {
-        return params;
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        return (mHeaders != null) ? mHeaders : super.getHeaders();
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return "multipart/form-data;boundary=" + boundary;
+    }
+
+    @Override
+    public byte[] getBody() throws AuthFailureError {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+
+        try {
+            // Write the file part
+            buildFilePart(dataOutputStream);
+            // Write the end of the multipart request
+            dataOutputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private void buildFilePart(DataOutputStream dataOutputStream) throws IOException {
+        String fileName = file.getName();
+
+        // Write content disposition and content type for the file
+        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"" + lineEnd);
+        dataOutputStream.writeBytes("Content-Type: " + "application/octet-stream" + lineEnd);
+        dataOutputStream.writeBytes(lineEnd);
+
+        // Write file data
+        FileInputStream fileInputStream = new FileInputStream(file);
+        int bytesRead;
+        byte[] buffer = new byte[4096];
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+            dataOutputStream.write(buffer, 0, bytesRead);
+        }
+
+        dataOutputStream.writeBytes(lineEnd);
+        fileInputStream.close();
     }
 
     @Override
     protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
         try {
-            return Response.success(response,
+            return Response.success(
+                    response,
                     HttpHeaderParser.parseCacheHeaders(response));
         } catch (Exception e) {
             return Response.error(new ParseError(e));
@@ -54,27 +116,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     }
 
     @Override
-    public byte[] getBody() throws AuthFailureError {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-            multipartEntityBuilder.addPart("file", new FileBody(file, ContentType.DEFAULT_BINARY, file.getName()));
-
-            // Add other parameters as text parts
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                multipartEntityBuilder.addPart(entry.getKey(),
-                        new StringBody(entry.getValue(), ContentType.TEXT_PLAIN));
-            }
-
-            multipartEntityBuilder.build().writeTo(bos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bos.toByteArray();
-    }
-
-    @Override
-    public String getBodyContentType() {
-        return "multipart/form-data";
+    public void deliverError(VolleyError error) {
+        mErrorListener.onErrorResponse(error);
     }
 }
