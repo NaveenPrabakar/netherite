@@ -27,7 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
 public class TextActivity extends AppCompatActivity {
-    private final String URL_STRING_REQ = "http://10.26.48.79:8080/files/upload";
+    private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private Button back2main;
     private Button saveButt;
     private EditText mainText;
