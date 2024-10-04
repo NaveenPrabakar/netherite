@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/login.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/loginRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/signupAPI/signRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/signupAPI/signRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +44,8 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "20-doing-signup-backend",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/asian/4_rasel_2"
+    "last_opened_file_path": "C:/Users/asian/4_rasel_2",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
