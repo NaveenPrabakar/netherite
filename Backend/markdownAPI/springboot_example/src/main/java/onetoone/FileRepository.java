@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
     FileEntity findByFileName(String fileName);
 
-
     @Transactional
     void deleteByFileName(String fileName);
 }
