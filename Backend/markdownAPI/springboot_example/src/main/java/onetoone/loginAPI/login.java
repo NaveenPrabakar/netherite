@@ -29,8 +29,8 @@ public class login{
     @PostMapping("/searchEmail")
     String getUserByEmail(@RequestBody logs l ){
 
-        System.out.println(l.getEmail());
-        signEntity temp = login.findByEmail(l.getEmail());
+        System.out.println(l.getUsername());
+        signEntity temp = login.findByEmail(l.getUsername());
 
         if (temp == null) {
             return "No";
