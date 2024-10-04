@@ -28,7 +28,7 @@ public class login{
     //checking if the user email exist testing
     @GetMapping("/searchEmail/{email}")
     signEntity getUserByEmail( @PathVariable String email){
-       if (loginRepository.findByEmailId(emailId))==null{
+       if ((loginRepository.findByEmailId(emailId))==null){
            return "the user email non exist";
         }
        else{
@@ -61,7 +61,7 @@ public class login{
 
     //update the password with the email given (update)
     @PutMapping("/changePassword/{email}/{password}")
-    signEntity searchUserByEmail(@PathVariable String email, @PathVariable String password){
+    signEntity changeUserByEmail(@PathVariable String email, @PathVariable String password){
 
         //store in temp
         signEntity temp = loginRepository.findByEmailId(emailId);
