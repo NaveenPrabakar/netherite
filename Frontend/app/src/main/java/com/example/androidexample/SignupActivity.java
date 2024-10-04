@@ -33,7 +33,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button back2main;
 
     private TextView msgResponse;
-    private static final String URL_STRING_REQ = "https://8cbc6de5-c93a-4ddb-91c4-94820e4b534c.mock.pstmn.io";
+    private static final String URL_STRING_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

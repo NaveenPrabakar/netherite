@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.StandardCopyOption;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -75,6 +77,46 @@ public class markdown {
             //Returns in JSON format
 
         } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PutMapping("/update/{name}")
+    public ResponseEntity<String> updateFile(@PathVariable String name, @RequestParam("file") MultipartFile file) {
+        FileEntity fileEntity = fileRepository.findByFileName(name);
+
+        if (fileEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            Path filePath = location.resolve(name);
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return ResponseEntity.ok("File updated successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @DeleteMapping("delete/{name}")
+    public ResponseEntity<String> deleteFile(@PathVariable String name){
+        FileEntity files = fileRepository.findByFileName(name);
+
+        if(files == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        try{
+            Path filePath = location.resolve(name);
+
+            Files.delete(filePath);
+
+            fileRepository.deleteByFileName(name);
+
+            return ResponseEntity.ok("File has been deleted");
+        } catch (IOException e){
             return ResponseEntity.status(500).build();
         }
     }
