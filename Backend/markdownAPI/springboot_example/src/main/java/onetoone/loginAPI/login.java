@@ -23,7 +23,7 @@ public class login{
 
     //global variables
     //chance is for login chance
-    int chance=3;
+    int chance= 3;
 
     //checking if the user email exist testing
     @PostMapping("/searchEmail")

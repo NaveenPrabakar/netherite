@@ -12,6 +12,10 @@ public class logs{
         this.password = password;
     }
 
+    public logs(){
+
+    }
+
     public String getUsername(){
         return username;
     }
