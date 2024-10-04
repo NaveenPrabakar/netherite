@@ -26,14 +26,21 @@ public class login{
     int chance=3;
 
     //checking if the user email exist testing
-    @GetMapping("/searchEmail/{email}")
-    String getUserByEmail( @PathVariable String email){
-       if ((login.findByEmail(email))==null){
-           return "the user email non exist";
+    @PostMapping("/searchEmail")
+    String getUserByEmail(@RequestBody logs l ){
+
+        System.out.println(l.getEmail());
+        signEntity temp = login.findByEmail(l.getEmail());
+
+        if (temp == null) {
+            return "No";
         }
-       else{
-           return "it exist";
+
+        if(temp.getPassword().equals(l.getPassword())){
+            return "yes";
         }
+
+        return "no";
     }
 
     //checking if the user email exist and also the password is correct (create)
