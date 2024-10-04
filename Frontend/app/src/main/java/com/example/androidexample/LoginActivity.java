@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;
+    private Button forgetPassword;
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus = false;
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
-
+        forgetPassword = findViewById(R.id.forget_password);
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void makeStringReq(String username, String password) {
-        Uri.Builder builder = Uri.parse("https://4efc3913-a738-4f74-b964-b0290a1b0fe9.mock.pstmn.io/login1/sucess").buildUpon();
+        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
         builder.appendQueryParameter("username", username);
         builder.appendQueryParameter("password", password);
         String url = builder.build().toString();
