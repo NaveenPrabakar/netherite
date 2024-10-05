@@ -3,11 +3,19 @@ package com.example.androidexample;
 import static com.android.volley.Request.Method.POST;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -17,29 +25,83 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+
+import io.noties.markwon.AbstractMarkwonPlugin;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private Button back2main;
     private Button saveButt;
-    private EditText mainText;
+    private TextView mainText;
+    private Button editButton;
+    private EditText editor;
     private EditText fileName;
+    private Markwon markwon;
+    private String content = "# Hello World\n This is **Markwon** rendering _Markdown_\n";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        // link to Login activity XML
-        mainText = findViewById(R.id.editTextTextMultiLine4);
+        mainText = findViewById(R.id.textViewMarkdown);
+        editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
+        editButton = findViewById(R.id.editButton);
+
+        markwon = Markwon.create(this);
+
+        editor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                    updateParsedOutput(charSequence.toString());
+                    content = charSequence.toString();
+                    Log.d("content", content);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editor.hasFocus()) {
+                    editor.setVisibility(View.GONE);
+                    mainText.setVisibility(View.VISIBLE);
+                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
+                }else{
+                    editor.setVisibility(View.VISIBLE);
+                    mainText.setVisibility(View.GONE);
+                    mainText.requestFocus();
+                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
+                }
+            }
+        });
 
 
         back2main = findViewById(R.id.back2main);
@@ -58,16 +120,21 @@ public class TextActivity extends AppCompatActivity {
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (fileName.getText().toString().isEmpty()){
+                if (fileName.getText().toString().isEmpty()) {
                     System.out.println("file name is empty");
-                }else{
+                } else {
                     writeToFile();
                     listFiles();
-                    sendFile();
-                    readFromFile(fileName.getText().toString()+".md");
+                    sendFileString(fileName.getText().toString() + ".md");
+                    readFromFile(fileName.getText().toString() + ".md");
                 }
 
-            }});
+            }
+        });
+    }
+
+    private void updateParsedOutput(String markdown) {
+        markwon.setMarkdown(mainText, markdown);
     }
 
     public void writeToFile() {
@@ -82,7 +149,7 @@ public class TextActivity extends AppCompatActivity {
                 System.out.println("File already exists.");
             }
             FileOutputStream writer = new FileOutputStream(file);
-            writer.write(mainText.getText().toString().getBytes());
+            writer.write(content.getBytes());
             writer.close();
             Toast.makeText(getApplicationContext(), "File saved", Toast.LENGTH_SHORT).show();
         }catch (Exception e){
@@ -90,7 +157,7 @@ public class TextActivity extends AppCompatActivity {
         }
     }
 
-    public void readFromFile(String fileKey) {
+    public Pair<String, String> readFromFile(String fileKey) {
         String fileName = fileKey;
         try  {
             FileInputStream fis = openFileInput(fileName);
@@ -103,9 +170,11 @@ public class TextActivity extends AppCompatActivity {
             }
             String fileContents = stringBuilder.toString();
             System.out.println("Contents of file: "+ fileName + ": " + fileContents);
+            return Pair.create(fileName, fileContents);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return Pair.create("Null", "Null");
     }
 
     public String[] listFiles(){
@@ -155,6 +224,36 @@ public class TextActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(multipartRequest);
+    }
+
+
+    public void sendFileString(String fileName){
+            Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+            Pair<String, String> pair = readFromFile(fileName);
+            builder.appendQueryParameter("file", pair.first);
+            builder.appendQueryParameter("content", pair.second);
+            String url = builder.build().toString();
+
+            StringRequest stringRequest = new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("Volley Response", response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle any errors that occur during the request
+                            Log.e("Volley Error", error.toString());
+                        }
+                    }
+            );
+
+            // Adding request to request queue
+            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 }
