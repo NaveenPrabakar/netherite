@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -106,11 +107,16 @@ public class LoginActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjGet = new JsonObjectRequest(
                 Request.Method.POST,
                 URL_JSON_OBJECT,
-                null, // Pass null as the request body since it's a GET request
+                requestBody, // Pass null as the request body since it's a GET request
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
+                        JSONObject resp = response;
+                        try {
+                            Log.d("Volley Response", resp.getString("response"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                         err_msg.setText(response.toString());
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
