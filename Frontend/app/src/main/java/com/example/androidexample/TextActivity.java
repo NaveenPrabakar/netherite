@@ -25,10 +25,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
-import java.util.concurrent.Executors;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.NetworkResponse;
@@ -39,21 +35,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-
-import io.noties.markwon.AbstractMarkwonPlugin;
 import io.noties.markwon.Markwon;
-import io.noties.markwon.editor.MarkwonEditor;
-import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private Button back2main;
     private Button saveButt;
-    private TextView mainText;
+    private EditText mainText;
     private Button editButton;
     private EditText editor;
     private EditText fileName;
@@ -87,21 +75,23 @@ public class TextActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
             }
         });
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (editor.hasFocus()) {
-                    editor.setVisibility(View.GONE);
-                    mainText.setVisibility(View.VISIBLE);
-                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
-                }else{
-                    editor.setVisibility(View.VISIBLE);
-                    mainText.setVisibility(View.GONE);
-                    mainText.requestFocus();
-                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
-                }
-            }
-        });
+        editor.setAlpha(0f);
+
+//        editButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (editor.hasFocus()) {
+//                    editor.setVisibility(View.GONE);
+//                    mainText.setVisibility(View.INVISIBLE);
+//                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
+//                }else{
+//                    editor.setVisibility(View.VISIBLE);
+//                    mainText.setVisibility(View.INVISIBLE);
+//                    mainText.requestFocus();
+//                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
+//                }
+//            }
+//        });
 
 
         back2main = findViewById(R.id.back2main);
