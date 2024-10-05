@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;
+    private Button forgetPassword;
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus;
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
-
+        forgetPassword = findViewById(R.id.forget_password);
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,4 +153,28 @@ public class LoginActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
     }
+
+    public HashMap<String, String> jsonToMap(String jsonString) {
+        HashMap<String, String> map = new HashMap<>();
+
+        try {
+            // Convert JSON string to JSONObject
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // Get the keys of the JSONObject
+            Iterator<String> keys = jsonObject.keys();
+
+            // Loop through the keys and put key-value pairs into the HashMap
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = jsonObject.getString(key);
+                map.put(key, value);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();  // Handle the exception
+        }
+
+        return map;
+    }
+
 }

@@ -1,0 +1,1 @@
+naveen is wearing a blue hat
