@@ -10,13 +10,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 import java.net.URL;
 import java.util.HashMap;
@@ -26,6 +32,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
+    private EditText emailEditText;     // define email edittext variable
     private EditText confirmEditText;   // define confirm edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
@@ -33,8 +40,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button back2main;
 
     private TextView msgResponse;
-    private static final String URL_STRING_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
-
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/user/create";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +49,7 @@ public class SignupActivity extends AppCompatActivity {
         /* initialize UI elements */
         usernameEditText = findViewById(R.id.signup_username_edt);  // link to username edtext in the Signup activity XML
         passwordEditText = findViewById(R.id.signup_password_edt);  // link to password edtext in the Signup activity XML
+        emailEditText = findViewById(R.id.signup_email_edt);    // link to email edtext in the Signup activity XML
         confirmEditText = findViewById(R.id.signup_confirm_edt);    // link to confirm edtext in the Signup activity XML
         loginButton = findViewById(R.id.signup_login_btn);    // link to login button in the Signup activity XML
         signupButton = findViewById(R.id.signup_signup_btn);  // link to signup button in the Signup activity XML
@@ -68,10 +75,16 @@ public class SignupActivity extends AppCompatActivity {
                 /* grab strings from user inputs */
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
+                String email = emailEditText.getText().toString();
                 String confirm = confirmEditText.getText().toString();
 
-                if (username.indexOf('@') == -1){
-                    err_msg.setText("Username must be an email");
+                if (username.length() < 3)
+                {
+                    err_msg.setText("Username must be at least 4 characters");
+                    return;
+                }
+                if (email.indexOf('@') == -1){
+                    err_msg.setText("Email must be an email");
                     return;
                 }
                 if (password.length() < 8){
@@ -82,18 +95,15 @@ public class SignupActivity extends AppCompatActivity {
                     err_msg.setText("Password must contain at least one '!' ");
                     return;
                 }
-                if (username.contains(".com") == false){
-                    err_msg.setText("Password must be a valid email ");
-                    return;
-                }
+//                if (username.contains(".com") == false){
+//                    err_msg.setText("Password must be a valid email ");
+//                    return;
+//                }
 
                 if (password.equals(confirm)){
                     Toast.makeText(getApplicationContext(), "Signing up", Toast.LENGTH_LONG).show();
-                    makeStringPost(username, password);
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                    intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                    startActivity(intent);  // go to MainActivity with the key-value data
+                    makeJsonObjPost(username, email, password);
+
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Password don't match", Toast.LENGTH_LONG).show();
@@ -113,77 +123,60 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void makeStringPost(String username, String password)
-    {
-        StringRequest stringPost = new StringRequest(Request.Method.POST, URL_STRING_REQ,
-                new Response.Listener<String>() {
+    private void makeJsonObjPost(String username, String email, String password) {
+
+        // Create the request body as a JSON object
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("username", username);
+            requestBody.put("email", email);
+            requestBody.put("password", password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjPost = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_JSON_OBJECT,
+                requestBody, // Pass body because its a post request
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        // Handle the successful response here
-                        Log.d("Signup Success: ", response);
-                        msgResponse.setText(response.toString());
+                    public void onResponse(JSONObject response) {
+                        Log.d("Signup Success", response.toString());
+                        JSONObject resp = response;
+                        try {
+                            msgResponse.setText(resp.getString("Response"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                        startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-        )
-        {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                return params;
-            }
-        };
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringPost);
-    }
-
-    private void makeStringReq()
-    {
-
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.GET,
-                URL_STRING_REQ,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Handle the successful response here
-                        Log.d("Volley Response", response);
-                        msgResponse.setText(response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
                     }
                 }
         ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-//                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-//                headers.put("Content-Type", "application/json");
-                return headers;
-            }
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<String, String>();
+//                //headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                //headers.put("Content-Type", "application/json");
+//                return headers;
+//            }
 
             @Override
             protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("param1", username);
+                params.put("email", email);
+                params.put("param2", password);
                 return params;
             }
         };
-        // Adding request to request queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-    }
-
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjPost);
+    };
 }

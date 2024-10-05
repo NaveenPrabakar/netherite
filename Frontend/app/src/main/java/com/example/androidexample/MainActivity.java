@@ -12,10 +12,6 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;
-    private TextView messageText2;// define message textview variable
-    private Button button1;
-    private EditText editText;
-    private String newString;
     private Button loginButt;
     private Button signupButt;
     private TextView usernameDisplay;

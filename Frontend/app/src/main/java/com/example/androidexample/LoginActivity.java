@@ -10,12 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
-import android.net.Uri;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,8 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button forgetPassword;
     private TextView err_msg;// define signup button variable
     private Button back2main;
-    private Boolean ApiStatus = false;
-    private final String URL_STRING_REQ = "https://localhost:8080/files/upload";
+    private Boolean ApiStatus;
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchEmail";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                if (username.indexOf('@') == -1){
-                    err_msg.setText("Username must be an email");
-                    return;
-                }
                 if (password.length() < 8){
                     err_msg.setText("Password must be at least 8 characters");
                     return;
@@ -67,13 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                     err_msg.setText("Password must contain at least one '!' ");
                     return;
                 }
-                if (username.contains(".com") == false){
-                    err_msg.setText("Password must be a valid email ");
-                    return;
-                }
 
                 /* when login button is pressed, use intent to switch to Login Activity */
-                makeStringReq(username, password);
+
+                makeJsonObjReq(username, password);
 
 
             }
@@ -102,44 +96,62 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void makeStringReq(String username, String password) {
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-        builder.appendQueryParameter("username", username);
-        builder.appendQueryParameter("password", password);
-        String url = builder.build().toString();
+    private void makeJsonObjReq(String username, String password) {
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("username", username);
+            requestBody.put("password", password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
+        JsonObjectRequest jsonObjGet = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_JSON_OBJECT,
+                requestBody, // Pass null as the request body since it's a GET request
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        HashMap<String, String> responseMap = jsonToMap(response);
-                        Log.d("Volley Response", response);
-                        for (String key : responseMap.keySet()) {
-                            Log.d("Key", key);
-                            Log.d("Value", responseMap.get(key));
+                    public void onResponse(JSONObject response) {
+                        JSONObject resp = response;
+                        try {
+                            Log.d("Volley Response", resp.getString("response"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
                         }
-                        ApiStatus=true;
+                        err_msg.setText(response.toString());
+
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
-                        intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
-                        startActivity(intent);  // go to MainActivity with the key-value data
+                        intent.putExtra("USERNAME", username);
+                        intent.putExtra("PASSWORD", password);
+                        startActivity(intent);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
-                        ApiStatus=false;
-                        err_msg.setText("Failed to send request");
+                        err_msg.setText(error.toString());
                     }
                 }
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+//                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                headers.put("Content-Type", "application/json");
+                return headers;
+            }
 
-        // Adding request to request queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+//                params.put("param1", "value1");
+//                params.put("param2", "value2");
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
     }
 
     public HashMap<String, String> jsonToMap(String jsonString) {
