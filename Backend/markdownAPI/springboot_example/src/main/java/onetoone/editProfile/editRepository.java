@@ -22,4 +22,9 @@ public interface editRepository extends JpaRepository<signEntity, Long> {
     @Transactional
     @Query("UPDATE signEntity s Set s.password = :newPassword WHERE s.id = :id")
     void updatepassword(Long id, String newPassword);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE signEntity s Set s.email = :newEmail WHERE s.id = :id")
+    void updateEmail(Long id, String newEmail);
 }
