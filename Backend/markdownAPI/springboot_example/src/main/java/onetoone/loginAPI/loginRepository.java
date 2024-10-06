@@ -6,6 +6,7 @@ import onetoone.signupAPI.signup;
 
 public interface loginRepository extends JpaRepository<signEntity, Long> {
 
+    signEntity findByUsername(String username);
     signEntity findByEmail(String email);
     signEntity findByPassword(String password);
 
