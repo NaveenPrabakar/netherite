@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,9 @@ import java.io.IOException;
 
 import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
+import onetoone.loginAPI.logs;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/edit")
@@ -31,5 +35,28 @@ public class edit{
     @Autowired
     private editRepository edits;
 
+    @PutMapping("/changeusernmae/{name}")
+    public Map<String, String> ChangeUsername(@RequestBody logs l, @PathVariable String name){
+        HashMap<String, String> response = new HashMap<>();
+        signEntity user = edits.findByEmail(l.getUsername());
+
+        //check if profile exists
+        if(user == null){
+            response.put("response", "user profile does not exist");
+            return response;
+        }
+
+        //check if the password is correct
+        if(!l.getPassword().equals(user.getPassword())){
+            response.put("response", "password is incorrect");
+            return response;
+        }
+
+        long id = user.getId();
+        edits.updateusername(id, name);
+        response.put("response", "username has been updated");
+
+        return response;
+    }
 
 }

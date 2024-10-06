@@ -4,7 +4,6 @@ import org.springframework.transaction.annotation.Transactional;
 import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
 
-
 public interface loginRepository extends JpaRepository<signEntity, Long> {
 
     signEntity findByEmail(String email);
