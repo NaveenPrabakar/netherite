@@ -12,12 +12,16 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userID;
+
     private String fileName;
 
     public FileEntity() {}
 
-    public FileEntity(String fileName) {
+    public FileEntity(String fileName, Long userID)
+    {
         this.fileName = fileName;
+        this.userID = userID;
     }
 
 }
