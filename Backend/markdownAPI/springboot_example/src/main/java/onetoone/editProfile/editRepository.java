@@ -17,4 +17,9 @@ public interface editRepository extends JpaRepository<signEntity, Long> {
     @Transactional
     @Query("UPDATE signEntity s SET s.username = :newUsername WHERE s.id = :id")
     void updateusername(Long id, String newUsername);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE signEntity s Set s.password = :newPassword WHERE s.id = :id")
+    void updatepassword(Long id, String newPassword);
 }
