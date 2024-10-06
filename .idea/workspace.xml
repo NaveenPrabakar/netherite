@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="misc.xml">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/experiment1/springboot_example/src/main/java/onetoone/Users/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/experiment1/springboot_example/src/main/java/onetoone/Users/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/experiment1/springboot_example/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments2/experiment1/springboot_example/src/main/resources/application.properties" afterDir="false" />
-    </list>
+    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="misc.xml" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +16,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="20-doing-signup-backend" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
