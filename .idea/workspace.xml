@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="get data from naven 2nd">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/login.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/login.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/loginRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/loginAPI/loginRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/resources/application.properties" afterDir="false" />
-    </list>
+    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="get data from naven 2nd" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
