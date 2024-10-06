@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -35,6 +37,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.commonmark.node.Node;
+
 import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
@@ -46,11 +50,12 @@ public class TextActivity extends AppCompatActivity {
     private EditText editor;
     private EditText fileName;
     private Markwon markwon;
-    private String content = "# Hello World\n This is **Markwon** rendering _Markdown_\n";
+    private String content = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
+
 
         mainText = findViewById(R.id.textViewMarkdown);
         editor = findViewById(R.id.EditMarkdown);
@@ -66,8 +71,8 @@ public class TextActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                    updateParsedOutput(charSequence.toString());
                     content = charSequence.toString();
+                    updateParsedOutput(content);
                     Log.d("content", content);
             }
 
@@ -76,23 +81,6 @@ public class TextActivity extends AppCompatActivity {
             }
         });
         editor.setAlpha(0f);
-
-//        editButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (editor.hasFocus()) {
-//                    editor.setVisibility(View.GONE);
-//                    mainText.setVisibility(View.INVISIBLE);
-//                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
-//                }else{
-//                    editor.setVisibility(View.VISIBLE);
-//                    mainText.setVisibility(View.INVISIBLE);
-//                    mainText.requestFocus();
-//                    Log.d("EditTextFocus", "EditText gained focus. Switch is ON.");
-//                }
-//            }
-//        });
-
 
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +112,16 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void updateParsedOutput(String markdown) {
-        markwon.setMarkdown(mainText, markdown);
+        String contentParsed = "";
+        for (int i = 0; i < markdown.length(); i++){
+            if (markdown.charAt(i) == '\n'){
+                contentParsed += "  \n";
+                Log.d("content", "newline detected");
+            }else{
+                contentParsed += markdown.charAt(i);
+            }
+        }
+        markwon.setMarkdown(mainText, contentParsed);
     }
 
     public void writeToFile() {
