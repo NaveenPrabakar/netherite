@@ -1,5 +1,6 @@
 package onetoone.loginAPI;
 
+
 import java.util.List;
 import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
@@ -57,69 +58,94 @@ public class login{
         return response;
     }
 
-    //update the password with the email given (update)
-    @PutMapping("/changePassword/{email}/{password}")
-    String changeUserByEmail(@PathVariable String email, @PathVariable String password){
+    // Forget password, need the username only (one argument) to find the email
+    //send the generate code to front end as json
+    //send the generate code to the user email
+    @PostMapping("/forgotPassword")
+    public Map<String, String> requestPasswordReset(@RequestBody logs l) {
+        Map<String, String> response = new HashMap<>();
 
-        //store in temp
-        signEntity temp = login.findByEmail(email);
+
+            signEntity temp = login.findByUsername(l.getUsername());
 
             if (temp == null) {
-                return "Your Email Non-Exist\n";
+                response.put("response404", "User with this username does not exist");
+                return response;
             }
-            else {
-                temp.setPassword(password);
-                return "Your email exists";
-            }
-    }
 
-    @PostMapping("/forgot-password")
-    public Map<String, String> requestPasswordReset(@RequestBody logs request) {
-        Map<String, String> response = new HashMap<>();
-        signEntity user = login.findByEmail(request.getUsername()); // Assuming username holds the email
+            // Generate a random code
+            String generatedCode = UUID.randomUUID().toString(); // Generate a unique code
+           // response.put(temp.getEmail(), generatedCode);
+        try {
+            // Send the verification code to the user's email
+            String value=sendVerificationCodeEmail(temp.getEmail(), generatedCode);
 
-        if (user == null) {
-            response.put("response404", "User with this email does not exist");
-            return response;
+            // Optionally, send the generated code to the front end
+            response.put("emialText status:",value );
+            response.put("emailCode",temp.getEmail() );
+            response.put("verificationCode", generatedCode);
+            response.put("message", "Verification code has been sent to your email.");
+        } catch (Exception e) {
+            response.put("error", "Failed to send verification code: " + e.getMessage());
+            e.printStackTrace(); // For debugging purposes, you might want to log this instead
         }
 
-        // Generate a token
-        String token = UUID.randomUUID().toString();
-        user.setResetToken(token); // Make sure to have this field in your signEntity
-        login.save(user); // Save user with the reset token
-
-        // Send the email
-        sendPasswordResetEmail(user.getEmail(), token);
-        response.put("response", "Password reset link has been sent to your email.");
         return response;
     }
 
-    @PostMapping("/reset-password")
-    public Map<String, String> resetPassword(@RequestParam String token, @RequestBody logs newPasswordRequest) {
-        Map<String, String> response = new HashMap<>();
-        signEntity user = login.findByResetToken(token); // Ensure you have a method to find by reset token
+    // Update the newPassword with username, the new password
+    //send front end with the responses and success
+    @PutMapping("/resetPassword")
+    public Map<String, String> resetPassword(@RequestBody logs l) {
 
-        if (user == null) {
-            response.put("response404", "Invalid or expired token");
+        Map<String, String> response = new HashMap<>();
+
+        signEntity temp = login.findByUsername(l.getUsername());
+
+        if (temp == null) {
+            response.put("response404", "User with this username does not exist");
             return response;
         }
 
-        // Update the password
-        user.setPassword(newPasswordRequest.getPassword());
-        user.setResetToken(null); // Clear the reset token
-        login.save(user); // Save the updated user
+        temp.setPassword(l.getPassword()); // Set the new password
+        response.put("responses", "Password has been reset successfully.");
 
-        response.put("response", "Password has been successfully reset.");
         return response;
     }
 
-    private void sendPasswordResetEmail(String toEmail, String token) {
-        String resetUrl = "http://your-domain.com/reset-password?token=" + token; // Change to your domain
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("Password Reset Request");
-        message.setText("To reset your password, click the link below:\n" + resetUrl);
+    // Helper method to send the verification code via email
+//    private void sendVerificationCodeEmail(String toEmail, String generatedCode) {
+//
+//        SimpleMailMessage message = new SimpleMailMessage();
+//
+//        return "hi";
+//        message.setTo(toEmail);
+//        message.setSubject("Password Reset Code");
+//        message.setText("Your password reset code is: " + generatedCode);
+//
+//        mailSender.send(message); // Send the email
+//    }
 
-        mailSender.send(message);
+    // Helper method to send the verification code via email
+    private String sendVerificationCodeEmail(String toEmail, String generatedCode) {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("15776abk@gmail.com");
+            message.setTo(toEmail);
+            message.setSubject("Password Reset Code");
+            message.setText("Your password reset code is: " + generatedCode);
+
+            mailSender.send(message); // Send the email
+
+
+        } catch (Exception e) {
+
+            System.err.println("Failed to send email: " + e.getMessage()); // Log the exception
+            e.printStackTrace();
+        }
+        return "fail to send the email text";
     }
+
+
 }
