@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="get data from naven 2nd" />
+    <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="get data from naven 2nd">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/src/main/java/coms309/people/EmailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/src/main/java/coms309/people/EmailController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/hellopeople/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/helloworld/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Experiments/YiYunKhor/experiments/helloworld/pom.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

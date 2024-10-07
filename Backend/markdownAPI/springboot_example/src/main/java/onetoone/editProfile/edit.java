@@ -80,4 +80,25 @@ public class edit{
         return response;
     }
 
+    @PutMapping("/changeemail/{email}")
+    public Map<String, String> ChangeEmail(@RequestBody logs l, @PathVariable String email){
+        HashMap<String, String> response = new HashMap<>();
+        signEntity user = edits.findByEmail(l.getUsername());
+
+        if(user == null){
+            response.put("response", "Your email or password is wrong");
+            return response;
+        }
+
+        if(!user.getPassword().equals(l.getPassword())){
+            response.put("response", "Your password is wrong");
+            return response;
+        }
+
+        long id = user.getId();
+        edits.updateEmail(id, email);
+        response.put("response", "Your Email has been updated");
+        return response;
+
+    }
 }

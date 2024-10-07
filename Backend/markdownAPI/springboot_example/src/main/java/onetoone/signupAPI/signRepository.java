@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface signRepository extends JpaRepository<signEntity, Long> {
 
     signEntity findByEmail(String email);
+    signEntity findByUsername(String username);
     signEntity findByPassword(String password);
 
     @Transactional
