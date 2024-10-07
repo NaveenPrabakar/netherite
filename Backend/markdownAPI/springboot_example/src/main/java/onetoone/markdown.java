@@ -43,8 +43,11 @@ public class markdown {
     @Autowired
     private loginRepository logs;
 
+    @Autowired
+    private JsonRepository j;
+
     @PostMapping("/upload")
-    public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestBody logs l ) {
+    public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json,  @RequestParam("username") String username, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
 
         try {
@@ -53,12 +56,15 @@ public class markdown {
                 Files.createDirectory(location);
             }
 
-            signEntity user = logs.findByEmail(l.getUsername());
+            signEntity user = logs.findByEmail(username);
 
             if(user == null){
                 response.put("response", "user does not exist");
                 return response;
             }
+
+            JsonEntity je = new JsonEntity(json, user.getId());
+            j.save(je);
 
             Path filePath = location.resolve(fileName);
             Files.write(filePath, content.getBytes());
@@ -72,7 +78,31 @@ public class markdown {
         }
 
         response.put("response", "File saved");
-
         return response;
+    }
+
+    @GetMapping("/pull")
+    public String pull(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("fileName") String fileName){
+
+        FileEntity fileEntity = fileRepository.findByFileName(fileName);
+        signEntity user = logs.findByEmail(username);
+
+        if(fileEntity == null){
+            return "response: file does not exist";
+        }
+
+        try {
+            Path filePath = location.resolve(fileName);
+
+            if (!Files.exists(filePath)) {
+                return "File not found in the directory";
+            }
+
+            String content = new String(Files.readAllBytes(filePath));
+            return content;
+
+        } catch (IOException e) {
+            return "Failed to retrieve file content due to an IO error: ";
+        }
     }
 }

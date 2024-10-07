@@ -7,25 +7,18 @@ import jakarta.persistence.Id;
 
 
 @Entity
-public class FileEntity {
+public class JsonEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userID;
 
-    private String fileName;
+    private String path;
 
-    public FileEntity() {}
-
-    public FileEntity(String fileName, Long userID)
-    {
-        this.fileName = fileName;
+    public JsonEntity(String path, Long userID){
+        this.path = path;
         this.userID = userID;
     }
-
-    public Long getId(){
-        return userID;
-    }
-
 }
