@@ -26,8 +26,9 @@ import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
 import onetoone.loginAPI.logs;
 import onetoone.loginAPI.loginRepository;
-
 import java.util.*;
+
+import java.nio.charset.StandardCharsets;
 
 
 @RestController
@@ -67,7 +68,7 @@ public class markdown {
             j.save(je);
 
             Path filePath = location.resolve(fileName);
-            Files.write(filePath, content.getBytes());
+            Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
 
             FileEntity fileEntity = new FileEntity(fileName, user.getId());
             fileRepository.save(fileEntity);
@@ -104,5 +105,19 @@ public class markdown {
         } catch (IOException e) {
             return "Failed to retrieve file content due to an IO error: ";
         }
+    }
+
+    @GetMapping("/system")
+    public String system(@RequestParam("username") String username, @RequestParam("password") String password){
+        signEntity user = logs.findByEmail(username);
+
+        if(user == null){
+            return "User does not exist";
+        }
+        System.out.println(user.getId());
+
+        String path = j.getSystem(user.getId());
+
+        return path;
     }
 }
