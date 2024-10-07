@@ -168,12 +168,13 @@ public class SignupActivity extends AppCompatActivity {
 //                return headers;
 //            }
 
+            // This function?? i don't remember what the fuck it does
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("param1", username);
+                params.put("username", username);
                 params.put("email", email);
-                params.put("param2", password);
+                params.put("password", password);
                 return params;
             }
         };
