@@ -51,6 +51,8 @@ public class markdown {
     public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json,  @RequestParam("username") String username, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
 
+        System.out.println(json);
+
         try {
 
             if (!Files.exists(location)) {//Creates Directory if it doesn't exist
@@ -64,8 +66,16 @@ public class markdown {
                 return response;
             }
 
-            JsonEntity je = new JsonEntity(json, user.getId());
-            j.save(je);
+            String path = j.getSystem(user.getId());
+
+            if(path != null){
+                j.updatepath(user.getId(), json);
+            }
+            else{
+
+                JsonEntity je = new JsonEntity(json, user.getId());
+                j.save(je);
+            }
 
             Path filePath = location.resolve(fileName);
             Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));

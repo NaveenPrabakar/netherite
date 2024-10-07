@@ -11,4 +11,10 @@ public interface JsonRepository extends JpaRepository<JsonEntity, Long> {
 
     @Query("Select path from JsonEntity where userID = :id")
     String getSystem(Long id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE JsonEntity j Set j.path = :newPath WHERE j.id = :id")
+    void updatepath(Long id, String newPath);
+
 }
