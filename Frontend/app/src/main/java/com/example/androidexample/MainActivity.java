@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView usernameDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
+    private Button settingsButt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingsButt = findViewById(R.id.settingsButt);
+        settingsButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(i);
+            }
+        });
 
 
 
