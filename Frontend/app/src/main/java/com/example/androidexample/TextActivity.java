@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.NetworkResponse;
@@ -38,13 +39,17 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.commonmark.node.Node;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
+    private final String URL_SUMMARIZE_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
     private Button back2main;
     private Button saveButt;
+    private Button summarizeButt;
     private EditText mainText;
     private Button editButton;
     private EditText editor;
@@ -103,10 +108,27 @@ public class TextActivity extends AppCompatActivity {
                 } else {
                     writeToFile();
                     listFiles();
-                    sendFileString(fileName.getText().toString() + ".md");
+                    sendFileString(fileName.getText().toString() + ".md", URL_STRING_REQ);
                     readFromFile(fileName.getText().toString() + ".md");
                 }
 
+            }
+        });
+
+        summarizeButt = findViewById(R.id.summarizeButt);
+        summarizeButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (fileName.getText().toString().isEmpty())
+                {
+                    System.out.println("file name is empty");
+                }
+                else
+                {
+                    summarizeString(content, URL_SUMMARIZE_REQ);
+                }
             }
         });
     }
@@ -214,8 +236,8 @@ public class TextActivity extends AppCompatActivity {
     }
 
 
-    public void sendFileString(String fileName){
-            Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+    public void sendFileString(String fileName, String URL){
+            Uri.Builder builder = Uri.parse(URL).buildUpon();
             Pair<String, String> pair = readFromFile(fileName);
             builder.appendQueryParameter("file", pair.first);
             builder.appendQueryParameter("content", pair.second);
@@ -241,6 +263,42 @@ public class TextActivity extends AppCompatActivity {
 
             // Adding request to request queue
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    private void summarizeString(String contentToSummarize, String URL)
+    {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        Log.d("Signup Success", response.toString());
+                        String resp = response;
+                        System.out.println(resp);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        Log.e("Volley Error", error.toString());
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("content", contentToSummarize);
+                return params;
+            }
+        };
+
+
+        // Add the string request to the Volley Queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 }

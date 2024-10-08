@@ -78,6 +78,16 @@
             app:layout_constraintStart_toEndOf="@+id/fileName"
             app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine4"
             app:layout_constraintVertical_bias="0.1" />
+
+        <Button
+            android:id="@+id/summarizeButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="37dp"
+            android:layout_marginBottom="47dp"
+            android:text="Summarize"
+            app:layout_constraintBottom_toBottomOf="@+id/saveButt"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
