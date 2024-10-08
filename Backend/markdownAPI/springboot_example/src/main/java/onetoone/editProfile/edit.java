@@ -35,10 +35,12 @@ public class edit{
     @Autowired
     private editRepository edits;
 
-    @PutMapping("/changeusernmae/{name}")
+    @PutMapping("/changeusername/{name}")
     public Map<String, String> ChangeUsername(@RequestBody logs l, @PathVariable String name){
         HashMap<String, String> response = new HashMap<>();
         signEntity user = edits.findByEmail(l.getUsername());
+
+
 
         //check if profile exists
         if(user == null){
@@ -64,19 +66,24 @@ public class edit{
         HashMap<String, String> response = new HashMap<>();
         signEntity user = edits.findByEmail(l.getUsername());
 
+        System.out.println(password);
+
         if(user == null){
             response.put("response", "your email or password is wrong");
+            System.out.println("Wrong, user does not exist");
             return response;
         }
 
         if(!user.getPassword().equals(l.getPassword())){
             response.put("response", "Your password is wrong");
+            System.out.println("check:" + user.getPassword() + "input: " + l.getPassword());
             return response;
         }
 
         long id = user.getId();
         edits.updatepassword(id, password);
         response.put("response", "Your password is changed");
+        System.out.println("Correct");
         return response;
     }
 

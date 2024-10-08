@@ -63,6 +63,7 @@ public class markdown {
 
             if(user == null){
                 response.put("response", "user does not exist");
+
                 return response;
             }
 
