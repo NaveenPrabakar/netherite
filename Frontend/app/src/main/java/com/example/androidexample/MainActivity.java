@@ -12,16 +12,12 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;
-    private TextView messageText2;// define message textview variable
-    private Button button1;
-    private EditText editText;
-    private String newString;
     private Button loginButt;
     private Button signupButt;
     private TextView usernameDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
-    private Button summarizeButt;
+    private Button settingsButt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        summarizeButt = findViewById(R.id.summarizeButt);
-        summarizeButt.setOnClickListener(new View.OnClickListener() {
+        settingsButt = findViewById(R.id.settingsButt);
+        settingsButt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
-                Intent i = new Intent(MainActivity.this, SummarizeActivity.class);
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(i);
             }
         });

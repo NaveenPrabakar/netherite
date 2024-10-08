@@ -1,10 +1,23 @@
 package com.example.androidexample;
 
+import static com.android.volley.Request.Method.POST;
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.Editable;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.util.Pair;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -13,26 +26,61 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-
+import java.util.HashMap;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class TextActivity extends AppCompatActivity {
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.commonmark.node.Node;
+
+import io.noties.markwon.Markwon;
+
+public class TextActivity extends AppCompatActivity {
+    private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private Button back2main;
     private Button saveButt;
     private EditText mainText;
-    private String newFileName;
+    private Button editButton;
+    private EditText editor;
     private EditText fileName;
+    private Markwon markwon;
+    private String content = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        // link to Login activity XML
-        mainText = findViewById(R.id.editTextTextMultiLine4);
-        fileName = findViewById(R.id.fileName);
 
+        mainText = findViewById(R.id.textViewMarkdown);
+        editor = findViewById(R.id.EditMarkdown);
+        fileName = findViewById(R.id.fileName);
+        editButton = findViewById(R.id.editButton);
+
+        markwon = Markwon.create(this);
+
+        editor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                    content = charSequence.toString();
+                    updateParsedOutput(content);
+                    Log.d("content", content);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        editor.setAlpha(0f);
 
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
@@ -50,15 +98,30 @@ public class TextActivity extends AppCompatActivity {
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (fileName.getText().toString().isEmpty()){
+                if (fileName.getText().toString().isEmpty()) {
                     System.out.println("file name is empty");
-                }else{
+                } else {
                     writeToFile();
                     listFiles();
-                    readFromFile(fileName.getText().toString()+".md");
+                    sendFileString(fileName.getText().toString() + ".md");
+                    readFromFile(fileName.getText().toString() + ".md");
                 }
 
-            }});
+            }
+        });
+    }
+
+    private void updateParsedOutput(String markdown) {
+        String contentParsed = "";
+        for (int i = 0; i < markdown.length(); i++){
+            if (markdown.charAt(i) == '\n'){
+                contentParsed += "  \n";
+                Log.d("content", "newline detected");
+            }else{
+                contentParsed += markdown.charAt(i);
+            }
+        }
+        markwon.setMarkdown(mainText, contentParsed);
     }
 
     public void writeToFile() {
@@ -73,7 +136,7 @@ public class TextActivity extends AppCompatActivity {
                 System.out.println("File already exists.");
             }
             FileOutputStream writer = new FileOutputStream(file);
-            writer.write(mainText.getText().toString().getBytes());
+            writer.write(content.getBytes());
             writer.close();
             Toast.makeText(getApplicationContext(), "File saved", Toast.LENGTH_SHORT).show();
         }catch (Exception e){
@@ -81,7 +144,7 @@ public class TextActivity extends AppCompatActivity {
         }
     }
 
-    public void readFromFile(String fileKey) {
+    public Pair<String, String> readFromFile(String fileKey) {
         String fileName = fileKey;
         try  {
             FileInputStream fis = openFileInput(fileName);
@@ -93,10 +156,12 @@ public class TextActivity extends AppCompatActivity {
                 stringBuilder.append(line);
             }
             String fileContents = stringBuilder.toString();
-            System.out.println("Contents of file: " + fileContents);
+            System.out.println("Contents of file: "+ fileName + ": " + fileContents);
+            return Pair.create(fileName, fileContents);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return Pair.create("Null", "Null");
     }
 
     public String[] listFiles(){
@@ -112,6 +177,70 @@ public class TextActivity extends AppCompatActivity {
             System.out.println("no files found");;
         }
         return fileKeys;
+    }
+
+    public void sendFile() {
+        File path = getApplicationContext().getFilesDir();
+        File file = new File(path, fileName.getText().toString() + ".md");
+
+        if (!file.exists()) {
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = URL_STRING_REQ;  // Replace with your server's URL
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("description", "This is a file upload");
+
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(POST, url, file,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        Toast.makeText(TextActivity.this, "File sent successfully!", Toast.LENGTH_SHORT).show();
+                        Log.d("VolleyResponse", new String(response.data));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(TextActivity.this, "File upload failed", Toast.LENGTH_SHORT).show();
+                        Log.e("VolleyError", error.toString());
+                    }
+                });
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(multipartRequest);
+    }
+
+
+    public void sendFileString(String fileName){
+            Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+            Pair<String, String> pair = readFromFile(fileName);
+            builder.appendQueryParameter("file", pair.first);
+            builder.appendQueryParameter("content", pair.second);
+            String url = builder.build().toString();
+
+            StringRequest stringRequest = new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("Volley Response", response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // Handle any errors that occur during the request
+                            Log.e("Volley Error", error.toString());
+                        }
+                    }
+            );
+
+            // Adding request to request queue
+            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 }

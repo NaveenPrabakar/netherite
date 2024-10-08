@@ -16,12 +16,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signup Example"
+        android:text="Change Password Example"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="80dp"
-        android:textSize="30dp"
-        android:textColor="#fc0303">
+        android:layout_marginBottom="150dp"
+        android:textSize="30dp">
     </TextView>
 
     <TextView
@@ -29,9 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="#fc0303"
-         />
-
+        android:textColor="#fc0303"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,56 +40,36 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="username: "
-            android:textColor="#000000"
-            android:textSize="20dp"></TextView>
-
-        <EditText
-            android:id="@+id/signup_username_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username Here"></EditText>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="email:"
-            android:textColor="#000000"
-            android:textSize="20dp"></TextView>
-
-        <EditText
-            android:id="@+id/signup_email_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username Here"></EditText>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="password: "
+            android:text="email: "
             android:textSize="20dp"
             android:textColor="#000000">
         </TextView>
 
         <EditText
-            android:id="@+id/signup_password_edt"
+            android:id="@+id/email_edt"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="Enter Username Here">
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password: "
+            android:textSize="20dp"
+            android:textColor="#000000">
+        </TextView>
+
+        <EditText
+            android:id="@+id/password_edt"
             android:layout_width="wrap_content"
             android:inputType="textPassword"
             android:layout_height="50dp"
@@ -109,18 +86,18 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="70sp"
-            android:text="confirm\npassword: "
+            android:layout_height="wrap_content"
+            android:text="New Username: "
             android:textSize="20dp"
             android:textColor="#000000">
         </TextView>
 
         <EditText
-            android:id="@+id/signup_confirm_edt"
+            android:id="@+id/new_username_edt"
             android:layout_width="wrap_content"
-            android:inputType="textPassword"
-            android:layout_height="70dp"
-            android:hint="Enter Password Here">
+            android:inputType="textPersonName"
+            android:layout_height="50dp"
+            android:hint="Enter new username Here">
         </EditText>
 
     </LinearLayout>
@@ -133,24 +110,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/signup_login_btn"
-            android:layout_width="150dp"
+            android:id="@+id/change_username"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:text="Login"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
-
-        <Button
-            android:id="@+id/signup_signup_btn"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Signup"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
+            android:layout_weight="1"
+            android:text="Change username"
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
 
     </LinearLayout>
 
