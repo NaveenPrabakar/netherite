@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings Example"
+        android:text="Enter Verification Code"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="150dp"
@@ -30,6 +30,29 @@
         android:layout_gravity="center"
         android:textColor="#fc0303"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Code: "
+            android:textSize="20dp"
+            android:textColor="#000000">
+        </TextView>
+
+        <EditText
+            android:id="@+id/verification_code"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:hint="Enter Code">
+        </EditText>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -39,41 +62,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/change_username"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Change Username"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
-
-        <Button
-            android:id="@+id/forget_password"
-            android:layout_width="100dp"
+            android:id="@+id/verification"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:text="Forget Password"
+            android:text="Verify"
             android:textColor="#ffffff"
             android:textSize="20sp"></Button>
-
-        <Button
-            android:id="@+id/change_password"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Change Password"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
-        <Button
-            android:id="@+id/change_email"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Change Email"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
-
 
     </LinearLayout>
 

@@ -18,10 +18,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ForgetPasswordActivity extends AppCompatActivity {
 
     // Button takes you back home
     private Button backToMain;
@@ -32,88 +33,78 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private TextView msgResponse;
     private String new_password;
 
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changepassword";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/forgotPassword";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_changepassword);
+        setContentView(R.layout.activity_forget_password);
 
-        o_password = findViewById(R.id.old_password_edt);
         email = findViewById(R.id.login_email_edt);
-        n_password = findViewById(R.id.new_password_edt);
         msgResponse = findViewById(R.id.err_msg);
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            String emailIntent = intent.getStringExtra("EMAIL");
-            Log.d("Email", intent.getStringExtra("EMAIL"));
-            email.setText(emailIntent);
-
-        }
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                Intent intent = new Intent(ForgetPasswordActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
-        changePassword = findViewById(R.id.change_password);
+        changePassword = findViewById(R.id.forget_password);
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                String user_email = email.getText().toString();
-                new_password = n_password.getText().toString();
-                String old_password = o_password.getText().toString();
-
-                Log.e("Password", old_password);
-                makeJsonObjPost(user_email, old_password, new_password);
+                Log.d("Email", email.getText().toString());
+                makeJsonObjPost(email.getText().toString());
             }
         });
     }
 
     // Update the password. Put email, old_password in the body, and new_password to change.
-    private void makeJsonObjPost(String email, String old_password, String new_password) {
+    private void makeJsonObjPost(String email) {
 
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            Log.e("CHECK HERRE PIECE OF SHIELDPassword", old_password);
             requestBody.put("username", email);
-            requestBody.put("password", old_password);
-            //requestBody.put("newPassword", new_password);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         JsonObjectRequest jsonObjPost = new JsonObjectRequest(
-                Request.Method.PUT,
-                "http://coms-3090-068.class.las.iastate.edu:8080/edit/changepassword/" + new_password,
+                Request.Method.POST,
+                URL_JSON_OBJECT,
                 requestBody, // Pass body because its a post request
                 new Response.Listener<JSONObject>(){
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Change Password", response.toString());
                         JSONObject resp = response;
-                        try {
-                            msgResponse.setText(resp.getString("Changing old password to new."));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                        Log.d("Change Password", resp.toString());
+                        try{
+                            if (resp.has("message")){
+                                Intent intent = new Intent(ForgetPasswordActivity.this, VerificationActivity.class);
+                                try {
+                                    intent.putExtra("EMAIL", email);
+                                    intent.putExtra("verificationCode", resp.getString("verificationCode"));
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                startActivity(intent);
+                            }
+                        }catch (Exception e){
+                            Log.d("Error", e.toString());
                         }
-                        Intent intent = new Intent(ChangePasswordActivity.this, SettingsActivity.class);
-                        // Bring in extras ?
-                        startActivity(intent);  // go to MainActivity with the key-value data
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", error.toString());
+                        msgResponse.setText(error.toString());
                     }
                 }
         ) {
@@ -129,7 +120,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("username", email);
-                params.put("password", old_password);
                 return params;
             }
         };

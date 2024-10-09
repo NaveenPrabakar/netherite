@@ -51,6 +51,7 @@ public class TextActivity extends AppCompatActivity {
     private EditText fileName;
     private Markwon markwon;
     private String content = "";
+    private boolean parseSwitch = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,16 +72,20 @@ public class TextActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if (parseSwitch) {
+                    parseSwitch = false;
                     content = charSequence.toString();
                     updateParsedOutput(content);
                     Log.d("content", content);
+                    parseSwitch = true;
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
-        editor.setAlpha(0f);
+        mainText.setAlpha(0f);
 
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
@@ -112,16 +117,17 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void updateParsedOutput(String markdown) {
-        String contentParsed = "";
-        for (int i = 0; i < markdown.length(); i++){
-            if (markdown.charAt(i) == '\n'){
-                contentParsed += "  \n";
-                Log.d("content", "newline detected");
-            }else{
-                contentParsed += markdown.charAt(i);
+            String contentParsed = "";
+            for (int i = 0; i < markdown.length(); i++) {
+                if (markdown.charAt(i) == '\n') {
+                    contentParsed += "  \n";
+                    Log.d("content", "newline detected");
+                } else {
+                    contentParsed += markdown.charAt(i);
+                }
             }
-        }
-        markwon.setMarkdown(mainText, contentParsed);
+
+            markwon.setMarkdown(editor, contentParsed);
     }
 
     public void writeToFile() {

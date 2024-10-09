@@ -16,6 +16,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button changePassword;
     private Button changeUsername;
     private Button changeEmail;
+    private Button forgetPassword;
     //private EditText username;
     //private EditText email;
     //private EditText password;
@@ -68,5 +69,14 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        forgetPassword = findViewById(R.id.forget_password);
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create an Intent to navigate to ForgetPasswordActivity
+                Intent intent = new Intent(SettingsActivity.this, ForgetPasswordActivity.class);
+                startActivity(intent);
+        }});
     }
 }
