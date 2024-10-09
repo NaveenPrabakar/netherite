@@ -50,9 +50,6 @@ public class markdown {
     @PostMapping("/upload")
     public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json,  @RequestParam("username") String username, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
-
-        System.out.println(json);
-
         try {
 
             if (!Files.exists(location)) {//Creates Directory if it doesn't exist

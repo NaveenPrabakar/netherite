@@ -14,7 +14,7 @@ public interface JsonRepository extends JpaRepository<JsonEntity, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE JsonEntity j Set j.path = :newPath WHERE j.id = :id")
+    @Query("UPDATE JsonEntity j Set j.path = :newPath WHERE j.userID = :id")
     void updatepath(Long id, String newPath);
 
 }
