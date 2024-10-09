@@ -46,7 +46,7 @@ import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
-    private final String URL_SUMMARIZE_REQ = "https://5a2cd8da-ae65-4e72-9b37-93e9c4132497.mock.pstmn.io";
+    private final String URL_SUMMARIZE_REQ = "https://postman-echo.com/post?test=12345";
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
@@ -274,8 +274,10 @@ public class TextActivity extends AppCompatActivity {
                     public void onResponse(String response)
                     {
                         Log.d("Signup Success", response.toString());
+                        content = response;
                         String resp = response;
                         System.out.println(resp);
+                        // textView = response ??
                     }
                 },
                 new Response.ErrorListener()
