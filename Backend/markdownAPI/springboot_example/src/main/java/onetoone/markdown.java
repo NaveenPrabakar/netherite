@@ -47,6 +47,16 @@ public class markdown {
     @Autowired
     private JsonRepository j;
 
+    /**
+     * The method saves a file to the approriate directory
+     *
+     * @param fileName -- Name of the file
+     * @param content -- content of the file
+     * @param json -- directory of the file
+     * @param username -- email
+     * @param password -- password
+     * @return A successful response
+     */
     @PostMapping("/upload")
     public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json,  @RequestParam("username") String username, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
@@ -90,6 +100,14 @@ public class markdown {
         return response;
     }
 
+    /**
+     * The Get mapping grabs the contents of a certain file
+     *
+     * @param username -- email
+     * @param password --password
+     * @param fileName -- name of file requested
+     * @return -- the contents of the file
+     */
     @GetMapping("/pull")
     public String pull(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("fileName") String fileName){
 
@@ -115,6 +133,12 @@ public class markdown {
         }
     }
 
+    /**
+     * The method grabs the User's associated Json path
+     * @param username -- email of the user
+     * @param password -- password of the user
+     * @return the Json path
+     */
     @GetMapping("/system")
     public String system(@RequestParam("username") String username, @RequestParam("password") String password){
         signEntity user = logs.findByEmail(username);
@@ -122,7 +146,6 @@ public class markdown {
         if(user == null){
             return "User does not exist";
         }
-        System.out.println(user.getId());
 
         String path = j.getSystem(user.getId());
 
