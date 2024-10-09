@@ -150,6 +150,8 @@ public class SignupActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                         Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                        intent.putExtra("USERNAME",username);
+                        intent.putExtra("PASSWORD", password);
                         startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 },
@@ -168,12 +170,13 @@ public class SignupActivity extends AppCompatActivity {
 //                return headers;
 //            }
 
+            // This function?? i don't remember what the fuck it does
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("param1", username);
+                params.put("username", username);
                 params.put("email", email);
-                params.put("param2", password);
+                params.put("password", password);
                 return params;
             }
         };
