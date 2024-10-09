@@ -4,6 +4,7 @@ package onetoone.loginAPI;
 import java.util.List;
 import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
+import onetoone.editProfile.editRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +32,9 @@ public class login{
     @Autowired
     private JavaMailSender mailSender; // Autowire the mail sender
 
+    @Autowired
+    private editRepository edit;
+
     //global variables
     //chance is for login chance
     int chance= 3;
@@ -44,17 +47,18 @@ public class login{
         System.out.println(l.getUsername());
         signEntity temp = login.findByUsername(l.getUsername());
 
+        // IMPLEMENT ACTUAL ERRORS
         if (temp == null) {
-            response.put("response404", "User Profile does not exist");
+            response.put("response", "User Profile does not exist");
             return response;
         }
 
         if(temp.getPassword().equals(l.getPassword())){
-            response.put("response", "Password is correct, login success");
+            response.put("response", "ok");
             return response;
         }
 
-        response.put("response404", "password is incorrect");
+        response.put("response", "password is incorrect");
         return response;
     }
 
@@ -66,7 +70,7 @@ public class login{
         Map<String, String> response = new HashMap<>();
 
 
-            signEntity temp = login.findByUsername(l.getUsername());
+            signEntity temp = login.findByEmail(l.getUsername()); //Annabelle, I fixed your code
 
             if (temp == null) {
                 response.put("response404", "User with this username does not exist");
@@ -75,6 +79,7 @@ public class login{
 
             // Generate a random code
             String generatedCode = UUID.randomUUID().toString(); // Generate a unique code
+            generatedCode = generatedCode.substring(0,4);  //UPDATED SOME CODE HERE (MADE PASSKEY 4 LETTERS)
            // response.put(temp.getEmail(), generatedCode);
         try {
             // Send the verification code to the user's email
@@ -100,7 +105,7 @@ public class login{
 
         Map<String, String> response = new HashMap<>();
 
-        signEntity temp = login.findByUsername(l.getUsername());
+        signEntity temp = login.findByEmail(l.getUsername());
 
         if (temp == null) {
             response.put("response404", "User with this username does not exist");
@@ -108,6 +113,7 @@ public class login{
         }
 
         temp.setPassword(l.getPassword()); // Set the new password
+        edit.updatepassword(temp.getId(), l.getPassword());
         response.put("responses", "Password has been reset successfully.");
 
         return response;

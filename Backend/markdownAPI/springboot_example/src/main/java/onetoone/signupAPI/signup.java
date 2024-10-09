@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,13 +21,23 @@ public class signup{
     private signRepository signup;
 
     @PostMapping("/create")
-    public String createUser(@RequestBody signEntity sign){
+    public Map<String, String> createUser(@RequestBody signEntity sign){
+
+        Map<String, String> check = new HashMap<>();
         if(sign == null){
-            return "Invalid input. Please fillout all inputs";
+            check.put("Response", "Invalid input. Please fillout all inputs");
+            return check;
+        }
+        signEntity temp = signup.findByEmail(sign.getEmail());
+
+        if(temp != null){
+            check.put("Response", "User with email already exists");
+            return check;
         }
 
         signup.save(sign); //Saves the users
-        return "You have successfully registered";
+        check.put("Response", "You have successfully registered");
+        return check;
     }
 }
 
