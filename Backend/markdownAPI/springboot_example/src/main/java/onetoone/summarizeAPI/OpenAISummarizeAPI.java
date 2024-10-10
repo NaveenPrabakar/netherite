@@ -56,7 +56,9 @@ public class OpenAISummarizeAPI{
     //front end giving the username or usergmail
     //need to tell front end to use a condition for post and put entity because diff API
     @GetMapping("/getUsageAPICount/{userName}")
-    public int getUsageAPICount(@PathVariable String userName) {
+    public Map<String, String>  getUsageAPICount(@PathVariable String userName) {
+
+        Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
         signEntity temp = sign.findByUsername(userName);
@@ -69,19 +71,25 @@ public class OpenAISummarizeAPI{
 
         //if the user not exist in the table that means user never use it before
         if (temp2==null){
-            return -1;
+            response.put("reply", "The user does not exist");
+            return response;
         }
 
+        //convert from integer to string
         int count=temp2.getUsageAPICount();
+        String countStr = String.valueOf(count);
 
-        return count;
+        response.put("reply", countStr);
+        return response;
     }
 
     //Post method to create the users entity in AI table (never use before)
     //using the class created AI.java for requestBody
     //front end giving json for username,promt and content
     @PostMapping("/createAIUser")
-    public String getFeedBack1(@RequestBody AI body){
+    public Map<String, String> getFeedBack1(@RequestBody AI body){
+
+        Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
         signEntity temp= sign.findByUsername(body.getUserName());
@@ -93,16 +101,20 @@ public class OpenAISummarizeAPI{
 
         //get the content and promt and pass in using open ai
         // Call OpenAI API for the first time
-        String response = callOpenAI(body.getPrompt(), body.getContent());
+        String responseString = callOpenAI(body.getPrompt(), body.getContent());
+        response.put("reply", responseString);
 
         return response;
+
 
     }
     //Post method to create the users entity in AI table
     //using the class created AI.java for requestBody
     //front end giving json for username,promt and content
     @PutMapping("/updateAIUser")
-    public String getFeedBack2(@RequestBody AI body){
+    public Map<String, String> getFeedBack2(@RequestBody AI body){
+
+        Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
         signEntity temp= sign.findByUsername(body.getUserName());
@@ -115,7 +127,8 @@ public class OpenAISummarizeAPI{
 
         //check if the count exceed 20 times
         if (count>20){
-            return "You have exceed the daily limit of using Open AI api, please wait for 24 hours later\n";
+            response.put("reply", "You have exceed the daily limit of using Open AI api, please wait for 24 hours later");
+            return response;
         }
 
         //increment the count and set the usageAPICount
@@ -126,27 +139,33 @@ public class OpenAISummarizeAPI{
 
         //get the content and promt and pass in using open ai
         // Call OpenAI API for the first time
-        String response = callOpenAI(body.getPrompt(), body.getContent());
+        String responseString = callOpenAI(body.getPrompt(), body.getContent());
+        response.put("reply", responseString);
 
         return response;
     }
 
     // DELETE method to reset usage count after 24 hours
     @DeleteMapping("/resetUsage/{userName}")
-    public String resetUsage(@PathVariable String userName) {
+    public Map<String, String> resetUsage(@PathVariable String userName) {
+
+        Map<String, String> response = new HashMap<>();
+
         signEntity user = sign.findByUsername(userName);
         Long userID = user.getId();
 
         //find the userentity and information
         summarizeAPIEntity temp = api.findByAIUserId(userID);
         if (temp == null) {
-            return "User has not used the API before.";
+            response.put("reply", "The user does not exist");
+            return response;
         }
 
         // Reset usage count to 0
         temp.setUsageAPICount(0);
         api.save(temp);
-        return "API usage has been reset for the user.";
+        response.put("reply", "API usage has been reset for the user.");
+        return response;
     }
 
     //helper method
