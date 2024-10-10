@@ -146,6 +146,8 @@ public class markdown {
     @GetMapping("/system")
     public String system(@RequestParam("username") String username, @RequestParam("password") String password){
         signEntity user = logs.findByEmail(username);
+        System.out.println(username);
+        System.out.println(password);
 
         if(user == null){
             return "User does not exist";

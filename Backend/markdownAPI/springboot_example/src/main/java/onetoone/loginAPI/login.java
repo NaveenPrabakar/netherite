@@ -45,7 +45,7 @@ public class login{
         HashMap<String, String> response = new HashMap<>();
 
         System.out.println(l.getUsername());
-        signEntity temp = login.findByUsername(l.getUsername());
+        signEntity temp = login.findByEmail(l.getUsername());
 
         // IMPLEMENT ACTUAL ERRORS
         if (temp == null) {
