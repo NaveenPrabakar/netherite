@@ -143,16 +143,16 @@ public class edit{
 
     // DELETE EVERYTHING MUST BE DONE
     @DeleteMapping("/exterminateUser")
-    public Map<String, String> Exterminate(@RequestBody logs l){
+    public Map<String, String> Exterminate(@RequestParam("username") String username, @RequestParam("password") String password){
         HashMap<String, String> response = new HashMap<>();
-        signEntity user = edits.findByEmail(l.getUsername());
+        signEntity user = edits.findByEmail(username);
 
         if(user == null){
             response.put("response", "Email is wrong");
             return response;
         }
 
-        if(!user.getPassword().equals(l.getPassword())){
+        if(!user.getPassword().equals(password)){
             response.put("response", "Your password is wrong");
             return response;
         }
@@ -164,21 +164,21 @@ public class edit{
 
             Path filePath = location.resolve(all.get(i));
 
-            try{
+            if(Files.exists(filePath)){
+                try{
 
-                Files.delete(filePath);
-            }
-            catch(IOException e){
-                response.put("response", "failed to delete");
-                return response;
+                    Files.delete(filePath);
+                }
+                catch(IOException e){
+                    response.put("response", "failed to delete");
+                    return response;
+                }
             }
         }
 
         edits.deleteAll(user.getId()); //Deletes all file names from the table
-
-        //ADD THE REMAINING DELETES
         j.deletepath(user.getId());
-        s.deleteByEmail(user.getUsername());
+        s.deleteall(user.getId());
 
         return response;
 

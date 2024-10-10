@@ -1,7 +1,8 @@
 package onetoone.signupAPI;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 public interface signRepository extends JpaRepository<signEntity, Long> {
 
@@ -9,8 +10,11 @@ public interface signRepository extends JpaRepository<signEntity, Long> {
     signEntity findByUsername(String username);
     signEntity findByPassword(String password);
 
+
+    @Modifying
     @Transactional
-    void deleteByEmail(String email);
+    @Query("DELETE from signEntity where id = :id")
+    void deleteall(Long id);
 }
 
 
