@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /* when signup button is pressed, use intent to switch to Main Activity */
+                /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);  // go to SignupActivity
             }
@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("USERNAME", username);
                                 intent.putExtra("PASSWORD", password);
+                                intent.putExtra("FILESYSTEM", resp.toString());
                                 startActivity(intent);
                             }
                         } catch (JSONException e) {
