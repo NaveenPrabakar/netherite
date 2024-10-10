@@ -21,10 +21,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
-
 import onetoone.signupAPI.signEntity;
+import onetoone.signupAPI.signRepository;
 import onetoone.signupAPI.signup;
 import onetoone.loginAPI.logs;
+import onetoone.JsonRepository;
 
 import java.util.*;
 
@@ -32,8 +33,18 @@ import java.util.*;
 @RequestMapping("/edit")
 public class edit{
 
+    private final Path location = Paths.get("root");
+
     @Autowired
     private editRepository edits;
+
+    @Autowired
+    private signRepository s;
+
+    @Autowired
+    private JsonRepository j;
+
+
 
     /**
      * The method allows the user to change their username
@@ -126,6 +137,49 @@ public class edit{
         long id = user.getId();
         edits.updateEmail(id, email);
         response.put("response", "Your Email has been updated");
+        return response;
+
+    }
+
+    // DELETE EVERYTHING MUST BE DONE
+    @DeleteMapping("/exterminateUser")
+    public Map<String, String> Exterminate(@RequestParam("username") String username, @RequestParam("password") String password){
+        HashMap<String, String> response = new HashMap<>();
+        signEntity user = edits.findByEmail(username);
+
+        if(user == null){
+            response.put("response", "Email is wrong");
+            return response;
+        }
+
+        if(!user.getPassword().equals(password)){
+            response.put("response", "Your password is wrong");
+            return response;
+        }
+
+        List<String> all = edits.findallFiles(user.getId());
+
+        //Delete all the files from the springboot server
+        for(int i = 0; i < all.size(); i++){
+
+            Path filePath = location.resolve(all.get(i));
+
+            if(Files.exists(filePath)){
+                try{
+
+                    Files.delete(filePath);
+                }
+                catch(IOException e){
+                    response.put("response", "failed to delete");
+                    return response;
+                }
+            }
+        }
+
+        edits.deleteAll(user.getId()); //Deletes all file names from the table
+        j.deletepath(user.getId());
+        s.deleteall(user.getId());
+
         return response;
 
     }

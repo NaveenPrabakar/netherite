@@ -88,8 +88,12 @@ public class markdown {
             Path filePath = location.resolve(fileName);
             Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
 
-            FileEntity fileEntity = new FileEntity(fileName, user.getId());
-            fileRepository.save(fileEntity);
+            FileEntity temp = fileRepository.findByFileName(fileName);
+
+            if(temp == null){
+                FileEntity fileEntity = new FileEntity(fileName, user.getId());
+                fileRepository.save(fileEntity);
+            }
 
         } catch (IOException e) {
             response.put("response", "Could not save the file");
@@ -142,13 +146,59 @@ public class markdown {
     @GetMapping("/system")
     public String system(@RequestParam("username") String username, @RequestParam("password") String password){
         signEntity user = logs.findByEmail(username);
+        System.out.println(username);
+        System.out.println(password);
 
         if(user == null){
             return "User does not exist";
         }
 
         String path = j.getSystem(user.getId());
-
+        System.out.println(path);
         return path;
+    }
+
+    @DeleteMapping("/deleteFile")
+    public Map<String, String> delete(@RequestParam("email") String email, @RequestParam("fileName") String fileName, @RequestParam("json") String json){
+        signEntity user = logs.findByEmail(email);
+        HashMap<String, String> response = new HashMap<>();
+
+        System.out.println(fileName);
+
+        if(user == null){
+            response.put("response", "this user does not exist");
+            return response;
+        }
+
+        FileEntity file = fileRepository.findByFileName(fileName);
+        if(file == null){
+            response.put("response", "the file does not exist");
+            return response;
+        }
+
+        Path filePath = location.resolve(fileName);
+
+        if(user.getId() == file.getId()){
+            fileRepository.deleteByFileName(fileName); //deletes the file from the table
+            j.updatepath(user.getId(), json);
+            response.put("response", "The file was deleted");
+
+
+            if(Files.exists(filePath)){//Deletes the file from the springboot_server
+                try{
+                    Files.delete(filePath);
+                }
+                catch(IOException e){
+                    response.put("response", "file was not found");
+                    return response;
+
+                }
+
+            }
+            return response;
+        }
+
+        response.put("response","the file was not deleted.");
+        return response;
     }
 }
