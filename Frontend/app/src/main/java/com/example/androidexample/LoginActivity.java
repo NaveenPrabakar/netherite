@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus;
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchEmail";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchUsername";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                 /* grab strings from user inputs */
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-
-                if (password.length() < 8){
-                    err_msg.setText("Password must be at least 8 characters");
-                    return;
-                }
-                if (password.indexOf('!') == -1){
-                    err_msg.setText("Password must contain at least one '!' ");
-                    return;
-                }
 
                 /* when login button is pressed, use intent to switch to Login Activity */
 
@@ -90,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /* when signup button is pressed, use intent to switch to Main Activity */
+                /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);  // go to SignupActivity
             }
@@ -120,11 +111,17 @@ public class LoginActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                         err_msg.setText(response.toString());
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("USERNAME", username);
-                        intent.putExtra("PASSWORD", password);
-                        startActivity(intent);
+                        try {
+                            if (resp.getString("response").equals("ok")){
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.putExtra("USERNAME", username);
+                                intent.putExtra("PASSWORD", password);
+                                intent.putExtra("FILESYSTEM", resp.toString());
+                                startActivity(intent);
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 },
                 new Response.ErrorListener() {

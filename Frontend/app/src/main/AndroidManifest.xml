@@ -25,10 +25,15 @@
         android:exported="false" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".TextActivity" />
+        <activity android:name=".filesActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".ChangeUsernameActivity" />
         <activity android:name=".ChangeEmailActivity" />
+        <activity android:name=".ForgetPasswordActivity" />
+        <activity android:name=".VerificationActivity" />
+        <activity android:name=".EnterForgetPasswordActivity" />
+        <activity android:name=".ExterminateUserActivity" />
 
 
         <activity

@@ -1,13 +1,8 @@
 package com.example.androidexample;
-
-import static com.android.volley.Request.Method.POST;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.text.Editable;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
@@ -36,6 +31,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.android.volley.toolbox.Volley;
 
 import org.commonmark.node.Node;
@@ -45,8 +43,8 @@ import org.json.JSONObject;
 import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
-    private final String URL_STRING_REQ = "http://10.26.47.170:8080/files/upload";
     private final String URL_SUMMARIZE_REQ = "https://postman-echo.com/post?test=12345";
+    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
@@ -56,6 +54,10 @@ public class TextActivity extends AppCompatActivity {
     private EditText fileName;
     private Markwon markwon;
     private String content = "";
+    private JSONObject fileSystem;
+    private JSONObject filePath;
+    private String username;
+    private String password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,9 @@ public class TextActivity extends AppCompatActivity {
 
         markwon = Markwon.create(this);
 
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
         editor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
@@ -78,7 +83,7 @@ public class TextActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                     content = charSequence.toString();
                     updateParsedOutput(content);
-                    Log.d("content", content);
+                    Log.d("Text changed", content);
             }
 
             @Override
@@ -87,6 +92,40 @@ public class TextActivity extends AppCompatActivity {
         });
         editor.setAlpha(0f);
 
+        if(extras != null) {
+            try {
+                fileSystem = new JSONObject(extras.getString("FILESYSTEM"));
+                filePath = new JSONObject(extras.getString("PATH"));
+                username = extras.getString("USERNAME");
+                password = extras.getString("PASSWORD");
+                Log.d("USERNAME", extras.getString("USERNAME"));
+                Log.d("PASSWORD", extras.getString("PASSWORD"));
+                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+                Log.d("PATH", extras.getString("PATH"));
+
+                if (extras.getString("CONTENT") != null){
+                    Log.d("content", extras.getString("CONTENT"));
+                    editor.setText(extras.getString("CONTENT"));
+                }
+                if (extras.getString("FILEKEY") != null){
+                    Log.d("filekey", extras.getString("FILEKEY"));
+                    fileName.setText(extras.getString("FILEKEY"));
+                }
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            filePath = new JSONObject();
+            fileSystem = new JSONObject();
+            try {
+                filePath.put("path", new JSONArray());
+                fileSystem.put("root", new JSONArray());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,10 +133,12 @@ public class TextActivity extends AppCompatActivity {
 
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(TextActivity.this, MainActivity.class);
+                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("USERNAME", username);
+                intent.putExtra("PASSWORD", password);
                 startActivity(intent);  // go to SignupActivity
             }
         });
-
 
         saveButt = findViewById(R.id.saveButt);
         saveButt.setOnClickListener(new View.OnClickListener() {
@@ -106,10 +147,13 @@ public class TextActivity extends AppCompatActivity {
                 if (fileName.getText().toString().isEmpty()) {
                     System.out.println("file name is empty");
                 } else {
-                    writeToFile();
-                    listFiles();
-                    sendFileString(fileName.getText().toString() + ".md", URL_STRING_REQ);
-                    readFromFile(fileName.getText().toString() + ".md");
+
+                    try {
+                        sendFileString(fileName.getText().toString(), String.valueOf(fileLocator(fileSystem, filePath, fileName.getText().toString())));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
 
             }
@@ -146,101 +190,13 @@ public class TextActivity extends AppCompatActivity {
         markwon.setMarkdown(mainText, contentParsed);
     }
 
-    public void writeToFile() {
-        File path = getApplicationContext().getFilesDir();
-
-        try {
-            File file = new File(path,fileName.getText().toString()+".md");
-            // Create the file
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-            FileOutputStream writer = new FileOutputStream(file);
-            writer.write(content.getBytes());
-            writer.close();
-            Toast.makeText(getApplicationContext(), "File saved", Toast.LENGTH_SHORT).show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public Pair<String, String> readFromFile(String fileKey) {
-        String fileName = fileKey;
-        try  {
-            FileInputStream fis = openFileInput(fileName);
-            InputStreamReader inputStreamReader = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            String fileContents = stringBuilder.toString();
-            System.out.println("Contents of file: "+ fileName + ": " + fileContents);
-            return Pair.create(fileName, fileContents);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Pair.create("Null", "Null");
-    }
-
-    public String[] listFiles(){
-        File directory = getApplicationContext().getFilesDir();  // Internal storage directory
-        File[] files = directory.listFiles();  // List all files in the directory
-        String[] fileKeys = new String[files.length];
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                fileKeys[i] = files[i].getName();
-                System.out.println("File: " + files[i].getName());
-            }
-        } else {
-            System.out.println("no files found");;
-        }
-        return fileKeys;
-    }
-
-    public void sendFile() {
-        File path = getApplicationContext().getFilesDir();
-        File file = new File(path, fileName.getText().toString() + ".md");
-
-        if (!file.exists()) {
-            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String url = URL_STRING_REQ;  // Replace with your server's URL
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("description", "This is a file upload");
-
-        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(POST, url, file,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        Toast.makeText(TextActivity.this, "File sent successfully!", Toast.LENGTH_SHORT).show();
-                        Log.d("VolleyResponse", new String(response.data));
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(TextActivity.this, "File upload failed", Toast.LENGTH_SHORT).show();
-                        Log.e("VolleyError", error.toString());
-                    }
-                });
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(multipartRequest);
-    }
-
-
-    public void sendFileString(String fileName, String URL){
-            Uri.Builder builder = Uri.parse(URL).buildUpon();
-            Pair<String, String> pair = readFromFile(fileName);
-            builder.appendQueryParameter("file", pair.first);
-            builder.appendQueryParameter("content", pair.second);
+    public void sendFileString(String fileName, String fileSystem){
+            Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+            builder.appendQueryParameter("fileName", fileName);
+            builder.appendQueryParameter("content", content);
+            builder.appendQueryParameter("json", fileSystem);
+            builder.appendQueryParameter("username", username);
+            builder.appendQueryParameter("password", password);
             String url = builder.build().toString();
 
             StringRequest stringRequest = new StringRequest(
@@ -303,4 +259,41 @@ public class TextActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+
+    /*
+    This stupid ass function takes a file, path, and the system of phone.
+    It puts the file into the path, and the path is in the file system.
+     */
+    public JSONObject fileLocator(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
+        JSONArray pathArray = filePath.getJSONArray("path");
+        JSONArray root = fileSystem.getJSONArray("root");
+
+        // Traverse the file system using the provided path
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = pathArray.getString(i);
+            for (int j = 0; j < root.length(); j++) {
+                Object currentItem = root.get(j);
+                if (currentItem instanceof JSONObject ) {
+                    JSONObject currentItemJson = (JSONObject) currentItem;
+                    if (currentItemJson.has(key)){
+                        root = currentItemJson.getJSONArray(key);
+                        break;
+                    }
+                }
+            }
+        }
+        JSONArray rootArray = (JSONArray) root;
+        int index =-1;
+        for(int i = 0; i < rootArray.length(); i++){
+            if (rootArray.get(i) instanceof String && rootArray.get(i).equals(fileName)){
+                index = i;
+            }
+        }
+        if (index == -1){
+            root.put(fileName);
+        }
+        Log.d("File System", fileSystem.toString());
+        return fileSystem;
+
+    }
 }
