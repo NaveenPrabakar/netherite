@@ -17,14 +17,14 @@ public class SettingsActivity extends AppCompatActivity {
     private Button changeUsername;
     private Button changeEmail;
     private Button forgetPassword;
+    private Button deleteUser;
     //private EditText username;
     //private EditText email;
     //private EditText password;
     private TextView msgResponse;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -77,6 +77,17 @@ public class SettingsActivity extends AppCompatActivity {
                 // Create an Intent to navigate to ForgetPasswordActivity
                 Intent intent = new Intent(SettingsActivity.this, ForgetPasswordActivity.class);
                 startActivity(intent);
-        }});
+            }
+        });
+
+        deleteUser = findViewById(R.id.delete_account);
+        deleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create an Intent to navigate to ExterminateUserActivity
+                Intent intent = new Intent(SettingsActivity.this, ExterminateUserActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
