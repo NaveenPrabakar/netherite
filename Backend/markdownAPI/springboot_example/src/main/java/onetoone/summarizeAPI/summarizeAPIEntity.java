@@ -26,6 +26,9 @@ public class summarizeAPIEntity{
     //amount using the ai api
     private int usageAPICount;
 
+    // Default constructor
+    public summarizeAPIEntity() {
+    }
 
     public summarizeAPIEntity(Long AIUserId, LocalDateTime eventDateTime, int usageAPICount) {
         this.AIUserId = AIUserId;

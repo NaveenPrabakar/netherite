@@ -59,11 +59,13 @@ public class OpenAISummarizeAPI{
     public int getUsageAPICount(@PathVariable String userName) {
 
         //need to go to signentity to find username in order to find userid
-        signEntity temp= sign.findByUsername(userName);
-        Long userID=temp.getId();
+        signEntity temp = sign.findByUsername(userName);
+        Long userID = temp.getId();
+
+        System.out.println(userID);
 
         //use the userid for the apientity table to find the count
-        summarizeAPIEntity temp2=api.findByAIUserId(userID);
+        summarizeAPIEntity temp2 = api.findByAIUserId(userID);
 
         //if the user not exist in the table that means user never use it before
         if (temp2==null){
@@ -108,6 +110,7 @@ public class OpenAISummarizeAPI{
 
         //user the userid for the api table to find the count
         summarizeAPIEntity temp2=api.findByAIUserId(userID);
+
         int count=temp2.getUsageAPICount();
 
         //check if the count exceed 20 times
@@ -117,6 +120,8 @@ public class OpenAISummarizeAPI{
 
         //increment the count and set the usageAPICount
         temp2.setUsageAPICount(++count);
+
+        api.save(temp2);
 
 
         //get the content and promt and pass in using open ai
@@ -140,6 +145,7 @@ public class OpenAISummarizeAPI{
 
         // Reset usage count to 0
         temp.setUsageAPICount(0);
+        api.save(temp);
         return "API usage has been reset for the user.";
     }
 
