@@ -30,6 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +44,11 @@ import org.json.JSONObject;
 import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
-    private final String URL_SUMMARIZE_REQ = "https://postman-echo.com/post?test=12345";
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
+    private final String URL_AI_GET = "/OpenAIAPIuse/getUsageAPI/Count/";
+    private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
+    private final String URL_AI_DELETE = "..../getUsageAPI/deleteAIUser/";
+    private final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
@@ -52,12 +56,14 @@ public class TextActivity extends AppCompatActivity {
     private Button editButton;
     private EditText editor;
     private EditText fileName;
+    private TextView AIText;
     private Markwon markwon;
     private String content = "";
     private JSONObject fileSystem;
     private JSONObject filePath;
     private String username;
     private String password;
+    private String aiCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +71,7 @@ public class TextActivity extends AppCompatActivity {
 
 
         mainText = findViewById(R.id.textViewMarkdown);
+        AIText = findViewById(R.id.AITextView);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
         editButton = findViewById(R.id.editButton);
@@ -171,7 +178,7 @@ public class TextActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    summarizeString(content, URL_SUMMARIZE_REQ);
+                    summarizeString(content, "belle", "summarize", URL_AI_PUT);
                 }
             }
         });
@@ -200,7 +207,7 @@ public class TextActivity extends AppCompatActivity {
             String url = builder.build().toString();
 
             StringRequest stringRequest = new StringRequest(
-                    Request.Method.POST,
+                    Request.Method.PUT,
                     url,
                     new Response.Listener<String>() {
                         @Override
@@ -212,6 +219,8 @@ public class TextActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             // Handle any errors that occur during the request
+                            Log.e("Username", username);
+
                             Log.e("Volley Error", error.toString());
                         }
                     }
@@ -221,42 +230,67 @@ public class TextActivity extends AppCompatActivity {
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-    private void summarizeString(String contentToSummarize, String URL)
+    private void summarizeString(String contentToSummarize, String username, String prompt, String URL)
     {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
-                new Response.Listener<String>()
-                {
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("userName", username);
+            requestBody.put("prompt", prompt);
+            requestBody.put("content", contentToSummarize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest summarizePost = new JsonObjectRequest (
+                Request.Method.PUT,
+                URL,
+                requestBody, // Pass body because its a post request
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response)
-                    {
-                        Log.d("Signup Success", response.toString());
-                        content = response;
-                        String resp = response;
-                        System.out.println(resp);
-                        // textView = response ??
+                    public void onResponse(JSONObject response) {
+                        Log.d("AI TEXT SHOULD LOOK LIKE", response.toString());
+                        try
+                        {
+                            AIText.setText(response.getString("reply"));
+                            aiCount = response.getString("count");
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
+                    public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", error.toString());
+                        Log.e("Username", username);
+                        Log.e("Content", contentToSummarize);
+                        Log.e("Prompt", prompt);
                     }
-                })
-        {
+                }
+        ) {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<String, String>();
+//                //headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                //headers.put("Content-Type", "application/json");
+//                return headers;
+//            }
+
+            // This function?? i don't remember what the fuck it does
             @Override
-            protected Map<String, String> getParams()
-            {
+            protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
+                params.put("prompt", prompt);
                 params.put("content", contentToSummarize);
                 return params;
             }
         };
 
-
         // Add the string request to the Volley Queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
 
 

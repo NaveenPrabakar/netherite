@@ -83,6 +83,7 @@ public class SignupActivity extends AppCompatActivity {
                     err_msg.setText("Username must be at least 4 characters");
                     return;
                 }
+                //java built in function to check if email is valid
                 if (email.indexOf('@') == -1){
                     err_msg.setText("Email must be an email");
                     return;

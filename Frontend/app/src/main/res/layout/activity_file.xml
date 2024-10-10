@@ -28,11 +28,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.808" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="750dp"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"
+            android:gravity="start|top"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/textViewMarkdown"
             android:layout_width="fill_parent"
-            android:layout_height="716dp"
+            android:layout_height="375dp"
             android:layout_marginTop="4dp"
             android:cursorVisible="true"
             android:ems="10"
@@ -43,13 +51,25 @@
         <EditText
             android:id="@+id/EditMarkdown"
             android:layout_width="fill_parent"
-            android:layout_height="716dp"
+            android:layout_height="375dp"
             android:layout_marginTop="4dp"
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/AITextView"
+            android:layout_width="fill_parent"
+            android:layout_height="375dp"
+            android:gravity="start|top"
+            android:layout_marginTop="22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="AI Usage"
+            />
+
 
         <EditText
             android:id="@+id/fileName"
@@ -63,7 +83,6 @@
             app:layout_constraintEnd_toStartOf="@+id/saveButt"
             app:layout_constraintHorizontal_bias="0.50"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine4"
             app:layout_constraintVertical_bias="0.1" />
 
         <Button
@@ -76,7 +95,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.956"
             app:layout_constraintStart_toEndOf="@+id/fileName"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine4"
+
             app:layout_constraintVertical_bias="0.1" />
 
         <Button
