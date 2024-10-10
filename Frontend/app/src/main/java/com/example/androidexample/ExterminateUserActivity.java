@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +31,7 @@ public class ExterminateUserActivity extends AppCompatActivity {
     private EditText email;
     private TextView msgResponse;
 
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/exterminateUser";
+    private static final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/edit/exterminateUser";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,57 +67,37 @@ public class ExterminateUserActivity extends AppCompatActivity {
     // find email and password and send to server to kill user.
     private void killUser(String email, String password) {
 
-        // Create the request body as a JSON object
-        JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put("username", email);
-            requestBody.put("password", password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Uri.Builder builder = Uri.parse(URL_DELETE_REQ).buildUpon();
+        builder.appendQueryParameter("username", email);
+        builder.appendQueryParameter("password", password);
+        String url = builder.build().toString();
 
-        JsonObjectRequest jsonObjPost = new JsonObjectRequest(
+        StringRequest stringRequest = new StringRequest(
                 Request.Method.DELETE,
-                URL_JSON_OBJECT,
-                requestBody,
-                new Response.Listener<JSONObject>() {
+                url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("KILL HIM! KILL HIM! KILL", response.toString());
-                        //JSONObject resp = response;
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
                         try {
-                            msgResponse.setText(response.getString("killed user"));
+                            JSONObject jsObj = new JSONObject(response);
+                            if (jsObj.getBoolean("success")) {
+                                Intent intent = new Intent(ExterminateUserActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                        Intent intent = new Intent(ExterminateUserActivity.this, SettingsActivity.class);
-                        // Bring in extras ?
-                        startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("username", email);
-                        Log.e("password", password);
+                        // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
                     }
                 }
-        ) {
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                HashMap<String, String> headers = new HashMap<String, String>();
-//                //headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-//                //headers.put("Content-Type", "application/json");
-//                return headers;
-//            }
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjPost);
+        );
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     };
 }
