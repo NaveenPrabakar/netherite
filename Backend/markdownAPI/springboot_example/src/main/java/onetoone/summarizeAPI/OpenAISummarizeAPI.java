@@ -71,7 +71,7 @@ public class OpenAISummarizeAPI{
 
         //if the user not exist in the table that means user never use it before
         if (temp2==null){
-            response.put("reply", "The user does not exist");
+            response.put("reply", "-1");
             return response;
         }
 
