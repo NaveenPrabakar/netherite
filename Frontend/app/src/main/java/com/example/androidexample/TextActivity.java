@@ -105,6 +105,9 @@ public class TextActivity extends AppCompatActivity {
 
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(TextActivity.this, MainActivity.class);
+                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("USERNAME", username);
+                intent.putExtra("PASSWORD", password);
                 startActivity(intent);  // go to SignupActivity
             }
         });

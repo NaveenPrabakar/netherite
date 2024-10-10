@@ -47,12 +47,16 @@ public class filesActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
 
         if(extras != null) {
-            fileSystem = extras.getString("FILESYSTEM");
-            username = extras.getString("USERNAME");
-            password = extras.getString("PASSWORD");
-            Log.d("USERNAME", extras.getString("USERNAME"));
-            Log.d("PASSWORD", extras.getString("PASSWORD"));
-            Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+            if (!extras.getString("FILESYSTEM").equals("User does not exist")){
+                fileSystem = extras.getString("FILESYSTEM");
+                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+            }
+            if (!extras.getString("USERNAME").equals("-1") && !extras.getString("PASSWORD").equals("-1")) {
+                username = extras.getString("USERNAME");
+                password = extras.getString("PASSWORD");
+                Log.d("USERNAME", extras.getString("USERNAME"));
+                Log.d("PASSWORD", extras.getString("PASSWORD"));
+            }
         }
 
         rootLayout = findViewById(R.id.rootLayout);

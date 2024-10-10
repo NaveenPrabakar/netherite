@@ -29,10 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private Button makeFile;
     private Button settingsButt;
     // the whole ass system full of paths
-    private String fileSystem = "{ \"root\": [] }";;
+    private String fileSystem = "{\"root\": [] }";;
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
-    private String username = "yiyunkhor27@gmail.com";
-    private String password = "anime";
+    private String username = "-1";
+    private String password = "-1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +52,10 @@ public class MainActivity extends AppCompatActivity {
         if(extras != null){
             username = extras.getString("USERNAME");
             password = extras.getString("PASSWORD");
-            getFileSystem(username, password);
-
             usernameDisplay.setText(username);
             passwordDisplay.setText(password);
 
         }
-        getFileSystem(username, password);
 
         FileView.setOnClickListener(new View.OnClickListener() {
             @Override
