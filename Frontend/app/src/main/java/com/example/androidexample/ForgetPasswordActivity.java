@@ -69,7 +69,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("username", email);
+            requestBody.put("email", email);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -4,27 +4,22 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
@@ -33,7 +28,7 @@ public class filesActivity extends AppCompatActivity {
     // path is hard coded. make a path lmao. make it dynamic
     // when i click a file or a folder, it should update the path.
     private String path = "{\"path\": []}";
-    private String username;
+    private String email;
     private String password;
     private String content;
     private LinearLayout rootLayout;
@@ -41,7 +36,7 @@ public class filesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_files);
+        setContentView(R.layout.activity_file_view);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -51,10 +46,10 @@ public class filesActivity extends AppCompatActivity {
                 fileSystem = extras.getString("FILESYSTEM");
                 Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
             }
-            if (!extras.getString("USERNAME").equals("-1") && !extras.getString("PASSWORD").equals("-1")) {
-                username = extras.getString("USERNAME");
+            if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1")) {
+                email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
-                Log.d("USERNAME", extras.getString("USERNAME"));
+                Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
             }
         }
@@ -184,7 +179,7 @@ public class filesActivity extends AppCompatActivity {
 
     public void getFileString(String fileName){
         Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-        builder.appendQueryParameter("username", username);
+        builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         builder.appendQueryParameter("fileName", fileName );
         String url = builder.build().toString();
@@ -202,7 +197,7 @@ public class filesActivity extends AppCompatActivity {
                         intent.putExtra("PATH", path);
                         intent.putExtra("CONTENT", content);
                         intent.putExtra("FILEKEY", fileName);
-                        intent.putExtra("USERNAME", username);
+                        intent.putExtra("EMAIL", email);
                         intent.putExtra("PASSWORD", password);
                         startActivity(intent);
                     }
@@ -252,7 +247,7 @@ public class filesActivity extends AppCompatActivity {
 
     public void deleteFile(String fileName, String newFileSystem){
         Uri.Builder builder = Uri.parse(URL_DELETE_REQ).buildUpon();
-        builder.appendQueryParameter("email", username);
+        builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("fileName", fileName);
         builder.appendQueryParameter("json", newFileSystem);
         String url = builder.build().toString();
