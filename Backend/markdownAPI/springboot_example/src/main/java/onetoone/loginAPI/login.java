@@ -68,7 +68,6 @@ public class login{
     public Map<String, String> requestPasswordReset(@RequestBody logs l) {
         Map<String, String> response = new HashMap<>();
 
-
             signEntity temp = login.findByEmail(l.getemail()); //Annabelle, I fixed your code
 
             if (temp == null) {
