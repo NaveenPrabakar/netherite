@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.*;
 
+import onetoone.JsonRepository;
+import onetoone.JsonEntity;
+
 @RestController
 @RequestMapping("/user")
 public class signup{
 
     @Autowired
     private signRepository signup;
+
+    @Autowired
+    private JsonRepository j;
 
     @PostMapping("/create")
     public Map<String, String> createUser(@RequestBody signEntity sign){
@@ -36,6 +42,13 @@ public class signup{
         }
 
         signup.save(sign); //Saves the users
+
+        String path = "{'root' : []}";
+
+        temp = signup.findByEmail(sign.getEmail());
+        JsonEntity je = new JsonEntity(path, temp.getId());
+        j.save(je);
+
         check.put("Response", "You have successfully registered");
         return check;
     }
