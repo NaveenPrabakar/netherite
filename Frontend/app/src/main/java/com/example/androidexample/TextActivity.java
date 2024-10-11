@@ -52,6 +52,8 @@ public class TextActivity extends AppCompatActivity {
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
+    private Button acceptButt;
+    private Button rejectButt;
     private EditText mainText;
     private Button editButton;
     private EditText editor;
@@ -172,7 +174,42 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                TESTsummarizeString(content, email, "summarize", URL_AI_GET);
+                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        acceptButt = findViewById(R.id.acceptButt);
+        acceptButt.setVisibility(View.INVISIBLE);
+        acceptButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
+                mainText.append("\nAI Usage: " + AIText.getText());
+                content += "\nAI Response: " + AIText.getText().toString();
+                AIText.setText("");
+            }
+        });
+
+        rejectButt = findViewById(R.id.rejectButt);
+        rejectButt.setVisibility(View.INVISIBLE);
+        rejectButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                AIText.setText("");
             }
         });
     }
@@ -223,32 +260,28 @@ public class TextActivity extends AppCompatActivity {
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-    private void TESTsummarizeString(String contentToSummarize, String email, String prompt, String URL)
+    private void TESTsummarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
     {
-
+        //Log.d("AICOUNT", aiCount);
         JsonObjectRequest summarizePost = new JsonObjectRequest (
-                Request.Method.GET,
+                method,
                 URL + email,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("AI TEXT SHOULD LOOK LIKE", response.toString());
-                        try
-                        {
-                            aiCount = response.getString("reply");
-                            if (aiCount.equals("-1"))
-                            {
-                                summarizeString(Request.Method.POST, contentToSummarize, email, prompt, URL_AI_POST);
+                        if (method == Request.Method.GET) {
+                            try {
+                                aiCount = response.getString("reply");
+                                if (aiCount.equals("-1")) {
+                                    summarizeString(Request.Method.POST, contentToSummarize, email, prompt, URL_AI_POST);
+                                } else {
+                                    summarizeString(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            else
-                            {
-                                summarizeString(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
-                            }
-                        }
-                        catch (JSONException e)
-                        {
-                            e.printStackTrace();
                         }
                     }
                 },
