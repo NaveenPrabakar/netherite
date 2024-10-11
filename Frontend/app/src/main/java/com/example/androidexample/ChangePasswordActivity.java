@@ -44,13 +44,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
         n_password = findViewById(R.id.new_password_edt);
         msgResponse = findViewById(R.id.err_msg);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            String emailIntent = intent.getStringExtra("EMAIL");
-            Log.d("Email", intent.getStringExtra("EMAIL"));
-            email.setText(emailIntent);
-
-        }
+//        Intent intent = getIntent();
+//        if (intent != null) {
+//            String emailIntent = intent.getStringExtra("EMAIL");
+//            //Log.d("Email", intent.getStringExtra("EMAIL"));
+//            email.setText(emailIntent);
+//        }
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {
@@ -83,8 +82,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            Log.e("CHECK HERRE PIECE OF SHIELDPassword", old_password);
-            requestBody.put("username", email);
+            //Log.e("CHECK HERRE PIECE OF SHIELDPassword", old_password);
+            requestBody.put("email", email);
             requestBody.put("password", old_password);
             //requestBody.put("newPassword", new_password);
         } catch (Exception e) {
@@ -128,7 +127,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", email);
+                params.put("email", email);
                 params.put("password", old_password);
                 return params;
             }

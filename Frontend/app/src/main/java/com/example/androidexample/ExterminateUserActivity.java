@@ -68,7 +68,7 @@ public class ExterminateUserActivity extends AppCompatActivity {
     private void killUser(String email, String password) {
 
         Uri.Builder builder = Uri.parse(URL_DELETE_REQ).buildUpon();
-        builder.appendQueryParameter("username", email);
+        builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         String url = builder.build().toString();
 

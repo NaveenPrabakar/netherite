@@ -71,7 +71,7 @@ public class ChangeUsernameActivity extends AppCompatActivity {
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("username", email);
+            requestBody.put("email", email);
             requestBody.put("password", password);
         } catch (Exception e) {
             e.printStackTrace();

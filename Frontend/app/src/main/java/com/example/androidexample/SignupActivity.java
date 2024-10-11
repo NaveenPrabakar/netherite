@@ -146,7 +146,7 @@ public class SignupActivity extends AppCompatActivity {
                         Log.d("Signup Success", response.toString());
                         JSONObject resp = response;
                         try {
-                            msgResponse.setText(resp.getString("Response"));
+                            msgResponse.setText(resp.getString("response"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

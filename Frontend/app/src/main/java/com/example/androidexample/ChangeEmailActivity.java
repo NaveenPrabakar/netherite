@@ -26,18 +26,19 @@ public class ChangeEmailActivity extends AppCompatActivity {
     private Button changeEmail;
     private EditText password;
     private EditText n_email;
-    private EditText username;
+    private EditText email;
     private TextView msgResponse;
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changeemail/";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_changeusername);
+        setContentView(R.layout.activity_changeemail);
 
         password = findViewById(R.id.password_edt);
-        n_email = findViewById(R.id.email_edt);
-        username = findViewById(R.id.new_username_edt);
+        email = findViewById(R.id.email_edt);
+        n_email = findViewById(R.id.new_email_edt);
+
         msgResponse = findViewById(R.id.err_msg);
 
         backToMain = findViewById(R.id.back2main);
@@ -50,14 +51,14 @@ public class ChangeEmailActivity extends AppCompatActivity {
             }
         });
 
-        changeEmail = findViewById(R.id.change_username);
+        changeEmail = findViewById(R.id.change_email);
         changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String user_email = n_email.getText().toString();
+                String user_email = email.getText().toString();
                 String user_password = password.getText().toString();
-                String new_email = username.getText().toString();
+                String new_email = n_email.getText().toString();
 
                 makeJsonObjPost(user_email, user_password, new_email);
             }
@@ -70,7 +71,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("username", email);
+            requestBody.put("email", email);
             requestBody.put("password", password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +87,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
                         Log.d("Change Password", response.toString());
                         JSONObject resp = response;
                         try {
-                            msgResponse.setText(resp.getString("Changing old password to new."));
+                            msgResponse.setText(resp.getString("Changing old email to new."));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -113,7 +114,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", email);
+                params.put("email", email);
                 params.put("password", password);
                 return params;
             }
