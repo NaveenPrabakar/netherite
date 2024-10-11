@@ -29,34 +29,25 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.808" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/textViewMarkdown"
+            android:layout_width="fill_parent"
+            android:layout_height="375dp"
+            android:layout_marginTop="4dp"
+            android:cursorVisible="true"
+            android:ems="10"
+            android:gravity="start|top"
+            tools:ignore="MissingConstraints" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <EditText
-                    android:id="@+id/textViewMarkdown"
-                    android:layout_width="fill_parent"
-                    android:layout_height="375dp"
-                    android:layout_marginTop="4dp"
-                    android:cursorVisible="true"
-                    android:ems="10"
-                    android:gravity="start|top" />
-
-                <EditText
-                    android:id="@+id/EditMarkdown"
-                    android:layout_width="fill_parent"
-                    android:layout_height="375dp"
-                    android:layout_marginTop="4dp"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine" />
-            </LinearLayout>
-        </ScrollView>
+        <EditText
+            android:id="@+id/EditMarkdown"
+            android:layout_width="fill_parent"
+            android:layout_height="375dp"
+            android:layout_marginTop="4dp"
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
