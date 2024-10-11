@@ -77,6 +77,13 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
+  <!--for json open api-->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20210307</version>
+    </dependency>
+
   </dependencies>
 
   <build>

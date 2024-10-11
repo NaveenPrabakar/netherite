@@ -40,12 +40,11 @@ public class login{
     int chance= 3;
 
     //checking if the username and password corret to login
-    @PostMapping("/searchUsername")
-    public Map<String, String> getUserByUsername(@RequestBody logs l ){
+    @PostMapping("/searchemail")
+    public Map<String, String> getUserByUserEmail(@RequestBody logs l ){
         HashMap<String, String> response = new HashMap<>();
 
-        System.out.println(l.getUsername());
-        signEntity temp = login.findByUsername(l.getUsername());
+        signEntity temp = login.findByEmail(l.getemail());
 
         // IMPLEMENT ACTUAL ERRORS
         if (temp == null) {
@@ -69,8 +68,7 @@ public class login{
     public Map<String, String> requestPasswordReset(@RequestBody logs l) {
         Map<String, String> response = new HashMap<>();
 
-
-            signEntity temp = login.findByEmail(l.getUsername()); //Annabelle, I fixed your code
+            signEntity temp = login.findByEmail(l.getemail()); //Annabelle, I fixed your code
 
             if (temp == null) {
                 response.put("response404", "User with this username does not exist");
@@ -86,12 +84,12 @@ public class login{
             String value=sendVerificationCodeEmail(temp.getEmail(), generatedCode);
 
             // Optionally, send the generated code to the front end
-            response.put("emialText status:",value );
+            response.put("emailText status:",value );
             response.put("emailCode",temp.getEmail() );
             response.put("verificationCode", generatedCode);
             response.put("message", "Verification code has been sent to your email.");
         } catch (Exception e) {
-            response.put("error", "Failed to send verification code: " + e.getMessage());
+            response.put("Error", "Failed to send verification code: " + e.getMessage());
             e.printStackTrace(); // For debugging purposes, you might want to log this instead
         }
 
@@ -105,7 +103,7 @@ public class login{
 
         Map<String, String> response = new HashMap<>();
 
-        signEntity temp = login.findByEmail(l.getUsername());
+        signEntity temp = login.findByEmail(l.getemail());
 
         if (temp == null) {
             response.put("response404", "User with this username does not exist");
