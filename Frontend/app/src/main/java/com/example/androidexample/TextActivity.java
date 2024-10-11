@@ -192,7 +192,7 @@ public class TextActivity extends AppCompatActivity {
                 rejectButt.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
-                mainText.append("\nAI Usage: " + AIText.getText());
+                mainText.append("\nAI Response: " + AIText.getText());
                 content += "\nAI Response: " + AIText.getText().toString();
                 AIText.setText("");
             }
