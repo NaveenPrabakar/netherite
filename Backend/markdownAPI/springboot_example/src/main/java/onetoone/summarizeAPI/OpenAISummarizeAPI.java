@@ -55,16 +55,15 @@ public class OpenAISummarizeAPI{
     //GET method to retrive the times the user use openai api
     //front end giving the username or usergmail
     //need to tell front end to use a condition for post and put entity because diff API
-    @GetMapping("/getUsageAPICount/{userName}")
-    public Map<String, String>  getUsageAPICount(@PathVariable String userName) {
+    @GetMapping("/getUsageAPICount/{email}")
+    public Map<String, String>  getUsageAPICount(@PathVariable String email) {
 
         Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
-        signEntity temp = sign.findByUsername(userName);
+        signEntity temp = sign.findByEmail(email);
         Long userID = temp.getId();
 
-        System.out.println(userID);
 
         //use the userid for the apientity table to find the count
         summarizeAPIEntity temp2 = api.findByAIUserId(userID);
@@ -92,7 +91,7 @@ public class OpenAISummarizeAPI{
         Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
-        signEntity temp= sign.findByUsername(body.getUserName());
+        signEntity temp= sign.findByEmail(body.getemail());
         Long userID=temp.getId();
 
         //need to create the table entity
@@ -117,7 +116,7 @@ public class OpenAISummarizeAPI{
         Map<String, String> response = new HashMap<>();
 
         //need to go to signentity to find username in order to find userid
-        signEntity temp= sign.findByUsername(body.getUserName());
+        signEntity temp= sign.findByEmail(body.getemail());
         Long userID=temp.getId();
 
         //user the userid for the api table to find the count
@@ -146,12 +145,12 @@ public class OpenAISummarizeAPI{
     }
 
     // DELETE method to reset usage count after 24 hours
-    @DeleteMapping("/resetUsage/{userName}")
-    public Map<String, String> resetUsage(@PathVariable String userName) {
+    @DeleteMapping("/resetUsage/{email}")
+    public Map<String, String> resetUsage(@PathVariable String email) {
 
         Map<String, String> response = new HashMap<>();
 
-        signEntity user = sign.findByUsername(userName);
+        signEntity user = sign.findByEmail(email);
         Long userID = user.getId();
 
         //find the userentity and information

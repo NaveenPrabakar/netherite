@@ -2,12 +2,12 @@ package onetoone.summarizeAPI;
 
 public class AI{
 
-    private String userName;
+    private String email;
     private String prompt;
     private String content;
 
-    public AI(String userName, String prompt, String content){
-        this.userName = userName;
+    public AI(String email, String prompt, String content){
+        this.email = email;
         this.prompt = prompt;
         this.content = content;
     }
@@ -28,11 +28,11 @@ public class AI{
         this.content = content;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getemail() {
+        return email;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setemail(String userEmail) {
+        this.email = email;
     }
 }

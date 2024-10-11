@@ -56,7 +56,7 @@ public class edit{
     @PutMapping("/changeusername/{name}")
     public Map<String, String> ChangeUsername(@RequestBody logs l, @PathVariable String name){
         HashMap<String, String> response = new HashMap<>();
-        signEntity user = edits.findByEmail(l.getUsername());
+        signEntity user = edits.findByEmail(l.getemail());
 
 
 
@@ -89,7 +89,7 @@ public class edit{
     @PutMapping("/changepassword/{password}")
     public Map<String, String> ChangePassword(@RequestBody logs l, @PathVariable String password){
         HashMap<String, String> response = new HashMap<>();
-        signEntity user = edits.findByEmail(l.getUsername());
+        signEntity user = edits.findByEmail(l.getemail());
 
         System.out.println(password);
 
@@ -122,7 +122,7 @@ public class edit{
     @PutMapping("/changeemail/{email}")
     public Map<String, String> ChangeEmail(@RequestBody logs l, @PathVariable String email){
         HashMap<String, String> response = new HashMap<>();
-        signEntity user = edits.findByEmail(l.getUsername());
+        signEntity user = edits.findByEmail(l.getemail());
 
         if(user == null){
             response.put("response", "Your email or password is wrong");
@@ -143,9 +143,9 @@ public class edit{
 
     // DELETE EVERYTHING MUST BE DONE
     @DeleteMapping("/exterminateUser")
-    public Map<String, String> Exterminate(@RequestParam("username") String username, @RequestParam("password") String password){
+    public Map<String, String> Exterminate(@RequestParam("email") String email, @RequestParam("password") String password){
         HashMap<String, String> response = new HashMap<>();
-        signEntity user = edits.findByEmail(username);
+        signEntity user = edits.findByEmail(email);
 
         if(user == null){
             response.put("response", "Email is wrong");
