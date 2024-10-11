@@ -45,9 +45,9 @@ import io.noties.markwon.Markwon;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
-    private final String URL_AI_GET = "/OpenAIAPIuse/getUsageAPI/Count/";
+    private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
-    private final String URL_AI_DELETE = "..../getUsageAPI/deleteAIUser/";
+    private final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/"; // PUT IN A PATH VARIABLE
     private final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private Button back2main;
     private Button saveButt;
@@ -61,7 +61,7 @@ public class TextActivity extends AppCompatActivity {
     private String content = "";
     private JSONObject fileSystem;
     private JSONObject filePath;
-    private String username;
+    private String email;
     private String password;
     private String aiCount;
     @Override
@@ -103,9 +103,9 @@ public class TextActivity extends AppCompatActivity {
             try {
                 fileSystem = new JSONObject(extras.getString("FILESYSTEM"));
                 filePath = new JSONObject(extras.getString("PATH"));
-                username = extras.getString("USERNAME");
+                email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
-                Log.d("USERNAME", extras.getString("USERNAME"));
+                Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
                 Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
                 Log.d("PATH", extras.getString("PATH"));
@@ -141,7 +141,7 @@ public class TextActivity extends AppCompatActivity {
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(TextActivity.this, MainActivity.class);
                 intent.putExtra("FILESYSTEM", fileSystem.toString());
-                intent.putExtra("USERNAME", username);
+                intent.putExtra("EMAIL", email);
                 intent.putExtra("PASSWORD", password);
                 startActivity(intent);  // go to SignupActivity
             }
@@ -172,14 +172,7 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                if (fileName.getText().toString().isEmpty())
-                {
-                    System.out.println("file name is empty");
-                }
-                else
-                {
-                    summarizeString(content, "belle", "summarize", URL_AI_PUT);
-                }
+                TESTsummarizeString(content, email, "summarize", URL_AI_GET);
             }
         });
     }
@@ -202,12 +195,12 @@ public class TextActivity extends AppCompatActivity {
             builder.appendQueryParameter("fileName", fileName);
             builder.appendQueryParameter("content", content);
             builder.appendQueryParameter("json", fileSystem);
-            builder.appendQueryParameter("username", username);
+            builder.appendQueryParameter("email", email);
             builder.appendQueryParameter("password", password);
             String url = builder.build().toString();
 
             StringRequest stringRequest = new StringRequest(
-                    Request.Method.PUT,
+                    Request.Method.POST,
                     url,
                     new Response.Listener<String>() {
                         @Override
@@ -219,7 +212,7 @@ public class TextActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             // Handle any errors that occur during the request
-                            Log.e("Username", username);
+                            Log.e("Email", email);
 
                             Log.e("Volley Error", error.toString());
                         }
@@ -230,11 +223,74 @@ public class TextActivity extends AppCompatActivity {
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-    private void summarizeString(String contentToSummarize, String username, String prompt, String URL)
+    private void TESTsummarizeString(String contentToSummarize, String email, String prompt, String URL)
+    {
+
+        JsonObjectRequest summarizePost = new JsonObjectRequest (
+                Request.Method.GET,
+                URL + email,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("AI TEXT SHOULD LOOK LIKE", response.toString());
+                        try
+                        {
+                            aiCount = response.getString("reply");
+                            if (aiCount.equals("-1"))
+                            {
+                                summarizeString(Request.Method.POST, contentToSummarize, email, prompt, URL_AI_POST);
+                            }
+                            else
+                            {
+                                summarizeString(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
+                            }
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", error.toString());
+                        Log.e("Email", email);
+                        Log.e("Content", contentToSummarize);
+                        Log.e("Prompt", prompt);
+                    }
+                }
+        ) {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<String, String>();
+//                //headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
+//                //headers.put("Content-Type", "application/json");
+//                return headers;
+//            }
+
+            // This function?? i don't remember what the fuck it does
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("prompt", prompt);
+                params.put("content", contentToSummarize);
+                return params;
+            }
+        };
+
+        // Add the string request to the Volley Queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
+
+    }
+
+    private void summarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
     {
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("userName", username);
+            requestBody.put("email", email);
             requestBody.put("prompt", prompt);
             requestBody.put("content", contentToSummarize);
         } catch (Exception e) {
@@ -242,7 +298,7 @@ public class TextActivity extends AppCompatActivity {
         }
 
         JsonObjectRequest summarizePost = new JsonObjectRequest (
-                Request.Method.PUT,
+                method,
                 URL,
                 requestBody, // Pass body because its a post request
                 new Response.Listener<JSONObject>() {
@@ -264,7 +320,7 @@ public class TextActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", error.toString());
-                        Log.e("Username", username);
+                        Log.e("Email", email);
                         Log.e("Content", contentToSummarize);
                         Log.e("Prompt", prompt);
                     }
@@ -282,7 +338,7 @@ public class TextActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
+                params.put("email", email);
                 params.put("prompt", prompt);
                 params.put("content", contentToSummarize);
                 return params;

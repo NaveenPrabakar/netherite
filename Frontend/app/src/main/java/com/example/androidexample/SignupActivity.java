@@ -151,7 +151,7 @@ public class SignupActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                         Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                        intent.putExtra("USERNAME",username);
+                        intent.putExtra("EMAIL", email);
                         intent.putExtra("PASSWORD", password);
                         startActivity(intent);  // go to MainActivity with the key-value data
                     }
