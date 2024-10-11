@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private Boolean ApiStatus;
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchUsername";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +54,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 /* grab strings from user inputs */
-                String username = usernameEditText.getText().toString();
+                String email = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
                 /* when login button is pressed, use intent to switch to Login Activity */
 
-                makeJsonObjReq(username, password);
+                makeJsonObjReq(email, password);
 
 
             }
@@ -88,10 +88,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void makeJsonObjReq(String username, String password) {
+    private void makeJsonObjReq(String email, String password) {
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("username", username);
+            requestBody.put("email", email);
             requestBody.put("password", password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjGet = new JsonObjectRequest(
                 Request.Method.POST,
                 URL_JSON_OBJECT,
-                requestBody, // Pass null as the request body since it's a GET request
+                requestBody,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             if (resp.getString("response").equals("ok")){
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.putExtra("USERNAME", username);
+                                intent.putExtra("EMAIL", email);
                                 intent.putExtra("PASSWORD", password);
                                 intent.putExtra("FILESYSTEM", resp.toString());
                                 startActivity(intent);

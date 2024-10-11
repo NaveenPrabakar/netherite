@@ -75,7 +75,7 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("username", email);
+            requestBody.put("email", email);
             requestBody.put("password", new_password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,7 +93,7 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
                         try{
                             if (resp.has("responses")){
                                 Intent intent = new Intent(EnterForgetPasswordActivity.this, MainActivity.class);
-                                intent.putExtra("USERNAME", email);
+                                intent.putExtra("EMAIL", email);
                                 intent.putExtra("PASSWORD", new_password);
                                 startActivity(intent);
                             }
@@ -121,7 +121,7 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", email);
+                params.put("email", email);
                 return params;
             }
         };

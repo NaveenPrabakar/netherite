@@ -83,6 +83,7 @@ public class SignupActivity extends AppCompatActivity {
                     err_msg.setText("Username must be at least 4 characters");
                     return;
                 }
+                //java built in function to check if email is valid
                 if (email.indexOf('@') == -1){
                     err_msg.setText("Email must be an email");
                     return;
@@ -150,7 +151,7 @@ public class SignupActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                         Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                        intent.putExtra("USERNAME",username);
+                        intent.putExtra("EMAIL", email);
                         intent.putExtra("PASSWORD", password);
                         startActivity(intent);  // go to MainActivity with the key-value data
                     }

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button loginButt;
     private Button signupButt;
     private Button FileView;
-    private TextView usernameDisplay;
+    private TextView emailDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
     private Button settingsButt;
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private String fileSystem = "{\"root\": [] }";;
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
     private String username = "-1";
+    private String email = "-1";
     private String password = "-1";
 
     @Override
@@ -43,16 +44,17 @@ public class MainActivity extends AppCompatActivity {
         messageText = findViewById(R.id.main_msg);      // link to message textview in the Main activity XML
         messageText.setText("Hello World");
 
-        usernameDisplay = findViewById(R.id.usernameDisplay);
+        emailDisplay = findViewById(R.id.usernameDisplay);
         passwordDisplay = findViewById(R.id.passwordDisplay);
         FileView = findViewById(R.id.FileView);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if(extras != null){
-            username = extras.getString("USERNAME");
+            email = extras.getString("EMAIL");
+            //username = extras.getString("USERNAME");
             password = extras.getString("PASSWORD");
-            usernameDisplay.setText(username);
+            emailDisplay.setText(email);
             passwordDisplay.setText(password);
 
         }
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         FileView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                getFileSystem(username, password);
+                getFileSystem(email, password);
 
             }
         });
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("FILESYSTEM", fileSystem);
                 i.putExtra("PATH", "{\"path\": []}");
                 i.putExtra("CONTENT", "");
-                i.putExtra("USERNAME", username);
+                i.putExtra("EMAIL", email);
                 i.putExtra("PASSWORD", password);
                 startActivity(i);
             }
@@ -108,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void getFileSystem(String username, String password){
+    public void getFileSystem(String email, String password){
         Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-        builder.appendQueryParameter("username", username);
+        builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         String url = builder.build().toString();
 
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         fileSystem = response;
                         Intent i = new Intent(MainActivity.this, filesActivity.class);
                         i.putExtra("FILESYSTEM", fileSystem);
-                        i.putExtra("USERNAME", username);
+                        i.putExtra("EMAIL", email);
                         i.putExtra("PASSWORD", password);
                         startActivity(i);
                     }
