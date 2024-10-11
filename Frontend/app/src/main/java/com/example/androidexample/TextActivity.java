@@ -192,8 +192,9 @@ public class TextActivity extends AppCompatActivity {
                 rejectButt.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
-                mainText.append("\nAI Response: " + AIText.getText());
-                content += "\nAI Response: " + AIText.getText().toString();
+//                mainText.append("\nAI Response: " + AIText.getText());
+//                content += "\nAI Response: " + AIText.getText().toString();
+                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
                 AIText.setText("");
             }
         });
@@ -280,6 +281,7 @@ public class TextActivity extends AppCompatActivity {
                                     summarizeString(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
                                 }
                             } catch (JSONException e) {
+                                //AIText.setText("Error: " + e.toString());
                                 e.printStackTrace();
                             }
                         }
@@ -292,6 +294,7 @@ public class TextActivity extends AppCompatActivity {
                         Log.e("Email", email);
                         Log.e("Content", contentToSummarize);
                         Log.e("Prompt", prompt);
+                        //AIText.setText("Error: " + error.toString());
                     }
                 }
         ) {
@@ -345,6 +348,7 @@ public class TextActivity extends AppCompatActivity {
                         }
                         catch (JSONException e)
                         {
+                            //AIText.setText("Error: " + e.toString());
                             e.printStackTrace();
                         }
                     }
@@ -356,6 +360,7 @@ public class TextActivity extends AppCompatActivity {
                         Log.e("Email", email);
                         Log.e("Content", contentToSummarize);
                         Log.e("Prompt", prompt);
+                        //AIText.setText("Error: " + error.toString());
                     }
                 }
         ) {
