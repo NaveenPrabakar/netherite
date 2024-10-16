@@ -100,7 +100,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         Log.d("Change Password", response.toString());
                         JSONObject resp = response;
                         try {
-                            msgResponse.setText(resp.getString("Changing old password to new."));
+                            msgResponse.setText(resp.getString("response"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

@@ -87,7 +87,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
                         Log.d("Change Password", response.toString());
                         JSONObject resp = response;
                         try {
-                            msgResponse.setText(resp.getString("Changing old email to new."));
+                            msgResponse.setText(resp.getString("response"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

@@ -84,10 +84,10 @@ public class ChangeUsernameActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Change Password", response.toString());
+                        Log.d("Change Username", response.toString());
                         JSONObject resp = response;
                         try {
-                            msgResponse.setText(resp.getString("Changing old password to new."));
+                            msgResponse.setText(resp.getString("response"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -114,7 +114,7 @@ public class ChangeUsernameActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", email);
+                params.put("email", email);
                 params.put("password", password);
                 return params;
             }
