@@ -2,56 +2,117 @@
 
 <head>
   <title>Chat</title>
+  <style>
+    body {
+        background-color: black;
+        color: #00ff00; /* Neon green text */
+        font-family: "Courier New", Courier, monospace;
+    }
+
+    table {
+        width: 80%;
+        margin: auto;
+        border: 1px solid #00ff00;
+        background-color: #111; /* Darker background for table */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px #00ff00;
+    }
+
+    input[type="text"] {
+        background-color: black;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        padding: 5px;
+        border-radius: 5px;
+        width: 95%;
+    }
+
+    button {
+        background-color: black;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #00ff00;
+        color: black;
+    }
+
+    textarea {
+        background-color: black;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        width: 95%;
+        height: 200px;
+        padding: 10px;
+        border-radius: 5px;
+        resize: none;
+    }
+
+    ::placeholder {
+        color: #00ff00;
+    }
+
+    td {
+        text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-  <table>
-    <tr>
-      <td colspan="2">
-        <input type="text" id="username" placeholder="Username" />
-        <button type="button" onclick="connect();">Connect</button>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <textarea readonly="true" rows="10" cols="80" id="log"></textarea>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="text" size="51" id="msg" placeholder="Message" />
-        <button type="button" onclick="send();">Send</button>
-      </td>
-    </tr>
-  </table>
+<table>
+  <tr>
+    <td colspan="2">
+      <input type="text" id="username" placeholder="Username" />
+      <button type="button" onclick="connect();">Connect</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <textarea readonly="true" rows="10" cols="80" id="log"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="text" size="51" id="msg" placeholder="Message" />
+      <button type="button" onclick="send();">Send</button>
+    </td>
+  </tr>
+</table>
 </body>
-<script> 
-var ws;
+<script>
+  var ws;
 
-function connect() {
-    var username = document.getElementById("username").value;
-    var url = "ws://localhost:8080/chat/" + username;
+  function connect() {
+      var username = document.getElementById("username").value;
+      var url = "ws://localhost:8080/chat/" + username;
 
-    ws = new WebSocket(url);
+      ws = new WebSocket(url);
 
-    ws.onmessage = function(event) {
-        console.log(event.data);
+      ws.onmessage = function (event) {
+          console.log(event.data);
 
-        // display on browser
-        var log = document.getElementById("log");
-        log.innerHTML += event.data + "\n";
-    };
+          // display on browser
+          var log = document.getElementById("log");
+          log.innerHTML += event.data + "\n";
+      };
 
-    ws.onopen = function(event) {
-        var log = document.getElementById("log");
-        log.innerHTML += "Connected to " + event.currentTarget.url + "\n";
-    };
-}
+      ws.onopen = function (event) {
+          var log = document.getElementById("log");
+          log.innerHTML += "Connected to " + event.currentTarget.url + "\n";
+      };
+  }
 
-function send() {  // this is how to send messages
-    var content = document.getElementById("msg").value;
-    ws.send(content);
-}
+  function send() {  // this is how to send messages
+      var content = document.getElementById("msg").value;
+      ws.send(content);
+  }
 </script>
 
 </html>
+
