@@ -42,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
@@ -66,6 +68,7 @@ public class TextActivity extends AppCompatActivity {
     private String email;
     private String password;
     private String aiCount;
+    private MarkwonEditor markwonEditor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +82,7 @@ public class TextActivity extends AppCompatActivity {
         editButton = findViewById(R.id.editButton);
 
         markwon = Markwon.create(this);
+        markwonEditor = MarkwonEditor.create(markwon);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -93,6 +97,8 @@ public class TextActivity extends AppCompatActivity {
                     content = charSequence.toString();
                     updateParsedOutput(content);
                     Log.d("Text changed", content);
+
+
             }
 
             @Override
