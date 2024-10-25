@@ -16,9 +16,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WebSocketListener {
 
     private TextView messageText;
     private Button loginButt;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     // the whole ass system full of paths
     private String fileSystem = "{\"root\": [] }";;
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
-    private String username = "-1";
+    private String username = "testRun";
     private String email = "-1";
     private String password = "-1";
 
@@ -50,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
+        String serverUrl = "ws://10.0.2.2:8080/chat/" + username;
+        WebSocketManager.getInstance().connectWebSocket(serverUrl);
+
         if(extras != null){
             email = extras.getString("EMAIL");
             //username = extras.getString("USERNAME");
@@ -142,5 +148,25 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+
     }
 }
