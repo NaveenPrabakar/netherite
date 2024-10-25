@@ -5,29 +5,16 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Pair;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -35,11 +22,6 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import com.android.volley.toolbox.Volley;
-
-import org.commonmark.node.Node;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,17 +39,18 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private Button acceptButt;
     private Button rejectButt;
     private EditText mainText;
-    private Button editButton;
     private EditText editor;
     private EditText fileName;
     private TextView AIText;
     private Markwon markwon;
-    private String content = "";
+    private String content = " ";
     private JSONObject fileSystem;
     private JSONObject filePath;
     private String email;
     private String password;
+    private String username;
     private String aiCount;
+    private TextWatcher textWatcher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,29 +62,30 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         AIText = findViewById(R.id.AITextView);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
-        editButton = findViewById(R.id.editButton);
 
         markwon = Markwon.create(this);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        editor.addTextChangedListener(new TextWatcher() {
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                    content = charSequence.toString();
-                    WebSocketManager.getInstance().sendMessage(updateParsedOutput(content));
-                    Log.d("Text changed", content);
+                content = charSequence.toString();
+                WebSocketManager.getInstance().sendMessage(updateParsedOutput(content));
+                Log.d("Text changed", content);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
-        });
+        };
+
+        editor.addTextChangedListener(textWatcher);
         editor.setAlpha(0f);
 
         if(extras != null) {
@@ -110,6 +94,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 filePath = new JSONObject(extras.getString("PATH"));
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
+                username = extras.getString("USERNAME");
                 Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
                 Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
@@ -429,6 +414,70 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+    public int getCorrectCursorLocation(String before, String after, int cursorPos){
+        int lenBefore = before.length()-1;
+        int lenAfter = after.length()-1;
+
+        Boolean isAddition = false;
+
+        if (lenBefore == lenAfter){
+            return cursorPos;
+        }
+
+        // Find the first position where the two strings differ
+        int minLen = Math.min(lenBefore, lenAfter);
+        int diffIndex = minLen; // Default to end if no early difference is found
+
+        // Loop to find the first differing index
+        for (int i = 0; i < minLen; i++) {
+            char beforeC = before.charAt(i);
+            char afterC = after.charAt(i);
+            if (before.charAt(i) != after.charAt(i)) {
+                diffIndex = i;
+                break;
+            }
+        }
+
+        // Determine what was added or removed
+        String changeType;
+        String diffChars;
+        if (lenAfter > lenBefore) {
+            isAddition = true;
+        } else if (lenAfter < lenBefore) {
+            isAddition = false;
+        }
+
+        int lenChanged = lenAfter - lenBefore;
+
+        if (isAddition) {
+            // If the change is an addition
+            if (diffIndex > cursorPos) {
+                // Do nothing if the addition is after the cursor
+                return cursorPos;
+            } else if (diffIndex < cursorPos) {
+                // Increment the cursor if the addition is before the cursor
+                return cursorPos + lenChanged;
+            } else {
+                // Do nothing if the addition is at the cursor
+                return cursorPos;
+            }
+        } else {
+            // If the change is a deletion
+            if (diffIndex > cursorPos) {
+                // Do nothing if the deletion is after the cursor
+                return cursorPos;
+            } else if (diffIndex < cursorPos) {
+                // Decrement the cursor by the length of the removed part
+                return cursorPos - lenChanged;
+            } else {
+                // Decrement by 1 if the deletion is at the cursor
+                return cursorPos + 1;
+            }
+        }
+
+
+    }
+
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.d("WebSocket", "Connected");
@@ -437,8 +486,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     @Override
     public void onWebSocketMessage(String message) {
         Log.d("WebSocket", "Received message: " + message);
-        editor.removeTextChangedListener();
-        editor.setText(message);
+        String messagePar = message.substring(9, message.length());
+        editor.removeTextChangedListener(textWatcher);
+        int newCursorPosition = Math.max(getCorrectCursorLocation(content, messagePar, editor.getSelectionStart()), 0);
+        editor.setText(messagePar);
+        editor.setSelection(newCursorPosition);
+        updateParsedOutput(messagePar);
+        editor.addTextChangedListener(textWatcher);
     }
 
     @Override

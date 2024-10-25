@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                         i.putExtra("FILESYSTEM", fileSystem);
                         i.putExtra("EMAIL", email);
                         i.putExtra("PASSWORD", password);
+                        i.putExtra("USERNAME", username);
                         startActivity(i);
                     }
                 },
