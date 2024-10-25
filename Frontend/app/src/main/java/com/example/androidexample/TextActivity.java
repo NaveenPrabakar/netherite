@@ -32,6 +32,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +47,7 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
 import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
-public class TextActivity extends AppCompatActivity {
+public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
@@ -74,6 +76,7 @@ public class TextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
+        WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
@@ -95,7 +98,7 @@ public class TextActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                     content = charSequence.toString();
-                    updateParsedOutput(content);
+                    WebSocketManager.getInstance().sendMessage(updateParsedOutput(content));
                     Log.d("Text changed", content);
 
 
@@ -221,7 +224,7 @@ public class TextActivity extends AppCompatActivity {
         });
     }
 
-    private void updateParsedOutput(String markdown) {
+    private String updateParsedOutput(String markdown) {
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
             if (markdown.charAt(i) == '\n'){
@@ -232,6 +235,7 @@ public class TextActivity extends AppCompatActivity {
             }
         }
         markwon.setMarkdown(mainText, contentParsed);
+        return contentParsed;
     }
 
     public void sendFileString(String fileName, String fileSystem){
@@ -429,5 +433,27 @@ public class TextActivity extends AppCompatActivity {
         Log.d("File System", fileSystem.toString());
         return fileSystem;
 
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Log.d("WebSocket", "Connected");
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+        Log.d("WebSocket", "Received message: " + message);
+        editor.removeTextChangedListener();
+        editor.setText(message);
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+        Log.d("WebSocket", "Closed");
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+        Log.e("WebSocket", "Error", ex);
     }
 }
