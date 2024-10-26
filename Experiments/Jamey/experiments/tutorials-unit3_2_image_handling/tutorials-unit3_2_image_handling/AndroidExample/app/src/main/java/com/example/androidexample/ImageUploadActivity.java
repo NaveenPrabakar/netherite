@@ -73,6 +73,7 @@ public class ImageUploadActivity extends AppCompatActivity {
                 response -> {
                     // Handle response
                     Toast.makeText(getApplicationContext(), response,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Image Uploaded! (New Change)",Toast.LENGTH_LONG).show();
                     Log.d("Upload", "Response: " + response);
                 },
                 error -> {
