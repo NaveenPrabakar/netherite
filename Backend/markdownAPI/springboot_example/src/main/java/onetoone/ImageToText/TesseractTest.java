@@ -13,35 +13,70 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import onetoone.loginAPI.loginRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import onetoone.signupAPI.signEntity;
 import java.util.*;
+import java.nio.file.StandardCopyOption;
+
 
 @RestController
 public class TesseractTest {
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Service is up!");
-    }
+    @Autowired
+    private loginRepository logs;
 
+    @Autowired
+    private ImageRepository im;
+
+    /**
+     * The following method works well for printed images
+     *
+     * @param image
+     * @return response
+     */
 
     @PostMapping("/extractText")
-    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity<String> extractText(@RequestParam("email") String email, @RequestParam("image") MultipartFile image) {
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
         tesseract.setDatapath("C:\\Program Files\\Tesseract-OCR\\tessdata");
         tesseract.setLanguage("eng");
-        tesseract.setConfigs(Arrays.asList("tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
+        tesseract.setPageSegMode(3);
+
+        signEntity s = logs.findByEmail(email);
 
 
         try {
-            // Save the MultipartFile to a temporary file
-            Path tempFile = Files.createTempFile("ocr-", ".png");
+            String originalFilename = image.getOriginalFilename();
+
+            if (originalFilename == null) {
+                return ResponseEntity.badRequest().body("Invalid file name.");
+            }
+
+
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            Path tempFile = Files.createTempFile("ocr-", extension);
             image.transferTo(tempFile.toFile());
 
-            // Use Tesseract to extract text
+
             String result = tesseract.doOCR(tempFile.toFile());
 
-            // Clean up: delete the temporary file
+            ImageEntity i = new ImageEntity (s, originalFilename);
+            im.save(i);
+
+            String uploadDir = "uploaded_images/";
+
+            File uploadDirFile = new File(uploadDir);
+
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs(); // Create the directory if it doesn't exist
+            }
+
+            File savedImageFile = new File(uploadDir + originalFilename);
+            Files.copy(tempFile, savedImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+
             Files.delete(tempFile);
 
             return ResponseEntity.ok(result);
