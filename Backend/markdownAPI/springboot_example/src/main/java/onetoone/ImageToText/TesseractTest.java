@@ -38,9 +38,10 @@ public class TesseractTest {
 
     @PostMapping("/extractText")
     public ResponseEntity<String> extractText(@RequestParam("email") String email, @RequestParam("image") MultipartFile image) {
+
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("C:\\Program Files\\Tesseract-OCR\\tessdata");
+        tesseract.setDatapath("/usr/share/tesseract/tessdata");
         tesseract.setLanguage("eng");
         tesseract.setPageSegMode(3);
 
