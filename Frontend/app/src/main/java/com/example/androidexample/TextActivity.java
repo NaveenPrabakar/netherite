@@ -468,7 +468,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 return cursorPos;
             } else if (diffIndex < cursorPos) {
                 // Decrement the cursor by the length of the removed part
-                return cursorPos - lenChanged;
+                return cursorPos + lenChanged;
             } else {
                 // Decrement by 1 if the deletion is at the cursor
                 return cursorPos + 1;
@@ -485,14 +485,16 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-        Log.d("WebSocket", "Received message: " + message);
-        String messagePar = message.substring(9, message.length());
-        editor.removeTextChangedListener(textWatcher);
-        int newCursorPosition = Math.max(getCorrectCursorLocation(content, messagePar, editor.getSelectionStart()), 0);
-        editor.setText(messagePar);
-        editor.setSelection(newCursorPosition);
-        updateParsedOutput(messagePar);
-        editor.addTextChangedListener(textWatcher);
+        runOnUiThread(() ->{
+            Log.d("WebSocket", "Received message: " + message);
+            editor.removeTextChangedListener(textWatcher);
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+            editor.setText(message);
+            content = message;
+            editor.setSelection(newCursorPosition);
+            updateParsedOutput(message);
+            editor.addTextChangedListener(textWatcher);
+        });
     }
 
     @Override
