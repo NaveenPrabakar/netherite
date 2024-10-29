@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
@@ -71,6 +72,9 @@ public class TextActivity extends AppCompatActivity {
     private String password;
     private String aiCount;
     private MarkwonEditor markwonEditor;
+
+    private Node testNode;
+    private Spanned markdown;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +90,16 @@ public class TextActivity extends AppCompatActivity {
 
         markwon = Markwon.create(this);
         markwonEditor = MarkwonEditor.create(markwon);
+        testNode = markwon.parse("# Hello, World!");
+        markdown = markwon.render(testNode);
+
+        //editor.setText(markdown);
+
+        //setMarkdown requires a String, not a Spanned.
+        //setParsedMarkdown requires a Spanned, not a String.
+        markwon.setParsedMarkdown(editor, markdown);
+        markwon.setParsedMarkdown(mainText, markdown);
+        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

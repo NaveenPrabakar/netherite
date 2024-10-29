@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         makeFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Intent i = new Intent(MainActivity.this, TextActivity.class);
+                Intent i = new Intent(MainActivity.this, EditorDisplayActivity.class);
                 i.putExtra("FILESYSTEM", fileSystem);
                 i.putExtra("PATH", "{\"path\": []}");
                 i.putExtra("CONTENT", "");

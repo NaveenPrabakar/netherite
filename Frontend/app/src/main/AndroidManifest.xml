@@ -34,6 +34,7 @@
         <activity android:name=".VerificationActivity" />
         <activity android:name=".EnterForgetPasswordActivity" />
         <activity android:name=".ExterminateUserActivity" />
+        <activity android:name=".EditorDisplayActivity" />
 
 
         <activity
