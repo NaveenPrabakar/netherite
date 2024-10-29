@@ -60,6 +60,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
+        AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
 
@@ -165,6 +166,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
                 acceptButt.setVisibility(View.VISIBLE);
                 rejectButt.setVisibility(View.VISIBLE);
+                AIText.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
             }
         });
@@ -178,6 +180,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             {
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
+                AIText.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
 //                mainText.append("\nAI Response: " + AIText.getText());
@@ -418,64 +421,47 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         int lenBefore = before.length()-1;
         int lenAfter = after.length()-1;
 
-        Boolean isAddition = false;
-
-        if (lenBefore == lenAfter){
-            return cursorPos;
-        }
-
         // Find the first position where the two strings differ
         int minLen = Math.min(lenBefore, lenAfter);
         int diffIndex = minLen; // Default to end if no early difference is found
 
-        // Loop to find the first differing index
-        for (int i = 0; i < minLen; i++) {
-            char beforeC = before.charAt(i);
-            char afterC = after.charAt(i);
-            if (before.charAt(i) != after.charAt(i)) {
-                diffIndex = i;
-                break;
+
+        if (lenBefore != lenAfter){
+            // Loop to find the first differing index
+            for (int i = 0; i < minLen; i++) {
+                if (before.charAt(i) != after.charAt(i)) {
+                    diffIndex = i;
+                    break;
+                }
+            }
+            int lenChanged = lenAfter - lenBefore;
+            if (lenAfter > lenBefore) {
+                // If the change is an addition
+                if (diffIndex > cursorPos) {
+                    // Do nothing if the addition is after the cursor
+                    return cursorPos;
+                } else if (diffIndex < cursorPos) {
+                    // Increment the cursor if the addition is before the cursor
+                    return cursorPos + lenChanged;
+                } else {
+                    // Do nothing if the addition is at the cursor
+                    return cursorPos;
+                }
+            } else if (lenAfter < lenBefore) {
+                // If the change is a deletion
+                if (diffIndex > cursorPos) {
+                    // Do nothing if the deletion is after the cursor
+                    return cursorPos;
+                } else if (diffIndex < cursorPos) {
+                    // Decrement the cursor by the length of the removed part
+                    return cursorPos + lenChanged;
+                } else {
+                    // Decrement by 1 if the deletion is at the cursor
+                    return cursorPos + 1;
+                }
             }
         }
-
-        // Determine what was added or removed
-        String changeType;
-        String diffChars;
-        if (lenAfter > lenBefore) {
-            isAddition = true;
-        } else if (lenAfter < lenBefore) {
-            isAddition = false;
-        }
-
-        int lenChanged = lenAfter - lenBefore;
-
-        if (isAddition) {
-            // If the change is an addition
-            if (diffIndex > cursorPos) {
-                // Do nothing if the addition is after the cursor
-                return cursorPos;
-            } else if (diffIndex < cursorPos) {
-                // Increment the cursor if the addition is before the cursor
-                return cursorPos + lenChanged;
-            } else {
-                // Do nothing if the addition is at the cursor
-                return cursorPos;
-            }
-        } else {
-            // If the change is a deletion
-            if (diffIndex > cursorPos) {
-                // Do nothing if the deletion is after the cursor
-                return cursorPos;
-            } else if (diffIndex < cursorPos) {
-                // Decrement the cursor by the length of the removed part
-                return cursorPos + lenChanged;
-            } else {
-                // Decrement by 1 if the deletion is at the cursor
-                return cursorPos + 1;
-            }
-        }
-
-
+        return cursorPos;
     }
 
     @Override
