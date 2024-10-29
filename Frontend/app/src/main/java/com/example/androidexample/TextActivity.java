@@ -87,7 +87,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         };
 
         editor.addTextChangedListener(textWatcher);
-        editor.setAlpha(0f);
+        mainText.setAlpha(0f);
 
         if(extras != null) {
             try {
@@ -418,14 +418,37 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
-        int lenBefore = before.length()-1;
-        int lenAfter = after.length()-1;
-
+        int lenBefore = before.length();
+        int lenAfter = after.length();
         // Find the first position where the two strings differ
         int minLen = Math.min(lenBefore, lenAfter);
         int diffIndex = minLen; // Default to end if no early difference is found
 
+        /*
+        Find the differing index, and then find how much it differs
+        if the lenChanged is positive, that means there is an addition to the text,
+        and if it is negative then there is a deletion
 
+        in an Addition
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we add to the cursor the length of the change
+        if it is equal (we add to where the cursor is) we do nothing, to prevent the user's
+        cursor to be changed by external input
+
+        in a Deletion
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we subtract from the cursor the length of the change
+        if it is equal we (we delete to the cursor where the user is adding)
+        we subtract from the cursor the length of the change
+
+        In short the only thing that matters is if we add before the cursor,
+        and if we delete on the cursor and before the cursor
+
+         */
         if (lenBefore != lenAfter){
             // Loop to find the first differing index
             for (int i = 0; i < minLen; i++) {
@@ -435,29 +458,17 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 }
             }
             int lenChanged = lenAfter - lenBefore;
-            if (lenAfter > lenBefore) {
+            if (lenChanged > 0) {
                 // If the change is an addition
-                if (diffIndex > cursorPos) {
-                    // Do nothing if the addition is after the cursor
-                    return cursorPos;
-                } else if (diffIndex < cursorPos) {
+                if (diffIndex < cursorPos) {
                     // Increment the cursor if the addition is before the cursor
                     return cursorPos + lenChanged;
-                } else {
-                    // Do nothing if the addition is at the cursor
-                    return cursorPos;
                 }
-            } else if (lenAfter < lenBefore) {
+            } else if (lenChanged < 0) {
                 // If the change is a deletion
-                if (diffIndex > cursorPos) {
-                    // Do nothing if the deletion is after the cursor
-                    return cursorPos;
-                } else if (diffIndex < cursorPos) {
+                if (diffIndex <= cursorPos) {
                     // Decrement the cursor by the length of the removed part
                     return cursorPos + lenChanged;
-                } else {
-                    // Decrement by 1 if the deletion is at the cursor
-                    return cursorPos + 1;
                 }
             }
         }
@@ -478,6 +489,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             editor.setText(message);
             content = message;
             editor.setSelection(newCursorPosition);
+            editor.getSelectionStart();
             updateParsedOutput(message);
             editor.addTextChangedListener(textWatcher);
         });
