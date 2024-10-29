@@ -421,7 +421,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         /*
         This method runs assuming the all the changes happens before or after the cursor
         not both at the same time.
-
+        Because the each user have 1 cursor, they can only update in 1 place each broadcast
+        Therefore it is impossible to have a change be both before and after the cursor
          */
         int lenBefore = before.length();
         int lenAfter = after.length();
