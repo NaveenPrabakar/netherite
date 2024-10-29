@@ -418,6 +418,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
+        /*
+        This method runs assuming the all the changes happens before or after the cursor
+        not both at the same time.
+
+         */
         int lenBefore = before.length();
         int lenAfter = after.length();
         // Find the first position where the two strings differ
@@ -488,8 +493,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
             editor.setText(message);
             content = message;
-            editor.setSelection(newCursorPosition);
-            editor.getSelectionStart();
+            if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
+                editor.setSelection(newCursorPosition);
+            }
+            else if (newCursorPosition < 0) { editor.setSelection(0); }
+            else { editor.setSelection(editor.getText().length());}
             updateParsedOutput(message);
             editor.addTextChangedListener(textWatcher);
         });
