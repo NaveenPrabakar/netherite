@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.ResponseEntity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +21,8 @@ import java.nio.file.StandardCopyOption;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 
 
 
