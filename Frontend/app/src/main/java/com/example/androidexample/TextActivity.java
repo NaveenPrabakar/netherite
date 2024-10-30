@@ -60,6 +60,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
+        AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
 
@@ -86,7 +87,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         };
 
         editor.addTextChangedListener(textWatcher);
-        editor.setAlpha(0f);
+        mainText.setAlpha(0f);
 
         if(extras != null) {
             try {
@@ -165,6 +166,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
                 acceptButt.setVisibility(View.VISIBLE);
                 rejectButt.setVisibility(View.VISIBLE);
+                AIText.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
             }
         });
@@ -178,6 +180,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             {
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
+                AIText.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
 //                mainText.append("\nAI Response: " + AIText.getText());
@@ -415,67 +418,67 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
-        int lenBefore = before.length()-1;
-        int lenAfter = after.length()-1;
-
-        Boolean isAddition = false;
-
-        if (lenBefore == lenAfter){
-            return cursorPos;
-        }
-
+        /*
+        This method runs assuming the all the changes happens before or after the cursor
+        not both at the same time.
+        Because the each user have 1 cursor, they can only update in 1 place each broadcast
+        Therefore it is impossible to have a change be both before and after the cursor
+         */
+        int lenBefore = before.length();
+        int lenAfter = after.length();
         // Find the first position where the two strings differ
         int minLen = Math.min(lenBefore, lenAfter);
         int diffIndex = minLen; // Default to end if no early difference is found
 
-        // Loop to find the first differing index
-        for (int i = 0; i < minLen; i++) {
-            char beforeC = before.charAt(i);
-            char afterC = after.charAt(i);
-            if (before.charAt(i) != after.charAt(i)) {
-                diffIndex = i;
-                break;
+        /*
+        Find the differing index, and then find how much it differs
+        if the lenChanged is positive, that means there is an addition to the text,
+        and if it is negative then there is a deletion
+
+        in an Addition
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we add to the cursor the length of the change
+        if it is equal (we add to where the cursor is) we do nothing, to prevent the user's
+        cursor to be changed by external input
+
+        in a Deletion
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we subtract from the cursor the length of the change
+        if it is equal we (we delete to the cursor where the user is adding)
+        we subtract from the cursor the length of the change
+
+        In short the only thing that matters is if we add before the cursor,
+        and if we delete on the cursor and before the cursor
+
+         */
+        if (lenBefore != lenAfter){
+            // Loop to find the first differing index
+            for (int i = 0; i < minLen; i++) {
+                if (before.charAt(i) != after.charAt(i)) {
+                    diffIndex = i;
+                    break;
+                }
+            }
+            int lenChanged = lenAfter - lenBefore;
+            if (lenChanged > 0) {
+                // If the change is an addition
+                if (diffIndex < cursorPos) {
+                    // Increment the cursor if the addition is before the cursor
+                    return cursorPos + lenChanged;
+                }
+            } else if (lenChanged < 0) {
+                // If the change is a deletion
+                if (diffIndex <= cursorPos) {
+                    // Decrement the cursor by the length of the removed part
+                    return cursorPos + lenChanged;
+                }
             }
         }
-
-        // Determine what was added or removed
-        String changeType;
-        String diffChars;
-        if (lenAfter > lenBefore) {
-            isAddition = true;
-        } else if (lenAfter < lenBefore) {
-            isAddition = false;
-        }
-
-        int lenChanged = lenAfter - lenBefore;
-
-        if (isAddition) {
-            // If the change is an addition
-            if (diffIndex > cursorPos) {
-                // Do nothing if the addition is after the cursor
-                return cursorPos;
-            } else if (diffIndex < cursorPos) {
-                // Increment the cursor if the addition is before the cursor
-                return cursorPos + lenChanged;
-            } else {
-                // Do nothing if the addition is at the cursor
-                return cursorPos;
-            }
-        } else {
-            // If the change is a deletion
-            if (diffIndex > cursorPos) {
-                // Do nothing if the deletion is after the cursor
-                return cursorPos;
-            } else if (diffIndex < cursorPos) {
-                // Decrement the cursor by the length of the removed part
-                return cursorPos - lenChanged;
-            } else {
-                // Decrement by 1 if the deletion is at the cursor
-                return cursorPos + 1;
-            }
-        }
-
-
+        return cursorPos;
     }
 
     @Override
@@ -485,14 +488,20 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-        Log.d("WebSocket", "Received message: " + message);
-        String messagePar = message.substring(9, message.length());
-        editor.removeTextChangedListener(textWatcher);
-        int newCursorPosition = Math.max(getCorrectCursorLocation(content, messagePar, editor.getSelectionStart()), 0);
-        editor.setText(messagePar);
-        editor.setSelection(newCursorPosition);
-        updateParsedOutput(messagePar);
-        editor.addTextChangedListener(textWatcher);
+        runOnUiThread(() ->{
+            Log.d("WebSocket", "Received message: " + message);
+            editor.removeTextChangedListener(textWatcher);
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+            editor.setText(message);
+            content = message;
+            if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
+                editor.setSelection(newCursorPosition);
+            }
+            else if (newCursorPosition < 0) { editor.setSelection(0); }
+            else { editor.setSelection(editor.getText().length());}
+            updateParsedOutput(message);
+            editor.addTextChangedListener(textWatcher);
+        });
     }
 
     @Override
