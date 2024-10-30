@@ -129,7 +129,51 @@ public class TextActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
             }
         });
+        acceptButt = findViewById(R.id.acceptButt);
+        rejectButt = findViewById(R.id.rejectButt);
 
+        acceptButt.setVisibility(View.INVISIBLE);
+        acceptButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
+//                mainText.append("\nAI Response: " + AIText.getText());
+//                content += "\nAI Response: " + AIText.getText().toString();
+                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
+                AIText.setText("");
+            }
+        });
+
+        rejectButt.setVisibility(View.INVISIBLE);
+        rejectButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                AIText.setText("");
+            }
+        });
+        summarizeButt = findViewById(R.id.summarizeButt);
+        summarizeButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+        });
 
         editor.setAlpha(0f);
 
@@ -151,6 +195,13 @@ public class TextActivity extends AppCompatActivity {
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
+                }
+                if (extras.getString("IMAGETEXT") != null)
+                {
+                    AIText.setText(extras.getString("IMAGETEXT"));
+                    acceptButt.setVisibility(View.VISIBLE);
+                    rejectButt.setVisibility(View.VISIBLE);
+                    summarizeButt.setVisibility(View.INVISIBLE);
                 }
 
             } catch (JSONException e) {
@@ -200,51 +251,7 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        summarizeButt = findViewById(R.id.summarizeButt);
-        summarizeButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
-                acceptButt.setVisibility(View.VISIBLE);
-                rejectButt.setVisibility(View.VISIBLE);
-                summarizeButt.setVisibility(View.INVISIBLE);
-            }
-        });
 
-        acceptButt = findViewById(R.id.acceptButt);
-        acceptButt.setVisibility(View.INVISIBLE);
-        acceptButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                acceptButt.setVisibility(View.INVISIBLE);
-                rejectButt.setVisibility(View.INVISIBLE);
-                summarizeButt.setVisibility(View.VISIBLE);
-                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
-//                mainText.append("\nAI Response: " + AIText.getText());
-//                content += "\nAI Response: " + AIText.getText().toString();
-                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
-                AIText.setText("");
-            }
-        });
-
-        rejectButt = findViewById(R.id.rejectButt);
-        rejectButt.setVisibility(View.INVISIBLE);
-        rejectButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
-                acceptButt.setVisibility(View.INVISIBLE);
-                rejectButt.setVisibility(View.INVISIBLE);
-                summarizeButt.setVisibility(View.VISIBLE);
-                AIText.setText("");
-            }
-        });
     }
 
     private String updateParsedOutput(String markdown) {

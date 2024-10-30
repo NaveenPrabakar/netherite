@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button loginButt;
     private Button signupButt;
     private Button FileView;
+    private Button OCRButt;
     private TextView emailDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         makeFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Intent i = new Intent(MainActivity.this, EditorDisplayActivity.class);
+                Intent i = new Intent(MainActivity.this, TextActivity.class);
                 i.putExtra("FILESYSTEM", fileSystem);
                 i.putExtra("PATH", "{\"path\": []}");
                 i.putExtra("CONTENT", "");
@@ -114,6 +115,18 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
+        OCRButt = findViewById(R.id.OCRButt);
+        OCRButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, OCRActivity.class);
+                i.putExtra("FILESYSTEM", fileSystem);
+                i.putExtra("PATH", "{\"path\": []}");
+                i.putExtra("EMAIL", email);
+                i.putExtra("PASSWORD", password);
+                startActivity(i);
+            }
+        });
     }
 
     public void getFileSystem(String email, String password){
