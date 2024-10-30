@@ -42,14 +42,14 @@ public class TesseractTest {
      * @return response
      */
 
-    @PostMapping("/extractText")
-    public ResponseEntity<String> extractText(@RequestParam("email") String email, @RequestParam("image") MultipartFile image, @RequestParam("lang") String lang) {
+    @PostMapping("/extractText/{email}/{language}")
+    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
         tesseract.setDatapath("/usr/share/tesseract/tessdata");
 
-        tesseract.setLanguage(lang.substring(0,3));
+        tesseract.setLanguage(language.substring(0,3));
         tesseract.setPageSegMode(3);
 
         signEntity s = logs.findByEmail(email);
@@ -86,6 +86,8 @@ public class TesseractTest {
 
 
             Files.delete(tempFile);
+
+            System.out.println("Result: " + result);
 
             return ResponseEntity.ok(result);
 
