@@ -42,12 +42,13 @@ public class TesseractTest {
      */
 
     @PostMapping("/extractText")
-    public ResponseEntity<String> extractText(@RequestParam("email") String email, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<String> extractText(@RequestParam("email") String email, @RequestParam("image") MultipartFile image, @RequestParam("lang") String lang) {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
         tesseract.setDatapath("/usr/share/tesseract/tessdata");
-        tesseract.setLanguage("eng");
+
+        tesseract.setLanguage(lang.substring(0,3));
         tesseract.setPageSegMode(3);
 
         signEntity s = logs.findByEmail(email);
