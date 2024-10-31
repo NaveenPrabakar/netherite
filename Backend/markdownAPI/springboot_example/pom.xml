@@ -88,6 +88,25 @@
       <version>4.1.1</version>
     </dependency>
 
+    <!-- Jackson Databind for JSON processing -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <!--org.apache.http.entity.mime in speechtotextcontroller-->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version> <!-- or latest version compatible with your setup -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.13</version> <!-- or latest version compatible with your setup -->
+    </dependency>
+
   </dependencies>
 
   <build>
