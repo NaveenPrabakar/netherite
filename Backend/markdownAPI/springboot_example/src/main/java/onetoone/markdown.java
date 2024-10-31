@@ -51,14 +51,14 @@ public class markdown {
      * The method saves a file to the approriate directory
      *
      * @param fileName -- Name of the file
-     * @param content -- content of the file
-     * @param json -- directory of the file
+     * @param content  -- content of the file
+     * @param json     -- directory of the file
      * @param username -- email
      * @param password -- password
      * @return A successful response
      */
     @PostMapping("/upload")
-    public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json,  @RequestParam("email") String email, @RequestParam("password") String password) {
+    public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json, @RequestParam("email") String email, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
         try {
 
@@ -68,7 +68,7 @@ public class markdown {
 
             signEntity user = logs.findByEmail(email);
 
-            if(user == null){
+            if (user == null) {
                 response.put("response", "user does not exist");
 
                 return response;
@@ -76,10 +76,9 @@ public class markdown {
 
             String path = j.getSystem(user.getId());
 
-            if(path != null){
+            if (path != null) {
                 j.updatepath(user.getId(), json);
-            }
-            else{
+            } else {
 
                 JsonEntity je = new JsonEntity(json, user.getId());
                 j.save(je);
@@ -90,7 +89,7 @@ public class markdown {
 
             FileEntity temp = fileRepository.findByFileName(fileName);
 
-            if(temp == null){
+            if (temp == null) {
                 FileEntity fileEntity = new FileEntity(fileName, user.getId());
                 fileRepository.save(fileEntity);
             }
@@ -107,18 +106,18 @@ public class markdown {
     /**
      * The Get mapping grabs the contents of a certain file
      *
-     * @param email -- email
+     * @param email    -- email
      * @param password --password
      * @param fileName -- name of file requested
      * @return -- the contents of the file
      */
     @GetMapping("/pull")
-    public String pull(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("fileName") String fileName){
+    public String pull(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("fileName") String fileName) {
 
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
         signEntity user = logs.findByEmail(email);
 
-        if(fileEntity == null){
+        if (fileEntity == null) {
             return "response: file does not exist";
         }
 
@@ -139,18 +138,19 @@ public class markdown {
 
     /**
      * The method grabs the User's associated Json path
-     * @param email -- email of the user
+     *
+     * @param email    -- email of the user
      * @param password -- password of the user
      * @return the Json path
      */
     @GetMapping("/system")
-    public String system(@RequestParam("email") String email, @RequestParam("password") String password){
+    public String system(@RequestParam("email") String email, @RequestParam("password") String password) {
         signEntity user = logs.findByEmail(email);
 
         System.out.println(email);
         System.out.println(password);
 
-        if(user == null){
+        if (user == null) {
             return "User does not exist";
         }
 
@@ -159,37 +159,48 @@ public class markdown {
         return path;
     }
 
+    @PutMapping("/update")
+    public String updates(@RequestParam("email") String email, @RequestParam("json") String json) {
+
+        signEntity user = logs.findByEmail(email);
+
+        j.updatepath(user.getId(), json);
+
+        return "Update is done";
+
+    }
+
+
     @DeleteMapping("/deleteFile")
-    public Map<String, String> delete(@RequestParam("email") String email, @RequestParam("fileName") String fileName, @RequestParam("json") String json){
+    public Map<String, String> delete(@RequestParam("email") String email, @RequestParam("fileName") String fileName, @RequestParam("json") String json) {
         signEntity user = logs.findByEmail(email);
         HashMap<String, String> response = new HashMap<>();
 
         System.out.println(fileName);
 
-        if(user == null){
+        if (user == null) {
             response.put("response", "this user does not exist");
             return response;
         }
 
         FileEntity file = fileRepository.findByFileName(fileName);
-        if(file == null){
+        if (file == null) {
             response.put("response", "the file does not exist");
             return response;
         }
 
         Path filePath = location.resolve(fileName);
 
-        if(user.getId() == file.getId()){
+        if (user.getId() == file.getId()) {
             fileRepository.deleteByFileName(fileName); //deletes the file from the table
             j.updatepath(user.getId(), json);
             response.put("response", "The file was deleted");
 
 
-            if(Files.exists(filePath)){//Deletes the file from the springboot_server
-                try{
+            if (Files.exists(filePath)) {//Deletes the file from the springboot_server
+                try {
                     Files.delete(filePath);
-                }
-                catch(IOException e){
+                } catch (IOException e) {
                     response.put("response", "file was not found");
                     return response;
 
@@ -199,7 +210,8 @@ public class markdown {
             return response;
         }
 
-        response.put("response","the file was not deleted.");
+        response.put("response", "the file was not deleted.");
         return response;
     }
 }
+
