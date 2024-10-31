@@ -1,5 +1,6 @@
 package com.example.androidexample;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
+    private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private String fileSystem =  "{\"root\": []}";
     // path is hard coded. make a path lmao. make it dynamic
     // when i click a file or a folder, it should update the path.
@@ -35,9 +37,12 @@ public class filesActivity extends AppCompatActivity {
     private String password;
     private String username;
     private String content;
+    private Button goback;
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
+    LinearLayout fileLayout;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +65,40 @@ public class filesActivity extends AppCompatActivity {
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
             }
         }
+        goback = findViewById(R.id.goback);
+        goback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    JSONObject base = new JSONObject(path);
+                    JSONArray pathArray = base.getJSONArray("path");
+                    pathArray.remove(pathArray.length()-1);
+                    currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
+                    String currFolder = pathArray.get(pathArray.length()-1).toString();
+                    path = base.toString();
+                    fileLayout.removeAllViewsInLayout();
+                    runOnUiThread(()->{
+                        try {
+                            createFolderWithFiles(fileLayout, currFolder, new JSONArray(currentArray) );
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    Log.d("Current Array", currentArray);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                ;
+            }
+        });
+
+
 
         rootLayout = findViewById(R.id.rootLayout);
-        createUI(rootLayout);
+        runOnUiThread(()->{
+            createUI(rootLayout);
+        });
+
     }
     private void createUI(LinearLayout parentLayout) {
         Button newFolder = new Button(this);
@@ -79,8 +115,11 @@ public class filesActivity extends AppCompatActivity {
                 Log.d("New Folder", "New Folder clicked: " + newFolderName.getText().toString());
                 try {
                     currentArray = newFolder(currentArray, fileSystem, newFolderName.getText().toString());
-                    parentLayout.removeAllViewsInLayout();
-                    createUI(parentLayout);
+                    rootLayout.removeAllViewsInLayout();
+                    runOnUiThread(()->{
+                        createUI(rootLayout);
+                    });
+                    folderUpdate(fileSystem);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -90,12 +129,19 @@ public class filesActivity extends AppCompatActivity {
         parentLayout.addView(newFolderName);
         parentLayout.addView(newFolder);
         try{
-            LinearLayout fileLayout = new LinearLayout(this);
+            fileLayout = new LinearLayout(this);
             fileLayout.setOrientation(LinearLayout.VERTICAL);
             parentLayout.addView(fileLayout);
             JSONObject currObj = new JSONObject(currentArray);
             String key = currObj.keys().next();
-            createFolderWithFiles(fileLayout, key, currObj.getJSONArray(key));
+            runOnUiThread(()->{
+                try {
+                    createFolderWithFiles(fileLayout, key, currObj.getJSONArray(key));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -203,8 +249,14 @@ public class filesActivity extends AppCompatActivity {
                                 pathArray.put(nestedKey);
                                 path = pathJS.toString();
                                 Log.d("PATH", path);
+                                runOnUiThread(()->{
+                                    try {
+                                        createFolderWithFiles(fileLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
 
-                                createFolderWithFiles(parentLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }
@@ -306,7 +358,16 @@ public class filesActivity extends AppCompatActivity {
                             JSONObject jsObj = new JSONObject(newFileSystem);
                             Log.d("JSON OBJECT", jsObj.toString());
                             fileSystem = newFileSystem;
-                            createFolderWithFiles(rootLayout, "root", jsObj.getJSONArray("root"));
+                            runOnUiThread(()->{
+                                try {
+                                    JSONObject base = new JSONObject(path);
+                                    JSONArray pathArray = base.getJSONArray("path");
+                                    String currFolder = pathArray.get(pathArray.length()-1).toString();
+                                    createFolderWithFiles(fileLayout, currFolder, new JSONArray(currentArray) );
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -388,7 +449,57 @@ public class filesActivity extends AppCompatActivity {
         return currentArrayJS.toString();
     }
 
-    public void addItemToPath(String currentPath, String fileName){
+    public JSONArray goToPath(String currentPath, String fileSystem) throws JSONException {
+        JSONArray pathArray = new JSONArray(currentPath);
+        JSONObject fileSystemJS = new JSONObject(fileSystem);
+        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
+        pathArray.remove(0);
 
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = (String) pathArray.get(i);
+            for (int j = 0; j < currArrayJS.length(); j++) {
+                Object item = currArrayJS.get(j);
+                if (item instanceof JSONObject){
+                    JSONObject itemJs = (JSONObject) item;
+                    String internalKey = itemJs.keys().next();
+                    if (internalKey.equals(key)){
+                        currArrayJS = itemJs.getJSONArray(internalKey);
+                        break;
+                    }
+                }
+            }
+        }
+        return currArrayJS;
     };
+
+    public void folderUpdate(String fileSystem){
+        Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
+        builder.appendQueryParameter("json", fileSystem);
+        builder.appendQueryParameter("email", email);
+        String url = builder.build().toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Email", email);
+                        Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
 }
