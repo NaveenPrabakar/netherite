@@ -11,6 +11,11 @@ import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
 import onetoone.editProfile.editRepository;
 import onetoone.FileEntity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import java.util.Set;
+import java.util.*;
 
 @Entity
 public class AccessEntity{
@@ -30,13 +35,27 @@ public class AccessEntity{
     @JoinColumn(name = "access_id", referencedColumnName = "id")
     private signEntity access;
 
+    @ManyToMany
+    @JoinTable(
+            name = "file_access", // Name of the join table
+            joinColumns = @JoinColumn(name = "access_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+
+    private Set<FileEntity> files = new HashSet<>();
+
     public AccessEntity(){
 
     }
 
     public AccessEntity(signEntity sign, FileEntity file, signEntity access){
         this.sign = sign;
-        this.file = file;
         this.access = access;
+        this.file = file;
+        this.files.add(file);
+    }
+
+    public Set<FileEntity> getFiles() {
+        return files;
     }
 }

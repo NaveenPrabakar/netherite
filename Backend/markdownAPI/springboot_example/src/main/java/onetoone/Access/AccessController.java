@@ -55,6 +55,8 @@ public class AccessController{
         AccessEntity a = new AccessEntity(sign, file, sign2);
         access.save(a);
 
+        file.addAccessEntity(a);
+
         return ResponseEntity.ok("The file was shared");
     }
 
