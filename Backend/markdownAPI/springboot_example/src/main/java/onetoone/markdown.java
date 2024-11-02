@@ -209,7 +209,6 @@ public class markdown {
             }
             return response;
         }
-
         response.put("response", "the file was not deleted.");
         return response;
     }
