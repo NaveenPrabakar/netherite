@@ -140,6 +140,20 @@ public class TesseractTest {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @GetMapping("/getImageNamesByUser/{email}")
+    public ResponseEntity<List<String>> getImageNamesByUser(@PathVariable String email) {
+
+        signEntity user = logs.findByEmail(email);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<String> imageNames = im.findImageNamesByUser(user);
+
+        return ResponseEntity.ok(imageNames);
+    }
 }
 
 
