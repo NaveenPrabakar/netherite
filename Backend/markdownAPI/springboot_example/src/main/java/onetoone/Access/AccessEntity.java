@@ -38,8 +38,8 @@ public class AccessEntity{
     @ManyToMany
     @JoinTable(
             name = "file_access", // Name of the join table
-            joinColumns = @JoinColumn(name = "access_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id")
+            joinColumns = @JoinColumn(name = "access_id", referencedColumnName = "access_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id", referencedColumnName = "id")
     )
 
     private Set<FileEntity> files = new HashSet<>();

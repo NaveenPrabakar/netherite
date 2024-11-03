@@ -34,6 +34,9 @@ public class AccessController{
     @Autowired
     private AccessRepository access;
 
+    @Autowired
+    private FileAccess fileAccessService;
+
     @PostMapping("/new")
     public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
@@ -83,6 +86,13 @@ public class AccessController{
         return ResponseEntity.ok(names);
 
 
+    }
+
+    @GetMapping("/filenames/{email}")
+    public List<String> getFileNamesByAccessId(@PathVariable String email) {
+
+        signEntity user = logs.findByEmail(email);
+        return fileAccessService.getFileNamesByAccessId(user.getId());
     }
 
 

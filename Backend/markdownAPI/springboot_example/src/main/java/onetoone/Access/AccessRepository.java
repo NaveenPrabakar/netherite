@@ -14,4 +14,7 @@ public interface AccessRepository extends JpaRepository<AccessEntity, Long> {
 
     @Query("SELECT a.access.username FROM AccessEntity a WHERE a.file = :file AND a.sign = :owner")
     List<String> sent(@Param("file") FileEntity file, @Param("owner") signEntity owner);
+
+    @Query("SELECT f.fileName FROM AccessEntity a JOIN a.files f WHERE a.access.id = :accessId")
+    List<String> findFileNamesByAccessId(Long accessId);
 }
