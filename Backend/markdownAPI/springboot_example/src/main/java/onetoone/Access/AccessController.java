@@ -37,8 +37,6 @@ public class AccessController{
     @PostMapping("/new")
     public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
-        HashMap<String, String> response = new HashMap<>();
-
         signEntity sign2 = logs.findByEmail(toUser);
         signEntity sign = logs.findByEmail(fromUser);
 
@@ -58,6 +56,33 @@ public class AccessController{
         file.addAccessEntity(a);
 
         return ResponseEntity.ok("The file was shared");
+    }
+
+    /**
+     * Returns a list of people the user shared the file with
+     * @param email
+     * @param fileName
+     * @return
+     */
+    @GetMapping("/sent")
+    public ResponseEntity<List<String>> sent(@RequestParam("email") String email, @RequestParam("fileName") String fileName){
+
+        signEntity user = logs.findByEmail(email);
+        FileEntity file = files.findByFileName(fileName);
+
+        List<String> error = new ArrayList<>();
+
+        if(file == null || user == null) {
+
+            error.add("the user or file does not exist");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        List<String> names = access.sent(file, user);
+
+        return ResponseEntity.ok(names);
+
+
     }
 
 

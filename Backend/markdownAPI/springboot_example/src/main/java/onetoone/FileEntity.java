@@ -38,6 +38,10 @@ public class FileEntity {
         return userID;
     }
 
+    public Long getfileId(){
+        return id;
+    }
+
     public Set<AccessEntity> getAccessEntities() {
         return accessEntities;
     }
