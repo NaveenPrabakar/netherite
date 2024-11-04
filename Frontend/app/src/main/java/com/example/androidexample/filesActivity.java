@@ -42,7 +42,7 @@ public class filesActivity extends AppCompatActivity {
     private Button goback;
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
-    LinearLayout fileLayout;
+    private LinearLayout fileLayout;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -83,7 +83,7 @@ public class filesActivity extends AppCompatActivity {
                         fileLayout.removeAllViewsInLayout();
                         runOnUiThread(()->{
                             try {
-                                createFolderWithFiles(fileLayout, currFolder, new JSONArray(currentArray) );
+                                createFolderWithFiles(fileLayout, currFolder, new JSONObject(currentArray).getJSONArray(currFolder) );
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }
@@ -283,7 +283,7 @@ public class filesActivity extends AppCompatActivity {
                                 JSONObject currentJS = new JSONObject(currentArray);
                                 JSONArray currentArr = currentJS.getJSONArray(currentJS.keys().next());
                                 for (int i = 0; i < currentArr.length(); i++){
-                                    if (currentArr.get(i).equals(String.valueOf(item))){
+                                    if (currentArr.get(i).toString().equals(String.valueOf(item))){
                                         currentArr.remove(i);
                                     }
                                 }
@@ -394,7 +394,7 @@ public class filesActivity extends AppCompatActivity {
         JSONArray rootArray = (JSONArray) root;
         int index =-1;
         for(int i = 0; i < rootArray.length(); i++){
-            if (rootArray.get(i) instanceof String && rootArray.get(i).equals(fileName)){
+            if (rootArray.get(i).toString().equals(fileName)){
                 index = i;
             }
         }
@@ -404,6 +404,94 @@ public class filesActivity extends AppCompatActivity {
         Log.d("File System", fileSystem.toString());
         return fileSystem;
 
+    }
+
+    public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
+        JSONObject currentArrayJS = new JSONObject(currentArray);
+        String newKey = currentArrayJS.keys().next();
+
+        JSONArray newRoot = currentArrayJS.getJSONArray(newKey);
+        newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
+
+        JSONObject pathJS = new JSONObject(this.path);
+        JSONArray pathArray = pathJS.getJSONArray("path");
+        JSONObject fileSystemJS = new JSONObject(fileSystem);
+        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
+        pathArray.remove(0);
+
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = (String) pathArray.get(i);
+            for (int j = 0; j < currArrayJS.length(); j++) {
+                Object item = currArrayJS.get(j);
+                if (item instanceof JSONObject){
+                    JSONObject itemJs = (JSONObject) item;
+                    String internalKey = itemJs.keys().next();
+                    if (internalKey.equals(key)){
+                        currArrayJS = itemJs.getJSONArray(internalKey);
+                        break;
+                    }
+                }
+            }
+        }
+        currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        this.fileSystem = fileSystemJS.toString();
+        Log.d("JSON ARRAY", currentArray.toString());
+        return currentArrayJS.toString();
+    }
+
+    public JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
+        JSONArray pathArray = new JSONArray(currentPath);
+        JSONObject fileSystemJS = new JSONObject(fileSystem);
+        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
+        String internalKey = pathArray.getString(0);
+        pathArray.remove(0);
+
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = (String) pathArray.get(i);
+            for (int j = 0; j < currArrayJS.length(); j++) {
+                Object item = currArrayJS.get(j);
+                if (item instanceof JSONObject){
+                    JSONObject itemJs = (JSONObject) item;
+                    internalKey = itemJs.keys().next();
+                    if (internalKey.equals(key)){
+                        currArrayJS = itemJs.getJSONArray(internalKey);
+                        break;
+                    }
+                }
+            }
+        }
+        return new JSONObject('{' + internalKey + " : " + currArrayJS.toString() + '}');
+    };
+
+    public void folderUpdate(String fileSystem){
+        Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
+        builder.appendQueryParameter("json", fileSystem);
+        builder.appendQueryParameter("email", email);
+        String url = builder.build().toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Email", email);
+                        Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     public void deleteFile(String fileName, String newFileSystem){
@@ -476,93 +564,6 @@ public class filesActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
-                    }
-                }
-        );
-
-        // Adding request to request queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-    }
-
-    public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
-        JSONObject currentArrayJS = new JSONObject(currentArray);
-        String newKey = currentArrayJS.keys().next();
-
-        JSONArray newRoot = currentArrayJS.getJSONArray(newKey);
-        newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
-
-        JSONObject pathJS = new JSONObject(this.path);
-        JSONArray pathArray = pathJS.getJSONArray("path");
-        JSONObject fileSystemJS = new JSONObject(fileSystem);
-        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
-        pathArray.remove(0);
-
-        for (int i = 0; i < pathArray.length(); i++) {
-            String key = (String) pathArray.get(i);
-            for (int j = 0; j < currArrayJS.length(); j++) {
-                Object item = currArrayJS.get(j);
-                if (item instanceof JSONObject){
-                    JSONObject itemJs = (JSONObject) item;
-                    String internalKey = itemJs.keys().next();
-                    if (internalKey.equals(key)){
-                        currArrayJS = itemJs.getJSONArray(internalKey);
-                        break;
-                    }
-                }
-            }
-        }
-        currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
-        this.fileSystem = fileSystemJS.toString();
-        Log.d("JSON ARRAY", currentArray.toString());
-        return currentArrayJS.toString();
-    }
-
-    public JSONArray goToPath(String currentPath, String fileSystem) throws JSONException {
-        JSONArray pathArray = new JSONArray(currentPath);
-        JSONObject fileSystemJS = new JSONObject(fileSystem);
-        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
-        pathArray.remove(0);
-
-        for (int i = 0; i < pathArray.length(); i++) {
-            String key = (String) pathArray.get(i);
-            for (int j = 0; j < currArrayJS.length(); j++) {
-                Object item = currArrayJS.get(j);
-                if (item instanceof JSONObject){
-                    JSONObject itemJs = (JSONObject) item;
-                    String internalKey = itemJs.keys().next();
-                    if (internalKey.equals(key)){
-                        currArrayJS = itemJs.getJSONArray(internalKey);
-                        break;
-                    }
-                }
-            }
-        }
-        return currArrayJS;
-    };
-
-    public void folderUpdate(String fileSystem){
-        Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
-        builder.appendQueryParameter("json", fileSystem);
-        builder.appendQueryParameter("email", email);
-        String url = builder.build().toString();
-
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.PUT,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Volley Response", response);
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
-                        Log.e("Email", email);
-                        Log.e("Volley Error", error.toString());
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
