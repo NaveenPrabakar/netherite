@@ -48,20 +48,23 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
 import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
-public class TextActivity extends AppCompatActivity {
+public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
     private final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/"; // PUT IN A PATH VARIABLE
     private final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
+    private final String URI_AI_WEBSOCKET = "http://coms-3090-068.class.las.iastate.edu:8080/chat/";
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
     private Button acceptButt;
+    private Button aiInputButt;
     private Button rejectButt;
     private EditText mainText;
     private EditText editor;
     private EditText fileName;
+    private EditText AIInputText;
     private TextView AIText;
     private Markwon markwon;
     private String content = " ";
@@ -88,6 +91,21 @@ public class TextActivity extends AppCompatActivity {
         AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
+        aiInputButt = findViewById(R.id.AIInputButt);
+        AIInputText = findViewById(R.id.AIChatBar);
+
+        aiInputButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!AIInputText.getText().toString().isEmpty())
+                {
+                    String msg = AIInputText.getText().toString();
+                    TESTsummarizeString(Request.Method.GET, msg, email, "summarize", URL_AI_GET);
+
+                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(AIText.getText().toString());
+                }
+            }
+        });
 
         markwon = Markwon.create(this);
         markwonEditor = MarkwonEditor.create(markwon);
@@ -121,7 +139,6 @@ public class TextActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
             }
         };
-
         editor.addTextChangedListener(textWatcher);
         mainText.setAlpha(0f);
 
@@ -420,6 +437,32 @@ public class TextActivity extends AppCompatActivity {
 
         // Add the string request to the Volley Queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
+    }
+
+    private void AIWebSocketCode(int method, String contentToSummarize, String email, String prompt, String URL)
+    {
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Email", email);
+
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        );
+
+        // Add the string request to the Volley Queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 

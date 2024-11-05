@@ -1,7 +1,8 @@
 package com.example.androidexample;
 
 import android.content.Context;
-
+import android.text.Editable;
+import android.util.Log;
 
 
 public class AISingletonUser {
@@ -9,6 +10,8 @@ public class AISingletonUser {
     private String email;
     private String password;
     private static Context context;
+
+    // Link is /chat/ {username}
 
     private AISingletonUser(Context ctx) {
         context = ctx;
@@ -21,8 +24,9 @@ public class AISingletonUser {
         return instance;
     }
 
-    public void broadcast(String message)
+    public void AIMessage(String content)
     {
-
+        WebSocketManager.getInstance().sendMessage(content);
+        Log.d("AI Message", content);
     }
 }
