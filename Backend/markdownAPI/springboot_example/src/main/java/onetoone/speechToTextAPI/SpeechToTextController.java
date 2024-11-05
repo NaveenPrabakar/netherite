@@ -80,6 +80,9 @@ public class SpeechToTextController{
             "mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"
     };
 
+    //global variable
+    String uploadDir = "upload_Speech/";
+
     //post-CreateUser
     //front end passing parameter (email and file)
     //parameter need to have the user email in order to access to sign entity to find the userid
@@ -124,7 +127,7 @@ public class SpeechToTextController{
             Path tempFile = Files.createTempFile(fileType, extension);
 
             // define the main upload directory
-            String uploadDir = "upload_speech/";
+            //String uploadDir = "upload_Speech/";
             File uploadDirFile = new File(uploadDir);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
@@ -248,7 +251,7 @@ public class SpeechToTextController{
             Long userID = temp.getId();
             //SpeechUserEntity speechUserEntity = api.findBySpeechUserId(userID);
 
-            String uploadDir = "upload_Speech/";
+            //String uploadDir = "upload_speech/";
             String filePath = uploadDir + userID + "/" + speechFile;
             File file = new File(filePath);
 
