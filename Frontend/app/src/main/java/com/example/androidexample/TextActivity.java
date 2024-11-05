@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
@@ -32,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +45,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 public class TextActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
@@ -66,11 +71,16 @@ public class TextActivity extends AppCompatActivity {
     private String email;
     private String password;
     private String aiCount;
+    private MarkwonEditor markwonEditor;
+
+    private Node testNode;
+    private Spanned markdown;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
+        //WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
@@ -79,9 +89,29 @@ public class TextActivity extends AppCompatActivity {
         editButton = findViewById(R.id.editButton);
 
         markwon = Markwon.create(this);
+        markwonEditor = MarkwonEditor.create(markwon);
+        testNode = markwon.parse("# Hello, World!");
+        markdown = markwon.render(testNode);
+
+        //editor.setText(markdown);
+
+        //setMarkdown requires a String, not a Spanned.
+        //setParsedMarkdown requires a Spanned, not a String.
+        markwon.setParsedMarkdown(editor, markdown);
+        markwon.setParsedMarkdown(mainText, markdown);
+        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
+//        editor.addTextChangedListener(new MarkwonEditorTextWatcher() {
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+
+        editor.addTextChangedListener(MarkwonEditorTextWatcher.withProcess(markwonEditor));
 
         editor.addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,15 +120,61 @@ public class TextActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                    content = charSequence.toString();
-                    updateParsedOutput(content);
-                    Log.d("Text changed", content);
+                content = charSequence.toString();
+                updateParsedOutput(content);
+                Log.d("Text changed", content);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
+        acceptButt = findViewById(R.id.acceptButt);
+        rejectButt = findViewById(R.id.rejectButt);
+
+        acceptButt.setVisibility(View.INVISIBLE);
+        acceptButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
+//                mainText.append("\nAI Response: " + AIText.getText());
+//                content += "\nAI Response: " + AIText.getText().toString();
+                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
+                AIText.setText("");
+            }
+        });
+
+        rejectButt.setVisibility(View.INVISIBLE);
+        rejectButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                AIText.setText("");
+            }
+        });
+        summarizeButt = findViewById(R.id.summarizeButt);
+        summarizeButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+        });
+
         editor.setAlpha(0f);
 
         if(extras != null) {
@@ -119,6 +195,13 @@ public class TextActivity extends AppCompatActivity {
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
+                }
+                if (extras.getString("IMAGETEXT") != null)
+                {
+                    AIText.setText(extras.getString("IMAGETEXT"));
+                    acceptButt.setVisibility(View.VISIBLE);
+                    rejectButt.setVisibility(View.VISIBLE);
+                    summarizeButt.setVisibility(View.INVISIBLE);
                 }
 
             } catch (JSONException e) {
@@ -200,23 +283,10 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        rejectButt = findViewById(R.id.rejectButt);
-        rejectButt.setVisibility(View.INVISIBLE);
-        rejectButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
-                acceptButt.setVisibility(View.INVISIBLE);
-                rejectButt.setVisibility(View.INVISIBLE);
-                summarizeButt.setVisibility(View.VISIBLE);
-                AIText.setText("");
-            }
-        });
     }
 
-    private void updateParsedOutput(String markdown) {
+    private String updateParsedOutput(String markdown) {
+        // USE MARKWONEDIT TEXT WATCHER TO REPLACE THIS ?
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
             if (markdown.charAt(i) == '\n'){
@@ -227,6 +297,7 @@ public class TextActivity extends AppCompatActivity {
             }
         }
         markwon.setMarkdown(mainText, contentParsed);
+        return contentParsed;
     }
 
     public void sendFileString(String fileName, String fileSystem){
@@ -425,4 +496,26 @@ public class TextActivity extends AppCompatActivity {
         return fileSystem;
 
     }
+//
+//    @Override
+//    public void onWebSocketOpen(ServerHandshake handshakedata) {
+//        Log.d("WebSocket", "Connected");
+//    }
+//
+//    @Override
+//    public void onWebSocketMessage(String message) {
+//        Log.d("WebSocket", "Received message: " + message);
+//        editor.removeTextChangedListener(message);
+//        editor.setText(message);
+//    }
+//
+//    @Override
+//    public void onWebSocketClose(int code, String reason, boolean remote) {
+//        Log.d("WebSocket", "Closed");
+//    }
+//
+//    @Override
+//    public void onWebSocketError(Exception ex) {
+//        Log.e("WebSocket", "Error", ex);
+//    }
 }
