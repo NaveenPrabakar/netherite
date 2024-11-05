@@ -175,6 +175,7 @@ public class TextActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                AISingletonUser.getInstance(getApplicationContext()).broadcast(content); // Have an AI User and he'll send a message through chat websocket
                 acceptButt.setVisibility(View.VISIBLE);
                 rejectButt.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
