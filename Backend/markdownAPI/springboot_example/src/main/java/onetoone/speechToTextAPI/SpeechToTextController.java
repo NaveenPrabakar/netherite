@@ -120,21 +120,25 @@ public class SpeechToTextController{
             String extension = fileName.substring(fileName.lastIndexOf("."));
             String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
 
-            //create the path with both of the info (file name and file type)
+            //create the path with both of the info (file type and file name)
             Path tempFile = Files.createTempFile(fileType, extension);
 
-            //add the file using the path
-            file.transferTo(tempFile.toFile());
-
-            //save the file into the server
-            //folder named "upload_speech" in server
-            String uploadDir = "upload_Speech/";
+            // define the main upload directory
+            String uploadDir = "upload_speech/";
             File uploadDirFile = new File(uploadDir);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
             }
 
-            File savedSpeechFile = new File(uploadDir + fileName);
+            // create subdirectory for the user ID inside the upload_speech folder
+            String userSubDirPath = uploadDir + userID + "/";
+            File userSubDir = new File(userSubDirPath);
+            if (!userSubDir.exists()) {
+                userSubDir.mkdirs();
+            }
+
+            // create the full path for saving the file inside the user ID directory
+            File savedSpeechFile = new File(userSubDirPath + fileName);
             Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             //delete the path
@@ -236,13 +240,6 @@ public class SpeechToTextController{
     @GetMapping("/getSpeechFile")
     public ResponseEntity<Resource> getSpeechFile(@RequestParam("email") String email, @RequestParam("speechFile") String speechFile) {
         try {
-            String uploadDir = "upload_Speech/";
-            File file = new File(uploadDir + speechFile);
-
-            if (!file.exists()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
-            }
-
             signEntity temp = sign.findByEmail(email);
             if (temp == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null for user not found
@@ -250,6 +247,15 @@ public class SpeechToTextController{
 
             Long userID = temp.getId();
             //SpeechUserEntity speechUserEntity = api.findBySpeechUserId(userID);
+
+            String uploadDir = "upload_Speech/";
+            String filePath = uploadDir + userID + "/" + speechFile;
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
+            }
+
             SpeechUserEntity speechUserEntity = api.findBySpeechFile(speechFile);
 
             if (speechUserEntity != null) {
