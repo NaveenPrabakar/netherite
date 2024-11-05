@@ -223,6 +223,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     String message = queue.take(); // Blocks until an item is available
                     // Process the item here
                     Log.d("THREADSSS","Processing item: " + message);
+                    editor.setEnabled(false);
                     int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
 
                     runOnUiThread(() ->{
@@ -240,6 +241,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                         updateParsedOutput(editor.getText().toString());
                         editor.addTextChangedListener(textWatcher);
                     });
+                    editor.setEnabled(true);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
