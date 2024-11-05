@@ -132,12 +132,17 @@ public class filesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("New Folder", "New Folder clicked: " + newFolderName.getText().toString());
                 try {
-                    currentArray = newFolder(currentArray, fileSystem, newFolderName.getText().toString());
-                    rootLayout.removeAllViewsInLayout();
-                    runOnUiThread(()->{
-                        createUI(rootLayout);
-                    });
-                    folderUpdate(fileSystem);
+                    String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
+                    if (!correctedFolderName.isEmpty()){
+                        currentArray = newFolder(currentArray, fileSystem, correctedFolderName);
+                        rootLayout.removeAllViewsInLayout();
+                        runOnUiThread(()->{
+                            createUI(rootLayout);
+                        });
+                        folderUpdate(fileSystem);
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Folder Name is invalid", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -236,7 +241,7 @@ public class filesActivity extends AppCompatActivity {
                 shareTo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        shareToUser(username.toString(), toUser.getText().toString(), String.valueOf(item));
+                        shareToUser(email.toString(), toUser.getText().toString(), String.valueOf(item));
                     }
                 });
 
@@ -564,11 +569,19 @@ public class filesActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "File Share Failed", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
 
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    public String newFolderCheck(String newFileName){
+        if (newFileName.matches("[A-Za-z0-9]+")){
+            return "";
+        }
+        return newFileName;
     }
 }
