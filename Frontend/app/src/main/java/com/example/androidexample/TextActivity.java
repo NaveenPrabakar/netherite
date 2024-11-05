@@ -226,6 +226,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     // Process the item here
                     Log.d("THREADSSS","Processing item: " + message);
 
+                    final InputFilter[] originalFilters = editor.getFilters();
                     final InputFilter blockInputFilter = new BlockInputFilter();
                     editor.setFilters(new InputFilter[]{blockInputFilter});
 
@@ -245,7 +246,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
                         updateParsedOutput(editor.getText().toString());
                         editor.addTextChangedListener(textWatcher);
-                        editor.setFilters(null);
+                        editor.setFilters(originalFilters);
 
                     });
                 }
