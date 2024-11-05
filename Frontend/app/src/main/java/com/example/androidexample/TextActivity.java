@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -26,6 +28,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 
 public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
@@ -51,10 +58,14 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String username;
     private String aiCount;
     private TextWatcher textWatcher;
+    BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
+
 
         WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
 
@@ -77,12 +88,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 content = charSequence.toString();
-                WebSocketManager.getInstance().sendMessage(updateParsedOutput(content));
+                updateParsedOutput(content);
                 Log.d("Text changed", content);
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                WebSocketManager.getInstance().sendMessage(content);
             }
         };
 
@@ -204,6 +216,37 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 AIText.setText("");
             }
         });
+
+        Thread consumerThread = new Thread(() -> {
+            try {
+                while (true) {
+                    String message = queue.take(); // Blocks until an item is available
+                    // Process the item here
+                    Log.d("THREADSSS","Processing item: " + message);
+                    int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+                    runOnUiThread(() ->{
+                        Log.d("WebSocket", "Received message: " + message);
+                        editor.removeTextChangedListener(textWatcher);
+                        editor.setText(message);
+                        content = message;
+
+                        if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
+                            editor.setSelection(newCursorPosition);
+                        }
+                        else if (newCursorPosition < 0) { editor.setSelection(0); }
+                        else { editor.setSelection(editor.getText().length());}
+
+                        updateParsedOutput(editor.getText().toString());
+                        editor.addTextChangedListener(textWatcher);
+                    });
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupted status
+            }
+        });
+
+        consumerThread.start();
     }
 
     private String updateParsedOutput(String markdown) {
@@ -417,6 +460,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
         /*
         This method runs assuming the all the changes happens before or after the cursor
@@ -488,20 +532,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-        runOnUiThread(() ->{
-            Log.d("WebSocket", "Received message: " + message);
-            editor.removeTextChangedListener(textWatcher);
-            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
-            editor.setText(message);
-            content = message;
-            if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
-                editor.setSelection(newCursorPosition);
-            }
-            else if (newCursorPosition < 0) { editor.setSelection(0); }
-            else { editor.setSelection(editor.getText().length());}
-            updateParsedOutput(message);
-            editor.addTextChangedListener(textWatcher);
-        });
+
+        try {
+            queue.put(message);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
