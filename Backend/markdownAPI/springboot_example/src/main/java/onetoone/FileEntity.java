@@ -42,6 +42,10 @@ public class FileEntity {
         return id;
     }
 
+    public String getName(){
+        return fileName;
+    }
+
     public Set<AccessEntity> getAccessEntities() {
         return accessEntities;
     }

@@ -29,7 +29,7 @@ public class signEntity{
     public signEntity(String username, String email, String password){
         this.username = username;
         this.email = email;
-        this.password = this.password;
+        this.password = password;
     }
 
     public signEntity(){

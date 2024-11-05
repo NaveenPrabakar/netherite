@@ -21,16 +21,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
-
-import onetoone.signupAPI.signEntity;
 import onetoone.signupAPI.signup;
+import onetoone.signupAPI.signRepository;
 import onetoone.loginAPI.logs;
 import onetoone.loginAPI.loginRepository;
 import java.util.*;
+import onetoone.signupAPI.signEntity;  // Ensure the correct package path
+
 
 import java.nio.charset.StandardCharsets;
 import org.json.*;
 import onetoone.*;
+import onetoone.Access.*;
 
 
 @RestController
@@ -49,6 +51,12 @@ public class markdown {
     @Autowired
     private JsonRepository j;
 
+    @Autowired
+    private AccessRepository access;
+
+    @Autowired
+    private signRepository signup;
+
     /**
      * The method saves a file to the approriate directory
      *
@@ -59,6 +67,7 @@ public class markdown {
      * @param password -- password
      * @return A successful response
      */
+
     @PostMapping("/upload")
     public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json, @RequestParam("email") String email, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
@@ -116,7 +125,10 @@ public class markdown {
     @GetMapping("/pull")
     public String pull(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("fileName") String fileName) {
 
+        String contents = "{\"id\": ";
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
+        String temp = Long.toString(fileEntity.getfileId());
+        contents += temp;
         signEntity user = logs.findByEmail(email);
 
         if (fileEntity == null) {
@@ -131,7 +143,15 @@ public class markdown {
             }
 
             String content = new String(Files.readAllBytes(filePath));
-            return content;
+            contents += ", \"content\":";
+            contents += "\"";
+            contents += content;
+
+            contents += "\"}";
+
+            System.out.println(contents);
+
+            return contents;
 
         } catch (IOException e) {
             return "Failed to retrieve file content due to an IO error: ";
@@ -198,9 +218,25 @@ public class markdown {
             Path filePath = location.resolve(fileName);
 
             if (user.getId() == file.getId()) {
+                //deletes access from all users
+                Optional<signEntity> allOptional = signup.findById(file.getId());
+                signEntity all = allOptional.orElse(null);
+                System.out.println(all.getId());
+                List<signEntity> lists = access.sents(file, all);
+                access.deleteBySignEntity(all);
+
                 fileRepository.deleteByFileName(fileName); //deletes the file from the table
                 j.updatepath(user.getId(), json);
                 response.put("response", "The file was deleted");
+
+                for(int i = 0; i < lists.size(); i++){
+                    signEntity s = lists.get(i);
+                    String ss = j.getSystem(s.getId());
+                    ss = delete(ss, fileName);
+                    j.updatepath(s.getId(), ss);
+
+                }
+
 
 
                 if (Files.exists(filePath)) {//Deletes the file from the springboot_server
@@ -214,6 +250,8 @@ public class markdown {
 
 
                 }
+
+
                 return response;
             }
         }
@@ -224,10 +262,16 @@ public class markdown {
 
         }
 
-        response.put("response", "the file was not deleted.");
+        response.put("response", "the file was deleted.");
         return response;
     }
 
+    /**
+     * Parse through the json
+     * @param json
+     * @param name
+     * @return
+     */
     private String delete(String json, String name){
         JSONObject fs = new JSONObject(json);
         JSONArray fsArr = fs.getJSONArray("root");
@@ -252,5 +296,7 @@ public class markdown {
         }
         return json;
     }
+
+
 }
 
