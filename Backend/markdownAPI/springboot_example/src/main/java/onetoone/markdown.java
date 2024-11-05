@@ -29,6 +29,8 @@ import onetoone.loginAPI.loginRepository;
 import java.util.*;
 
 import java.nio.charset.StandardCharsets;
+import org.json.*;
+import onetoone.*;
 
 
 @RestController
@@ -184,33 +186,71 @@ public class markdown {
         }
 
         FileEntity file = fileRepository.findByFileName(fileName);
-        if (file == null) {
-            response.put("response", "the file does not exist");
-            return response;
-        }
 
-        Path filePath = location.resolve(fileName);
+        //if it's owner
+        if(file.getId() == user.getId()) {
 
-        if (user.getId() == file.getId()) {
-            fileRepository.deleteByFileName(fileName); //deletes the file from the table
-            j.updatepath(user.getId(), json);
-            response.put("response", "The file was deleted");
+            if (file == null) {
+                response.put("response", "the file does not exist");
+                return response;
+            }
+
+            Path filePath = location.resolve(fileName);
+
+            if (user.getId() == file.getId()) {
+                fileRepository.deleteByFileName(fileName); //deletes the file from the table
+                j.updatepath(user.getId(), json);
+                response.put("response", "The file was deleted");
 
 
-            if (Files.exists(filePath)) {//Deletes the file from the springboot_server
-                try {
-                    Files.delete(filePath);
-                } catch (IOException e) {
-                    response.put("response", "file was not found");
-                    return response;
+                if (Files.exists(filePath)) {//Deletes the file from the springboot_server
+                    try {
+                        Files.delete(filePath);
+                    } catch (IOException e) {
+                        response.put("response", "file was not found");
+                        return response;
+
+                    }
+
 
                 }
-
+                return response;
             }
-            return response;
         }
+        else{
+
+            String deleted = delete(json, fileName);
+            j.updatepath(user.getId(), deleted);
+
+        }
+
         response.put("response", "the file was not deleted.");
         return response;
+    }
+
+    private String delete(String json, String name){
+        JSONObject fs = new JSONObject(json);
+        JSONArray fsArr = fs.getJSONArray("root");
+
+        for(int i = 0; i < fsArr.length(); i++){
+            Object item = fsArr.get(i);
+            if(item instanceof JSONObject){
+                JSONObject temp = (JSONObject) item;
+                String internalKey = temp.keys().next();
+                if(internalKey.equals("share")){
+                    JSONArray sha  = temp.getJSONArray("share");
+
+                    for(int j = 0; j < sha.length(); i++){
+                        if(sha.get(j).equals(name)){
+                            sha.remove(j);
+                            return fs.toString();
+                        }
+                    }
+
+                }
+            }
+        }
+        return json;
     }
 }
 
