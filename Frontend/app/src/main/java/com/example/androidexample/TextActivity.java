@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -223,7 +225,10 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     String message = queue.take(); // Blocks until an item is available
                     // Process the item here
                     Log.d("THREADSSS","Processing item: " + message);
-                    editor.setEnabled(false);
+
+                    final InputFilter blockInputFilter = new BlockInputFilter();
+                    editor.setFilters(new InputFilter[]{blockInputFilter});
+
                     int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
 
                     runOnUiThread(() ->{
@@ -240,8 +245,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
                         updateParsedOutput(editor.getText().toString());
                         editor.addTextChangedListener(textWatcher);
+                        editor.setFilters(null);
+
                     });
-                    editor.setEnabled(true);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
@@ -552,4 +558,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     public void onWebSocketError(Exception ex) {
         Log.e("WebSocket", "Error", ex);
     }
+
+
+    public class BlockInputFilter implements InputFilter {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   Spanned dest, int dstart, int dend) {
+            // Return an empty string to block the input
+            return "";
+        }
+    }
+
 }
