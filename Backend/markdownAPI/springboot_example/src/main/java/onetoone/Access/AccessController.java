@@ -19,29 +19,48 @@ import onetoone.Access.AccessRepository;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.json.*;
+import onetoone.*;
 
 @RestController
 @RequestMapping("/share")
 
 public class AccessController{
 
+    // To access the list of files
     @Autowired
     private FileRepository files;
 
+    //To get user info
     @Autowired
     private loginRepository logs;
 
+    //To add to access table
     @Autowired
     private AccessRepository access;
 
+    //To add to the join table
     @Autowired
     private FileAccess fileAccessService;
+
+    //To get the json directory
+    @Autowired
+    private JsonRepository json;
 
     @PostMapping("/new")
     public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
         signEntity sign2 = logs.findByEmail(toUser);
         signEntity sign = logs.findByEmail(fromUser);
+
+        String jsons = json.getSystem(sign2.getId());
+
+        System.out.println(jsons);
+
+        String updates = updateJson(jsons, docName);
+        json.updatepath(sign2.getId(), updates);
+
+
 
         if(sign2 == null){
             return ResponseEntity.badRequest().body("The user does not exist");
@@ -94,6 +113,38 @@ public class AccessController{
         signEntity user = logs.findByEmail(email);
         return fileAccessService.getFileNamesByAccessId(user.getId());
     }
+
+
+    private String updateJson(String json, String fileName){
+
+        JSONObject fs = new JSONObject(json);
+        JSONArray fsArr = fs.getJSONArray("root");
+
+        for(int i = 0; i < fsArr.length(); i++){
+            Object item = fsArr.get(i);
+            if(item instanceof JSONObject){
+                JSONObject temp = (JSONObject) item;
+                String internalKey = temp.keys().next();
+                if(internalKey.equals("share")){
+                    JSONArray sha  = temp.getJSONArray("share");
+                    sha.put(fileName);
+                    return fs.toString();
+                }
+            }
+        }
+
+        JSONObject share = new JSONObject();
+        JSONArray shareArr = new JSONArray();
+        shareArr.put(fileName);
+        share.put("share",shareArr);
+
+        fsArr.put(share);
+        System.out.println(fs.toString());
+
+        return fs.toString();
+
+    }
+
 
 
     }

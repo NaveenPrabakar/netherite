@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -14,6 +15,8 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import onetoone.*;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,8 @@ import org.springframework.stereotype.Component;
 @ServerEndpoint("/document/{fileName}")
 @Component
 public class DocServer {
+
+    public static FileRepository f;
 
     private static Map<Session, String> sessionFileMap = new Hashtable<>();
     private static final Logger logger = LoggerFactory.getLogger(DocServer.class);
@@ -34,6 +39,12 @@ public class DocServer {
      * @param fileName, the name of the file that's being edited
      * @throws IOException
      */
+
+    @Autowired
+    public void setFileRepository(FileRepository repo) {
+        f = repo;  // we are setting the static variable
+    }
+
     @OnOpen
     public void onOpen(Session session, @PathParam("fileName") String fileName) throws IOException {
         logger.info("[onOpen] File: " + fileName + " connected.");
@@ -52,12 +63,15 @@ public class DocServer {
         String fileName = sessionFileMap.get(session);
         logger.info("[onMessage] File: " + fileName + " Content: " + content);
 
+        Long l = Long.parseLong(fileName);
+        Optional<FileEntity> allOptional = f.findById(l);
+        FileEntity all = allOptional.orElse(null);
         // Update the document with the new content
-        Path filePath = location.resolve(fileName);
+        Path filePath = location.resolve(all.getName());
         Files.write(filePath, content.getBytes());
 
         // Broadcast the updated content to other connected users
-        broadcast(fileName + " updated: " + content);
+        broadcast(content, session);
     }
 
     /**
@@ -87,12 +101,14 @@ public class DocServer {
      * broadcast class to display message to all users
      * @param message
      */
-    private void broadcast(String message) {
+    private void broadcast(String message, Session skipSession) {
         sessionFileMap.keySet().forEach(session -> {
-            try {
-                session.getBasicRemote().sendText(message);
-            } catch (IOException e) {
-                logger.error("[Broadcast Exception] " + e.getMessage());
+            if (session != skipSession) {  // Skip the session passed as a parameter
+                try {
+                    session.getBasicRemote().sendText(message);
+                } catch (IOException e) {
+                    logger.error("[Broadcast Exception] " + e.getMessage());
+                }
             }
         });
     }

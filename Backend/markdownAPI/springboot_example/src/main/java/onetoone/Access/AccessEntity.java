@@ -38,7 +38,7 @@ public class AccessEntity{
     @ManyToMany
     @JoinTable(
             name = "file_access", // Name of the join table
-            joinColumns = @JoinColumn(name = "access_id", referencedColumnName = "access_id"),
+            joinColumns = @JoinColumn(name = "access_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "file_id", referencedColumnName = "id")
     )
 
