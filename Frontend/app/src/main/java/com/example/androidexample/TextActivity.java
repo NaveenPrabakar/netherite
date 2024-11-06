@@ -82,6 +82,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String username;
     private String aiCount;
     private TextWatcher textWatcher;
+    private String source;
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private String previousContent;
@@ -112,7 +113,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (!AIInputText.getText().toString().isEmpty())
                 {
                     String msg = AIInputText.getText().toString();
-                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(msg);
+                    WebSocketManager2.getInstance().sendMessage(msg);
                 }
             }
         });
@@ -571,6 +572,30 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             Log.d("THREAD","Finished Processing item: " + queue.size());
 
         });
+    }
+
+    @Override
+    public void onWebSocketJsonMessage(JSONObject jsonMessage) {
+        Log.d("WebSocket", "JSON message: " + jsonMessage.toString());
+        // At this point in time, I should have the JSON object
+        // Lets try to actually parse the JSON object
+        try {
+            // Example: extract data from the JSON object
+            source = jsonMessage.getString("source");
+            String stuff = jsonMessage.getString("content");
+            if (source == "AI")
+            {
+                // jamey shit
+                AISingletonUser.getInstance(getApplicationContext()).AIMessage(stuff);
+            }
+            else
+            {
+                // nicholas shit
+                onWebSocketMessage(stuff);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
