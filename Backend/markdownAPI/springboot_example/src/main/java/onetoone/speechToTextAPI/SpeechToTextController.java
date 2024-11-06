@@ -80,6 +80,9 @@ public class SpeechToTextController{
             "mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"
     };
 
+    //global variable
+    String uploadDir2 = "upload_speech/";
+
     //post-CreateUser
     //front end passing parameter (email and file)
     //parameter need to have the user email in order to access to sign entity to find the userid
@@ -120,21 +123,25 @@ public class SpeechToTextController{
             String extension = fileName.substring(fileName.lastIndexOf("."));
             String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
 
-            //create the path with both of the info (file name and file type)
+            //create the path with both of the info (file type and file name)
             Path tempFile = Files.createTempFile(fileType, extension);
 
-            //add the file using the path
-            file.transferTo(tempFile.toFile());
-
-            //save the file into the server
-            //folder named "upload_speech" in server
-            String uploadDir = "upload_Speech/";
-            File uploadDirFile = new File(uploadDir);
-            if (!uploadDirFile.exists()) {
-                uploadDirFile.mkdirs();
+            // define the main upload directory
+            //String uploadDir2 = "upload_Speech/";
+            File uploadDir2File = new File(uploadDir2);
+            if (!uploadDir2File.exists()) {
+                uploadDir2File.mkdirs();
             }
 
-            File savedSpeechFile = new File(uploadDir + fileName);
+            // create subdirectory for the user ID inside the upload_speech folder
+            String userSubDirPath = uploadDir2 + userID + "/";
+            File userSubDir = new File(userSubDirPath);
+            if (!userSubDir.exists()) {
+                userSubDir.mkdirs();
+            }
+
+            // create the full path for saving the file inside the user ID directory
+            File savedSpeechFile = new File(userSubDirPath + fileName);
             Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             //delete the path
@@ -236,13 +243,6 @@ public class SpeechToTextController{
     @GetMapping("/getSpeechFile")
     public ResponseEntity<Resource> getSpeechFile(@RequestParam("email") String email, @RequestParam("speechFile") String speechFile) {
         try {
-            String uploadDir = "upload_Speech/";
-            File file = new File(uploadDir + speechFile);
-
-            if (!file.exists()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
-            }
-
             signEntity temp = sign.findByEmail(email);
             if (temp == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null for user not found
@@ -250,6 +250,15 @@ public class SpeechToTextController{
 
             Long userID = temp.getId();
             //SpeechUserEntity speechUserEntity = api.findBySpeechUserId(userID);
+
+            //String uploadDir2 = "upload_speech/";
+            String filePath = uploadDir2 + userID + "/" + speechFile;
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
+            }
+
             SpeechUserEntity speechUserEntity = api.findBySpeechFile(speechFile);
 
             if (speechUserEntity != null) {
