@@ -16,24 +16,27 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WebSocketListener {
 
     private TextView messageText;
     private Button loginButt;
     private Button signupButt;
     private Button FileView;
+    private Button OCRButt;
     private TextView emailDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
     private Button settingsButt;
     // the whole ass system full of paths
-    private String fileSystem = "{\"root\": [] }";;
+    private String fileSystem = "{\"root\": [] }";
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
-    private String username = "-1";
-    private String email = "-1";
-    private String password = "-1";
+    private String username = "takulibruh";
+    private String email = "takuli@iastate.edu";
+    private String password = "admin123!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
         if(extras != null){
             email = extras.getString("EMAIL");
             //username = extras.getString("USERNAME");
@@ -108,6 +112,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        OCRButt = findViewById(R.id.OCRButt);
+        OCRButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, OCRActivity.class);
+                i.putExtra("FILESYSTEM", fileSystem);
+                i.putExtra("PATH", "{\"path\": []}");
+                i.putExtra("EMAIL", email);
+                i.putExtra("PASSWORD", password);
+                startActivity(i);
+            }
+        });
     }
 
     public void getFileSystem(String email, String password){
@@ -128,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         i.putExtra("FILESYSTEM", fileSystem);
                         i.putExtra("EMAIL", email);
                         i.putExtra("PASSWORD", password);
+                        i.putExtra("USERNAME", username);
                         startActivity(i);
                     }
                 },
@@ -142,5 +159,25 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+
     }
 }

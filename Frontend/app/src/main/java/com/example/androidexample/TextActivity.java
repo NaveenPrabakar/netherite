@@ -3,6 +3,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
@@ -23,6 +25,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.NetworkResponse;
@@ -32,6 +36,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,8 +48,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
-public class TextActivity extends AppCompatActivity {
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
+
+public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
@@ -53,53 +66,84 @@ public class TextActivity extends AppCompatActivity {
     private Button saveButt;
     private Button summarizeButt;
     private Button acceptButt;
+    private Button aiInputButt;
     private Button rejectButt;
     private EditText mainText;
-    private Button editButton;
     private EditText editor;
     private EditText fileName;
+    private EditText AIInputText;
     private TextView AIText;
     private Markwon markwon;
-    private String content = "";
+    private String content = " ";
     private JSONObject fileSystem;
     private JSONObject filePath;
     private String email;
     private String password;
+    private String username;
     private String aiCount;
+    private TextWatcher textWatcher;
+    private boolean allowEditorUpdate = true;
+    BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private String previousContent;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
 
+        WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
+        WebSocketManager2.getInstance().setWebSocketListener(TextActivity.this);
+
+
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
+        AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
-        editButton = findViewById(R.id.editButton);
+        aiInputButt = findViewById(R.id.AIInputButt);
+        AIInputText = findViewById(R.id.AIChatBar);
+
+        // This is the AI chat button
+        aiInputButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!AIInputText.getText().toString().isEmpty())
+                {
+                    String msg = AIInputText.getText().toString();
+                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(msg);
+                }
+            }
+        });
 
         markwon = Markwon.create(this);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        editor.addTextChangedListener(new TextWatcher() {
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                    content = charSequence.toString();
-                    updateParsedOutput(content);
-                    Log.d("Text changed", content);
+
+                previousContent = content;
+                content = charSequence.toString();
+                updateParsedOutput(content);
+                Log.d("Text changed", content);
+                WebSocketManager.getInstance().sendMessage(content);
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
-        });
-        editor.setAlpha(0f);
+        };
+        editor.addTextChangedListener(textWatcher);
+        mainText.setAlpha(0f);
 
         if(extras != null) {
             try {
@@ -107,6 +151,7 @@ public class TextActivity extends AppCompatActivity {
                 filePath = new JSONObject(extras.getString("PATH"));
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
+                username = extras.getString("USERNAME");
                 Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
                 Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
@@ -119,6 +164,13 @@ public class TextActivity extends AppCompatActivity {
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
+                }
+                if (extras.getString("IMAGETEXT") != null)
+                {
+                    AIText.setText(extras.getString("IMAGETEXT"));
+                    acceptButt.setVisibility(View.VISIBLE);
+                    rejectButt.setVisibility(View.VISIBLE);
+                    summarizeButt.setVisibility(View.INVISIBLE);
                 }
 
             } catch (JSONException e) {
@@ -177,6 +229,7 @@ public class TextActivity extends AppCompatActivity {
                 TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
                 acceptButt.setVisibility(View.VISIBLE);
                 rejectButt.setVisibility(View.VISIBLE);
+                AIText.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
             }
         });
@@ -190,6 +243,7 @@ public class TextActivity extends AppCompatActivity {
             {
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
+                AIText.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
 //                mainText.append("\nAI Response: " + AIText.getText());
@@ -213,9 +267,10 @@ public class TextActivity extends AppCompatActivity {
                 AIText.setText("");
             }
         });
+
     }
 
-    private void updateParsedOutput(String markdown) {
+    private String updateParsedOutput(String markdown) {
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
             if (markdown.charAt(i) == '\n'){
@@ -226,6 +281,7 @@ public class TextActivity extends AppCompatActivity {
             }
         }
         markwon.setMarkdown(mainText, contentParsed);
+        return contentParsed;
     }
 
     public void sendFileString(String fileName, String fileSystem){
@@ -387,7 +443,6 @@ public class TextActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
 
-
     /*
     This stupid ass function takes a file, path, and the system of phone.
     It puts the file into the path, and the path is in the file system.
@@ -424,4 +479,108 @@ public class TextActivity extends AppCompatActivity {
         return fileSystem;
 
     }
+
+
+    public int getCorrectCursorLocation(String before, String after, int cursorPos){
+        /*
+        This method runs assuming the all the changes happens before or after the cursor
+        not both at the same time.
+        Because the each user have 1 cursor, they can only update in 1 place each broadcast
+        Therefore it is impossible to have a change be both before and after the cursor
+         */
+        int lenBefore = before.length();
+        int lenAfter = after.length();
+        // Find the first position where the two strings differ
+        int minLen = Math.min(lenBefore, lenAfter);
+        int diffIndex = minLen; // Default to end if no early difference is found
+
+        /*
+        Find the differing index, and then find how much it differs
+        if the lenChanged is positive, that means there is an addition to the text,
+        and if it is negative then there is a deletion
+
+        in an Addition
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we add to the cursor the length of the change
+        if it is equal (we add to where the cursor is) we do nothing, to prevent the user's
+        cursor to be changed by external input
+
+        in a Deletion
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we subtract from the cursor the length of the change
+        if it is equal we (we delete to the cursor where the user is adding)
+        we subtract from the cursor the length of the change
+
+        In short the only thing that matters is if we add before the cursor,
+        and if we delete on the cursor and before the cursor
+
+         */
+        if (lenBefore != lenAfter){
+            // Loop to find the first differing index
+            for (int i = 0; i < minLen; i++) {
+                if (before.charAt(i) != after.charAt(i)) {
+                    diffIndex = i;
+                    break;
+                }
+            }
+            int lenChanged = lenAfter - lenBefore;
+            if (lenChanged > 0) {
+                // If the change is an addition
+                if (diffIndex < cursorPos) {
+                    // Increment the cursor if the addition is before the cursor
+                    return cursorPos + lenChanged;
+                }
+            } else if (lenChanged < 0) {
+                // If the change is a deletion
+                if (diffIndex <= cursorPos) {
+                    // Decrement the cursor by the length of the removed part
+                    return cursorPos + lenChanged;
+                }
+            }
+        }
+        return cursorPos;
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Log.d("WebSocket", "Connected");
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+        runOnUiThread(()->{
+            Log.d("THREAD","Processing item: " + queue.size());
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+            Log.d("WebSocket", "Received message: " + message);
+            editor.removeTextChangedListener(textWatcher);
+            editor.setText(message);
+            content = message;
+
+            if (newCursorPosition <= editor.getText().length()) {
+                editor.setSelection(newCursorPosition);
+            }
+            else { editor.setSelection(editor.getText().length());}
+            updateParsedOutput(editor.getText().toString());
+
+            editor.addTextChangedListener(textWatcher);
+            Log.d("THREAD","Finished Processing item: " + queue.size());
+
+        });
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+        Log.d("WebSocket", "Closed");
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+        Log.e("WebSocket", "Error", ex);
+    }
+
 }
