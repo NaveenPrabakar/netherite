@@ -30,6 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -80,6 +82,17 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         fileName = findViewById(R.id.fileName);
 
         markwon = Markwon.create(this);
+        markwonEditor = MarkwonEditor.create(markwon);
+        testNode = markwon.parse("# Hello, World!");
+        markdown = markwon.render(testNode);
+
+        //editor.setText(markdown);
+
+        //setMarkdown requires a String, not a Spanned.
+        //setParsedMarkdown requires a Spanned, not a String.
+        markwon.setParsedMarkdown(editor, markdown);
+        markwon.setParsedMarkdown(mainText, markdown);
+        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -127,6 +140,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
+                }
+                if (extras.getString("IMAGETEXT") != null)
+                {
+                    AIText.setText(extras.getString("IMAGETEXT"));
+                    acceptButt.setVisibility(View.VISIBLE);
+                    rejectButt.setVisibility(View.VISIBLE);
+                    summarizeButt.setVisibility(View.INVISIBLE);
                 }
 
             } catch (JSONException e) {
@@ -227,6 +247,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private String updateParsedOutput(String markdown) {
+        // USE MARKWONEDIT TEXT WATCHER TO REPLACE THIS ?
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
             if (markdown.charAt(i) == '\n'){
