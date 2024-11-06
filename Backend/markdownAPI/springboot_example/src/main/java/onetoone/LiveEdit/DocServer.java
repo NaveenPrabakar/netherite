@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
 
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
