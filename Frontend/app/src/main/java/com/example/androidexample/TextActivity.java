@@ -88,6 +88,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
                 if (queue.isEmpty()){
                     allowEditorUpdate = true;
+                }else{
+                    allowEditorUpdate = false;
                 }
             }
 
