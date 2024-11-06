@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     // the whole ass system full of paths
     private String fileSystem = "{\"root\": [] }";;
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
-    private String username = "testRun";
-    private String email = "-1";
-    private String password = "-1";
+    private String username = "takulibruh";
+    private String email = "takuli@iastate.edu";
+    private String password = "admin123!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        String serverUrl = "ws://10.0.2.2:8080/chat/" + username;
+        String serverUrl = "ws://10.0.2.2:8080/chat/1/" + username;
         WebSocketManager.getInstance().connectWebSocket(serverUrl);
 
         if(extras != null){
@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                         i.putExtra("FILESYSTEM", fileSystem);
                         i.putExtra("EMAIL", email);
                         i.putExtra("PASSWORD", password);
+                        i.putExtra("USERNAME", username);
                         startActivity(i);
                     }
                 },

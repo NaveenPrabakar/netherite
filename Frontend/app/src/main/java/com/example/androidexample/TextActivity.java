@@ -3,32 +3,22 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Pair;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -38,17 +28,17 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.android.volley.toolbox.Volley;
-
-import org.commonmark.node.Node;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
 import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
-public class TextActivity extends AppCompatActivity {
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
+
+public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
@@ -60,122 +50,65 @@ public class TextActivity extends AppCompatActivity {
     private Button acceptButt;
     private Button rejectButt;
     private EditText mainText;
-    private Button editButton;
     private EditText editor;
     private EditText fileName;
     private TextView AIText;
     private Markwon markwon;
-    private String content = "";
+    private String content = " ";
     private JSONObject fileSystem;
     private JSONObject filePath;
     private String email;
     private String password;
+    private String username;
     private String aiCount;
-    private MarkwonEditor markwonEditor;
+    private TextWatcher textWatcher;
+    private boolean allowEditorUpdate = true;
+    BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private String previousContent;
 
-    private Node testNode;
-    private Spanned markdown;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        //WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
+
+        WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
+        AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
-        editButton = findViewById(R.id.editButton);
 
         markwon = Markwon.create(this);
-        markwonEditor = MarkwonEditor.create(markwon);
-        testNode = markwon.parse("# Hello, World!");
-        markdown = markwon.render(testNode);
-
-        //editor.setText(markdown);
-
-        //setMarkdown requires a String, not a Spanned.
-        //setParsedMarkdown requires a Spanned, not a String.
-        markwon.setParsedMarkdown(editor, markdown);
-        markwon.setParsedMarkdown(mainText, markdown);
-        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-//        editor.addTextChangedListener(new MarkwonEditorTextWatcher() {
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-
-        editor.addTextChangedListener(MarkwonEditorTextWatcher.withProcess(markwonEditor));
-
-        editor.addTextChangedListener(new TextWatcher() {
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+
+                previousContent = content;
                 content = charSequence.toString();
                 updateParsedOutput(content);
                 Log.d("Text changed", content);
+                WebSocketManager.getInstance().sendMessage(content);
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
-        });
-        acceptButt = findViewById(R.id.acceptButt);
-        rejectButt = findViewById(R.id.rejectButt);
+        };
 
-        acceptButt.setVisibility(View.INVISIBLE);
-        acceptButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                acceptButt.setVisibility(View.INVISIBLE);
-                rejectButt.setVisibility(View.INVISIBLE);
-                summarizeButt.setVisibility(View.VISIBLE);
-                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
-//                mainText.append("\nAI Response: " + AIText.getText());
-//                content += "\nAI Response: " + AIText.getText().toString();
-                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
-                AIText.setText("");
-            }
-        });
-
-        rejectButt.setVisibility(View.INVISIBLE);
-        rejectButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
-                acceptButt.setVisibility(View.INVISIBLE);
-                rejectButt.setVisibility(View.INVISIBLE);
-                summarizeButt.setVisibility(View.VISIBLE);
-                AIText.setText("");
-            }
-        });
-        summarizeButt = findViewById(R.id.summarizeButt);
-        summarizeButt.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
-                acceptButt.setVisibility(View.VISIBLE);
-                rejectButt.setVisibility(View.VISIBLE);
-                summarizeButt.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        editor.setAlpha(0f);
+        editor.addTextChangedListener(textWatcher);
+        mainText.setAlpha(0f);
 
         if(extras != null) {
             try {
@@ -183,6 +116,7 @@ public class TextActivity extends AppCompatActivity {
                 filePath = new JSONObject(extras.getString("PATH"));
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
+                username = extras.getString("USERNAME");
                 Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
                 Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
@@ -251,6 +185,53 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
+        summarizeButt = findViewById(R.id.summarizeButt);
+        summarizeButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                AIText.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        acceptButt = findViewById(R.id.acceptButt);
+        acceptButt.setVisibility(View.INVISIBLE);
+        acceptButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                AIText.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
+//                mainText.append("\nAI Response: " + AIText.getText());
+//                content += "\nAI Response: " + AIText.getText().toString();
+                editor.append("  \n  \n ---  \nAI Response: " + AIText.getText() + "  \n  \n ---  \n");
+                AIText.setText("");
+            }
+        });
+
+        rejectButt = findViewById(R.id.rejectButt);
+        rejectButt.setVisibility(View.INVISIBLE);
+        rejectButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
+                acceptButt.setVisibility(View.INVISIBLE);
+                rejectButt.setVisibility(View.INVISIBLE);
+                summarizeButt.setVisibility(View.VISIBLE);
+                AIText.setText("");
+            }
+        });
 
     }
 
@@ -465,26 +446,108 @@ public class TextActivity extends AppCompatActivity {
         return fileSystem;
 
     }
-//
-//    @Override
-//    public void onWebSocketOpen(ServerHandshake handshakedata) {
-//        Log.d("WebSocket", "Connected");
-//    }
-//
-//    @Override
-//    public void onWebSocketMessage(String message) {
-//        Log.d("WebSocket", "Received message: " + message);
-//        editor.removeTextChangedListener(message);
-//        editor.setText(message);
-//    }
-//
-//    @Override
-//    public void onWebSocketClose(int code, String reason, boolean remote) {
-//        Log.d("WebSocket", "Closed");
-//    }
-//
-//    @Override
-//    public void onWebSocketError(Exception ex) {
-//        Log.e("WebSocket", "Error", ex);
-//    }
+
+
+    public int getCorrectCursorLocation(String before, String after, int cursorPos){
+        /*
+        This method runs assuming the all the changes happens before or after the cursor
+        not both at the same time.
+        Because the each user have 1 cursor, they can only update in 1 place each broadcast
+        Therefore it is impossible to have a change be both before and after the cursor
+         */
+        int lenBefore = before.length();
+        int lenAfter = after.length();
+        // Find the first position where the two strings differ
+        int minLen = Math.min(lenBefore, lenAfter);
+        int diffIndex = minLen; // Default to end if no early difference is found
+
+        /*
+        Find the differing index, and then find how much it differs
+        if the lenChanged is positive, that means there is an addition to the text,
+        and if it is negative then there is a deletion
+
+        in an Addition
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we add to the cursor the length of the change
+        if it is equal (we add to where the cursor is) we do nothing, to prevent the user's
+        cursor to be changed by external input
+
+        in a Deletion
+        If the different index (first occurance of a change) is after the cursor,
+        we dont change the cursor location
+        if it is before the cursor,
+        we subtract from the cursor the length of the change
+        if it is equal we (we delete to the cursor where the user is adding)
+        we subtract from the cursor the length of the change
+
+        In short the only thing that matters is if we add before the cursor,
+        and if we delete on the cursor and before the cursor
+
+         */
+        if (lenBefore != lenAfter){
+            // Loop to find the first differing index
+            for (int i = 0; i < minLen; i++) {
+                if (before.charAt(i) != after.charAt(i)) {
+                    diffIndex = i;
+                    break;
+                }
+            }
+            int lenChanged = lenAfter - lenBefore;
+            if (lenChanged > 0) {
+                // If the change is an addition
+                if (diffIndex < cursorPos) {
+                    // Increment the cursor if the addition is before the cursor
+                    return cursorPos + lenChanged;
+                }
+            } else if (lenChanged < 0) {
+                // If the change is a deletion
+                if (diffIndex <= cursorPos) {
+                    // Decrement the cursor by the length of the removed part
+                    return cursorPos + lenChanged;
+                }
+            }
+        }
+        return cursorPos;
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Log.d("WebSocket", "Connected");
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+        runOnUiThread(()->{
+            Log.d("THREAD","Processing item: " + queue.size());
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+            Log.d("WebSocket", "Received message: " + message);
+            editor.removeTextChangedListener(textWatcher);
+            editor.setText(message);
+            content = message;
+
+            if (newCursorPosition <= editor.getText().length()) {
+                editor.setSelection(newCursorPosition);
+            }
+            else { editor.setSelection(editor.getText().length());}
+            updateParsedOutput(editor.getText().toString());
+
+            editor.addTextChangedListener(textWatcher);
+            Log.d("THREAD","Finished Processing item: " + queue.size());
+
+        });
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+        Log.d("WebSocket", "Closed");
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+        Log.e("WebSocket", "Error", ex);
+    }
+
 }
