@@ -10,6 +10,7 @@ public class AISingletonUser {
     private String email;
     private String password;
     private static Context context;
+    private final String aiURL = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
 
     // Link is /chat/ {username}
 
