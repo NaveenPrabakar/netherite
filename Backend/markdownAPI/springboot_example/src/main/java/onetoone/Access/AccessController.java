@@ -18,6 +18,7 @@ import onetoone.FileEntity;
 import onetoone.Access.AccessRepository;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/share")
@@ -34,35 +35,30 @@ public class AccessController{
     private AccessRepository access;
 
     @PostMapping("/new")
-    public HashMap<String, String> share(@RequestParam("owner") String owner, @RequestParam("fileName") String fileName, @RequestParam("Access") String Access){
+    public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
         HashMap<String, String> response = new HashMap<>();
 
-        signEntity sign = logs.findByEmail(owner);
+        signEntity sign2 = logs.findByEmail(toUser);
+        signEntity sign = logs.findByEmail(fromUser);
 
-        if(sign == null){
-            response.put("response", "User does not exist");
-            return response;
+        if(sign2 == null){
+            return ResponseEntity.badRequest().body("The user does not exist");
         }
 
-        FileEntity file = files.findByFileName(fileName);
+        FileEntity file = files.findByFileName(docName);
 
         if(file.getId() != sign.getId()){
-            response.put("response", "User does not have this file");
-            return response;
+            return ResponseEntity.badRequest().body("The user does not have this file");
         }
 
-        signEntity acc = logs.findByEmail(Access);
-
-        if(acc == null){
-            response.put("response", "This user does not exist");
-            return response;
-        }
-
-        AccessEntity a = new AccessEntity(sign, file, acc);
+        AccessEntity a = new AccessEntity(sign, file, sign2);
         access.save(a);
 
-        response.put("response", "File has been shared");
-        return response;
+        file.addAccessEntity(a);
+
+        return ResponseEntity.ok("The file was shared");
     }
-}
+
+
+    }
