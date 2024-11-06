@@ -94,6 +94,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     content = charSequence.toString();
                     updateParsedOutput(content);
                     Log.d("Text changed", content);
+                    WebSocketManager.getInstance().sendMessage(content);
                 }
                 else{
                     editor.removeTextChangedListener(textWatcher);
@@ -104,7 +105,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
             @Override
             public void afterTextChanged(Editable editable) {
-                WebSocketManager.getInstance().sendMessage(content);
             }
         };
 
@@ -226,6 +226,39 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 AIText.setText("");
             }
         });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try{
+                        if(queue.size() > 0 && allowEditorUpdate){
+                            allowEditorUpdate = false;
+                            String message = queue.take();
+                            Log.d("THREAD","Processing item: " + message);
+                            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+                            Log.d("WebSocket", "Received message: " + message);
+                            editor.removeTextChangedListener(textWatcher);
+                            editor.setText(message);
+                            content = message;
+
+                            if (newCursorPosition <= editor.getText().length()) {
+                                editor.setSelection(newCursorPosition);
+                            }
+                            else { editor.setSelection(editor.getText().length());}
+                            updateParsedOutput(editor.getText().toString());
+
+                            editor.addTextChangedListener(textWatcher);
+                            allowEditorUpdate = true;
+                            Log.d("THREAD","Finished Processing item: " + message);
+                        }
+                    }catch (Exception e){
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }).start();
     }
 
     private String updateParsedOutput(String markdown) {
@@ -511,35 +544,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-
         try {
-            if(allowEditorUpdate){
-                runOnUiThread(()->{
-                    allowEditorUpdate = false;
-                    Log.d("THREAD","Processing item: " + message);
-                    int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
-
-                    Log.d("WebSocket", "Received message: " + message);
-                    editor.removeTextChangedListener(textWatcher);
-                    editor.setText(message);
-                    content = message;
-
-                    if (newCursorPosition <= editor.getText().length()) {
-                        editor.setSelection(newCursorPosition);
-                    }
-                    else { editor.setSelection(editor.getText().length());}
-                    updateParsedOutput(editor.getText().toString());
-
-                    editor.addTextChangedListener(textWatcher);
-                    allowEditorUpdate = true;
-                    Log.d("THREAD","Finished Processing item: " + message);
-                });
-            }
-
-        } catch (Exception e) {
+            queue.put(message);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
