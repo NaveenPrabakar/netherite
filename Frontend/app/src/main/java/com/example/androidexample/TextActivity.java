@@ -7,18 +7,31 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -26,6 +39,11 @@ import com.android.volley.toolbox.StringRequest;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.android.volley.toolbox.Volley;
+
+import org.commonmark.node.Node;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,10 +66,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private Button saveButt;
     private Button summarizeButt;
     private Button acceptButt;
+    private Button aiInputButt;
     private Button rejectButt;
     private EditText mainText;
     private EditText editor;
     private EditText fileName;
+    private EditText AIInputText;
     private TextView AIText;
     private Markwon markwon;
     private String content = " ";
@@ -74,12 +94,28 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
 
         WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
+        WebSocketManager2.getInstance().setWebSocketListener(TextActivity.this);
+
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
         AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
+        aiInputButt = findViewById(R.id.AIInputButt);
+        AIInputText = findViewById(R.id.AIChatBar);
+
+        // This is the AI chat button
+        aiInputButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!AIInputText.getText().toString().isEmpty())
+                {
+                    String msg = AIInputText.getText().toString();
+                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(msg);
+                }
+            }
+        });
 
         markwon = Markwon.create(this);
 
@@ -106,7 +142,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             public void afterTextChanged(Editable editable) {
             }
         };
-
         editor.addTextChangedListener(textWatcher);
         mainText.setAlpha(0f);
 
@@ -236,7 +271,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private String updateParsedOutput(String markdown) {
-        // USE MARKWONEDIT TEXT WATCHER TO REPLACE THIS ?
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
             if (markdown.charAt(i) == '\n'){
@@ -408,7 +442,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         // Add the string request to the Volley Queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
-
 
     /*
     This stupid ass function takes a file, path, and the system of phone.

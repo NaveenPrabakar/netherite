@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button makeFile;
     private Button settingsButt;
     // the whole ass system full of paths
-    private String fileSystem = "{\"root\": [] }";;
+    private String fileSystem = "{\"root\": [] }";
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
     private String username = "takulibruh";
     private String email = "takuli@iastate.edu";
@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-
-        String serverUrl = "ws://10.0.2.2:8080/chat/1/" + username;
-        WebSocketManager.getInstance().connectWebSocket(serverUrl);
 
         if(extras != null){
             email = extras.getString("EMAIL");
