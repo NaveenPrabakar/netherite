@@ -85,6 +85,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private String previousContent;
+    private int offset;
 
 
     @Override
