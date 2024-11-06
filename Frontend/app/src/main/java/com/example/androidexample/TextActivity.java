@@ -224,32 +224,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        new Thread(()->{
-            while (true) {
-                try{
-                    String message = queue.take();
-                    Log.d("THREAD","Processing item: " + queue.size());
-                    int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
-
-                    Log.d("WebSocket", "Received message: " + message);
-                    editor.removeTextChangedListener(textWatcher);
-                    editor.setText(message);
-                    content = message;
-
-                    if (newCursorPosition <= editor.getText().length()) {
-                        editor.setSelection(newCursorPosition);
-                    }
-                    else { editor.setSelection(editor.getText().length());}
-                    updateParsedOutput(editor.getText().toString());
-
-                    editor.addTextChangedListener(textWatcher);
-                    Log.d("THREAD","Finished Processing item: " + queue.size());
-
-                }catch (Exception e){
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
     }
 
     private String updateParsedOutput(String markdown) {
@@ -535,11 +509,25 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-        try {
-            queue.put(message);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        runOnUiThread(()->{
+            Log.d("THREAD","Processing item: " + queue.size());
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+            Log.d("WebSocket", "Received message: " + message);
+            editor.removeTextChangedListener(textWatcher);
+            editor.setText(message);
+            content = message;
+
+            if (newCursorPosition <= editor.getText().length()) {
+                editor.setSelection(newCursorPosition);
+            }
+            else { editor.setSelection(editor.getText().length());}
+            updateParsedOutput(editor.getText().toString());
+
+            editor.addTextChangedListener(textWatcher);
+            Log.d("THREAD","Finished Processing item: " + queue.size());
+
+        });
     }
 
     @Override
