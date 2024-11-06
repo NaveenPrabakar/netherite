@@ -1,6 +1,5 @@
 package com.example.androidexample;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,9 +26,11 @@ import java.util.Iterator;
 
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
+    private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
     private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/update";
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
+    private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
 
     private String fileSystem =  "{\"root\": []}";
     // path is hard coded. make a path lmao. make it dynamic
@@ -37,14 +38,12 @@ public class filesActivity extends AppCompatActivity {
     private String path = "{\"path\": [\"root\"]}";
     private String email;
     private String password;
-    private String username;
     private String content;
     private Button goback;
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
     private LinearLayout fileLayout;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +61,6 @@ public class filesActivity extends AppCompatActivity {
             if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
-                username = extras.getString("USERNAME");
                 Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
             }
@@ -218,7 +216,8 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Log.d("File Clicked", "File clicked: " + String.valueOf(item));
-                        getFileString(String.valueOf(item));
+                        getFile(String.valueOf(item));
+
                     }
                 });
 
@@ -358,6 +357,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         content = response;
+
                         Intent intent = new Intent(filesActivity.this, TextActivity.class);
                         intent.putExtra("FILESYSTEM", fileSystem );
                         intent.putExtra("PATH", path);
@@ -366,6 +366,7 @@ public class filesActivity extends AppCompatActivity {
                         intent.putExtra("EMAIL", email);
                         intent.putExtra("PASSWORD", password);
                         startActivity(intent);
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -381,92 +382,39 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-    public JSONObject fileDeletor(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
-        JSONArray pathArray = filePath.getJSONArray("path");
-        pathArray.remove(0);
-        JSONArray root = fileSystem.getJSONArray("root");
+    public void getFile(String fileName){
+        Uri.Builder builder = Uri.parse(URL_ID_REQ).buildUpon();
+        builder.appendQueryParameter("email", email);
+        builder.appendQueryParameter("fileName", fileName );
+        String url = builder.build().toString();
 
-        // Traverse the file system using the provided path
-        for (int i = 0; i < pathArray.length(); i++) { //loop through the path
-            String key = pathArray.getString(i); //get the path key
-            for (int j = 0; j < root.length(); j++) { //loop through current scope
-                if (root.get(j) instanceof JSONObject && root.getJSONObject(j).has(key) ) { //if the current item is a JSON object and it contains the path key
-                        root = ((JSONObject)root.get(j)).getJSONArray(key); //change scope to the new path key
-                        break; //break out of the scope
-                }
-            }
-        }
-        JSONArray rootArray = (JSONArray) root;
-        int index =-1;
-        for(int i = 0; i < rootArray.length(); i++){
-            if (rootArray.get(i).toString().equals(fileName)){
-                index = i;
-            }
-        }
-        if (index != -1){
-            root.remove(index);
-        }
-        Log.d("File System", fileSystem.toString());
-        return fileSystem;
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        int id = Integer.parseInt(response);
 
-    }
+                        String serverUrl = URL_WS + id;
+                        WebSocketManager.getInstance().connectWebSocket(serverUrl);
+                        getFileString(fileName);
 
-    public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
-        JSONObject currentArrayJS = new JSONObject(currentArray);
-        String newKey = currentArrayJS.keys().next();
-
-        JSONArray newRoot = currentArrayJS.getJSONArray(newKey);
-        newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
-
-        JSONObject pathJS = new JSONObject(this.path);
-        JSONArray pathArray = pathJS.getJSONArray("path");
-        JSONObject fileSystemJS = new JSONObject(fileSystem);
-        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
-        pathArray.remove(0);
-
-        for (int i = 0; i < pathArray.length(); i++) {
-            String key = (String) pathArray.get(i);
-            for (int j = 0; j < currArrayJS.length(); j++) {
-                Object item = currArrayJS.get(j);
-                if (item instanceof JSONObject){
-                    JSONObject itemJs = (JSONObject) item;
-                    String internalKey = itemJs.keys().next();
-                    if (internalKey.equals(key)){
-                        currArrayJS = itemJs.getJSONArray(internalKey);
-                        break;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Volley Error", error.toString());
                     }
                 }
-            }
-        }
-        currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
-        this.fileSystem = fileSystemJS.toString();
-        Log.d("JSON ARRAY", currentArray.toString());
-        return currentArrayJS.toString();
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
-
-    public JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
-        JSONArray pathArray = new JSONArray(currentPath);
-        JSONObject fileSystemJS = new JSONObject(fileSystem);
-        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
-        String internalKey = pathArray.getString(0);
-        pathArray.remove(0);
-
-        for (int i = 0; i < pathArray.length(); i++) {
-            String key = (String) pathArray.get(i);
-            for (int j = 0; j < currArrayJS.length(); j++) {
-                Object item = currArrayJS.get(j);
-                if (item instanceof JSONObject){
-                    JSONObject itemJs = (JSONObject) item;
-                    internalKey = itemJs.keys().next();
-                    if (internalKey.equals(key)){
-                        currArrayJS = itemJs.getJSONArray(internalKey);
-                        break;
-                    }
-                }
-            }
-        }
-        return new JSONObject('{' + internalKey + " : " + currArrayJS.toString() + '}');
-    };
 
     public void folderUpdate(String fileSystem){
         Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
@@ -579,9 +527,104 @@ public class filesActivity extends AppCompatActivity {
     }
 
     public String newFolderCheck(String newFileName){
-        if (newFileName.matches("[A-Za-z0-9]+")){
+        if (    newFileName.isEmpty()||
+                newFileName.equals(" ")||
+                newFileName.contains(",")||
+                newFileName.contains("{")||
+                newFileName.contains("}")||
+                newFileName.contains("[")||
+                newFileName.contains("]")||
+                newFileName.contains("/")||
+                newFileName.trim().isEmpty()){
             return "";
         }
         return newFileName;
     }
+
+    public JSONObject fileDeletor(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
+        JSONArray pathArray = filePath.getJSONArray("path");
+        pathArray.remove(0);
+        JSONArray root = fileSystem.getJSONArray("root");
+
+        // Traverse the file system using the provided path
+        for (int i = 0; i < pathArray.length(); i++) { //loop through the path
+            String key = pathArray.getString(i); //get the path key
+            for (int j = 0; j < root.length(); j++) { //loop through current scope
+                if (root.get(j) instanceof JSONObject && root.getJSONObject(j).has(key) ) { //if the current item is a JSON object and it contains the path key
+                    root = ((JSONObject)root.get(j)).getJSONArray(key); //change scope to the new path key
+                    break; //break out of the scope
+                }
+            }
+        }
+        JSONArray rootArray = (JSONArray) root;
+        int index =-1;
+        for(int i = 0; i < rootArray.length(); i++){
+            if (rootArray.get(i).toString().equals(fileName)){
+                index = i;
+            }
+        }
+        if (index != -1){
+            root.remove(index);
+        }
+        Log.d("File System", fileSystem.toString());
+        return fileSystem;
+
+    }
+
+    public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
+        JSONObject currentArrayJS = new JSONObject(currentArray);
+        String newKey = currentArrayJS.keys().next();
+
+        JSONArray newRoot = currentArrayJS.getJSONArray(newKey);
+        newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
+
+        JSONObject pathJS = new JSONObject(this.path);
+        JSONArray pathArray = pathJS.getJSONArray("path");
+        JSONObject fileSystemJS = new JSONObject(fileSystem);
+        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
+        pathArray.remove(0);
+
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = (String) pathArray.get(i);
+            for (int j = 0; j < currArrayJS.length(); j++) {
+                Object item = currArrayJS.get(j);
+                if (item instanceof JSONObject){
+                    JSONObject itemJs = (JSONObject) item;
+                    String internalKey = itemJs.keys().next();
+                    if (internalKey.equals(key)){
+                        currArrayJS = itemJs.getJSONArray(internalKey);
+                        break;
+                    }
+                }
+            }
+        }
+        currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        this.fileSystem = fileSystemJS.toString();
+        Log.d("JSON ARRAY", currentArray.toString());
+        return currentArrayJS.toString();
+    }
+
+    public JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
+        JSONArray pathArray = new JSONArray(currentPath);
+        JSONObject fileSystemJS = new JSONObject(fileSystem);
+        JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
+        String internalKey = pathArray.getString(0);
+        pathArray.remove(0);
+
+        for (int i = 0; i < pathArray.length(); i++) {
+            String key = (String) pathArray.get(i);
+            for (int j = 0; j < currArrayJS.length(); j++) {
+                Object item = currArrayJS.get(j);
+                if (item instanceof JSONObject){
+                    JSONObject itemJs = (JSONObject) item;
+                    internalKey = itemJs.keys().next();
+                    if (internalKey.equals(key)){
+                        currArrayJS = itemJs.getJSONArray(internalKey);
+                        break;
+                    }
+                }
+            }
+        }
+        return new JSONObject('{' + internalKey + " : " + currArrayJS.toString() + '}');
+    };
 }

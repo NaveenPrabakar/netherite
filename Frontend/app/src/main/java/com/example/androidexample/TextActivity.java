@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,6 +25,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.NetworkResponse;
@@ -47,6 +50,11 @@ import org.json.JSONObject;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
 import io.noties.markwon.editor.MarkwonEditorTextWatcher;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 
 public class TextActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
@@ -73,15 +81,17 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String password;
     private String username;
     private String aiCount;
-    private MarkwonEditor markwonEditor;
-
-    private Node testNode;
-    private Spanned markdown;
     private TextWatcher textWatcher;
+    private boolean allowEditorUpdate = true;
+    BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private String previousContent;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
+
 
         WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
         WebSocketManager2.getInstance().setWebSocketListener(TextActivity.this);
@@ -108,17 +118,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         });
 
         markwon = Markwon.create(this);
-        markwonEditor = MarkwonEditor.create(markwon);
-        testNode = markwon.parse("# Hello, World!");
-        markdown = markwon.render(testNode);
-
-        //editor.setText(markdown);
-
-        //setMarkdown requires a String, not a Spanned.
-        //setParsedMarkdown requires a Spanned, not a String.
-        markwon.setParsedMarkdown(editor, markdown);
-        markwon.setParsedMarkdown(mainText, markdown);
-        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -130,9 +129,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+
+                previousContent = content;
                 content = charSequence.toString();
-                WebSocketManager.getInstance().sendMessage(updateParsedOutput(content));
+                updateParsedOutput(content);
                 Log.d("Text changed", content);
+                WebSocketManager.getInstance().sendMessage(content);
+
             }
 
             @Override
@@ -264,6 +267,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 AIText.setText("");
             }
         });
+
     }
 
     private String updateParsedOutput(String markdown) {
@@ -503,6 +507,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
         /*
         This method runs assuming the all the changes happens before or after the cursor
@@ -574,19 +579,24 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
-        runOnUiThread(() ->{
+        runOnUiThread(()->{
+            Log.d("THREAD","Processing item: " + queue.size());
+            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
             Log.d("WebSocket", "Received message: " + message);
             editor.removeTextChangedListener(textWatcher);
-            int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
             editor.setText(message);
             content = message;
-            if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
+
+            if (newCursorPosition <= editor.getText().length()) {
                 editor.setSelection(newCursorPosition);
             }
-            else if (newCursorPosition < 0) { editor.setSelection(0); }
             else { editor.setSelection(editor.getText().length());}
-            updateParsedOutput(message);
+            updateParsedOutput(editor.getText().toString());
+
             editor.addTextChangedListener(textWatcher);
+            Log.d("THREAD","Finished Processing item: " + queue.size());
+
         });
     }
 
@@ -599,4 +609,5 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     public void onWebSocketError(Exception ex) {
         Log.e("WebSocket", "Error", ex);
     }
+
 }
