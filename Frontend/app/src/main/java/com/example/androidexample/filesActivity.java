@@ -52,6 +52,7 @@ public class filesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
+
         if(extras != null) {
             if (!extras.getString("FILESYSTEM").equals("User does not exist")){
                 fileSystem = extras.getString("FILESYSTEM");
@@ -398,6 +399,9 @@ public class filesActivity extends AppCompatActivity {
                         int id = Integer.parseInt(response);
 
                         String serverUrl = URL_WS + id;
+                        String aiURL = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/" + id;
+
+                        WebSocketManager2.getInstance().connectWebSocket(aiURL);
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);
                         getFileString(fileName);
 
