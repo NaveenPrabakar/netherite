@@ -239,7 +239,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     try{
                         if(queue.size() > 0 && allowEditorUpdate){
                             allowEditorUpdate = false;
-                            String message = queue.take();
+                            String message = queue.peek();
                             Log.d("THREAD","Processing item: " + message);
                             int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
 
@@ -255,6 +255,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                             updateParsedOutput(editor.getText().toString());
 
                             editor.addTextChangedListener(textWatcher);
+                            queue.take();
                             Log.d("THREAD","Finished Processing item: " + message);
                         }
                     }catch (Exception e){
