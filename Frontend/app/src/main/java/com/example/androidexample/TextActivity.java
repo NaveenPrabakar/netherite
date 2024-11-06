@@ -82,17 +82,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         fileName = findViewById(R.id.fileName);
 
         markwon = Markwon.create(this);
-        markwonEditor = MarkwonEditor.create(markwon);
-        testNode = markwon.parse("# Hello, World!");
-        markdown = markwon.render(testNode);
-
-        //editor.setText(markdown);
-
-        //setMarkdown requires a String, not a Spanned.
-        //setParsedMarkdown requires a Spanned, not a String.
-        markwon.setParsedMarkdown(editor, markdown);
-        markwon.setParsedMarkdown(mainText, markdown);
-        Log.d("Markdown: ",markdown.toString());
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
