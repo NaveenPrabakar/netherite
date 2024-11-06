@@ -81,6 +81,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String password;
     private String username;
     private String aiCount;
+    private Button voiceButt;
     private TextWatcher textWatcher;
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
@@ -105,6 +106,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         fileName = findViewById(R.id.fileName);
         aiInputButt = findViewById(R.id.AIInputButt);
         AIInputText = findViewById(R.id.AIChatBar);
+        voiceButt = findViewById(R.id.voiceButt);
+
 
         // This is the AI chat button
         aiInputButt.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +235,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 rejectButt.setVisibility(View.VISIBLE);
                 AIText.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
+                voiceButt.setVisibility(View.INVISIBLE);
+
+
             }
         });
 
@@ -246,6 +252,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 rejectButt.setVisibility(View.INVISIBLE);
                 AIText.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
+                voiceButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
 //                mainText.append("\nAI Response: " + AIText.getText());
 //                content += "\nAI Response: " + AIText.getText().toString();
@@ -265,7 +272,21 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
+                voiceButt.setVisibility(View.VISIBLE);
                 AIText.setText("");
+            }
+        });
+
+        voiceButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                /* when signup button is pressed, use intent to switch to Signup Activity */
+                Intent intent = new Intent(TextActivity.this, VoiceRecordActivity.class);
+                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("EMAIL", email);
+                intent.putExtra("PASSWORD", password);
+                startActivity(intent);
             }
         });
 
