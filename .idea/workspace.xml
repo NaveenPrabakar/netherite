@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="31aa1721-daa2-46c3-838b-262dd4ed3802" name="Changes" comment="commmit this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/LiveEdit/DocServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/LiveEdit/DocServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/AccessEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/AccessEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/AccessRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/AccessRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/FileAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/markdownAPI/springboot_example/src/main/java/onetoone/Access/FileAccess.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
