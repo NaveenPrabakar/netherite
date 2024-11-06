@@ -60,6 +60,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String username;
     private String aiCount;
     private TextWatcher textWatcher;
+    private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
 
@@ -89,9 +90,16 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                content = charSequence.toString();
-                updateParsedOutput(content);
-                Log.d("Text changed", content);
+                if(allowEditorUpdate){
+                    content = charSequence.toString();
+                    updateParsedOutput(content);
+                    Log.d("Text changed", content);
+                }
+                else{
+                    editor.removeTextChangedListener(textWatcher);
+                    editor.setText(content);
+                    editor.addTextChangedListener(textWatcher);
+                }
             }
 
             @Override
@@ -218,44 +226,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 AIText.setText("");
             }
         });
-
-        Thread consumerThread = new Thread(() -> {
-            try {
-                while (true) {
-                    String message = queue.take(); // Blocks until an item is available
-                    // Process the item here
-                    Log.d("THREADSSS","Processing item: " + message);
-
-                    final InputFilter[] originalFilters = editor.getFilters();
-                    final InputFilter blockInputFilter = new BlockInputFilter();
-                    editor.setFilters(new InputFilter[]{blockInputFilter});
-
-                    int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
-
-                    runOnUiThread(() ->{
-                        Log.d("WebSocket", "Received message: " + message);
-                        editor.removeTextChangedListener(textWatcher);
-                        editor.setText(message);
-                        content = message;
-
-                        if (0 <= newCursorPosition && newCursorPosition <= editor.getText().length()) {
-                            editor.setSelection(newCursorPosition);
-                        }
-                        else if (newCursorPosition < 0) { editor.setSelection(0); }
-                        else { editor.setSelection(editor.getText().length());}
-
-                        updateParsedOutput(editor.getText().toString());
-                        editor.addTextChangedListener(textWatcher);
-                        editor.setFilters(originalFilters);
-
-                    });
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore interrupted status
-            }
-        });
-
-        consumerThread.start();
     }
 
     private String updateParsedOutput(String markdown) {
@@ -543,8 +513,30 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     public void onWebSocketMessage(String message) {
 
         try {
-            queue.put(message);
-        } catch (InterruptedException e) {
+            if(allowEditorUpdate){
+                runOnUiThread(()->{
+                    allowEditorUpdate = false;
+                    Log.d("THREAD","Processing item: " + message);
+                    int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
+
+                    Log.d("WebSocket", "Received message: " + message);
+                    editor.removeTextChangedListener(textWatcher);
+                    editor.setText(message);
+                    content = message;
+
+                    if (newCursorPosition <= editor.getText().length()) {
+                        editor.setSelection(newCursorPosition);
+                    }
+                    else { editor.setSelection(editor.getText().length());}
+                    updateParsedOutput(editor.getText().toString());
+
+                    editor.addTextChangedListener(textWatcher);
+                    allowEditorUpdate = true;
+                    Log.d("THREAD","Finished Processing item: " + message);
+                });
+            }
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -558,16 +550,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     @Override
     public void onWebSocketError(Exception ex) {
         Log.e("WebSocket", "Error", ex);
-    }
-
-
-    public class BlockInputFilter implements InputFilter {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end,
-                                   Spanned dest, int dstart, int dend) {
-            // Return an empty string to block the input
-            return "";
-        }
     }
 
 }
