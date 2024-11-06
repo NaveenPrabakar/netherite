@@ -54,9 +54,10 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        String serverUrl = "ws://10.0.2.2:8080/chat/1/" + username;
-        String aiURL = "ws://10.0.2.2:8080/chat/" + username;
-        WebSocketManager.getInstance().connectWebSocket(serverUrl);
+        String serverUrl = "ws://coms-3090-068.class.iastate.edu:8080/chat/1/" + username;
+        String aiURL = "ws://coms-3090-068.class.iastate.edu:8080/chat/" + username;
+
+        WebSocketManager.getInstance().connectWebSocket(aiURL);
 
         if(extras != null){
             email = extras.getString("EMAIL");

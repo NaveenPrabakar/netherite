@@ -54,7 +54,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
     private final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/"; // PUT IN A PATH VARIABLE
     private final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
-    private final String URI_AI_WEBSOCKET = "http://coms-3090-068.class.las.iastate.edu:8080/chat/";
+    //private final String URI_AI_WEBSOCKET = "http://coms-3090-068.class.las.iastate.edu:8080/chat/";
     private Button back2main;
     private Button saveButt;
     private Button summarizeButt;
@@ -100,9 +100,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (!AIInputText.getText().toString().isEmpty())
                 {
                     String msg = AIInputText.getText().toString();
-                    TESTsummarizeString(Request.Method.GET, msg, email, "summarize", URL_AI_GET);
-
-                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(AIText.getText().toString());
+                    //TESTsummarizeString(Request.Method.GET, msg, email, "summarize", URL_AI_GET);
+                    //AIWebSocketCode();
+                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(msg);
                 }
             }
         });
