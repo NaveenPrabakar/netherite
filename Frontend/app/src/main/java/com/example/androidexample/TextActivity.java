@@ -86,6 +86,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                if (queue.isEmpty()){
+                    allowEditorUpdate = true;
+                }
             }
 
             @Override
@@ -250,7 +253,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                             updateParsedOutput(editor.getText().toString());
 
                             editor.addTextChangedListener(textWatcher);
-                            allowEditorUpdate = true;
                             Log.d("THREAD","Finished Processing item: " + message);
                         }
                     }catch (Exception e){
