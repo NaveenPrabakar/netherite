@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import java.util.Date;
 
-     // this is needed for this to be an endpoint to springboot
+// this is needed for this to be an endpoint to springboot
 @ServerEndpoint("/chat/{fileId}/{username}")  // this is Websocket url
 @Component //make sures tht spring will scan this class
 public class ChatSocket {
@@ -89,11 +89,11 @@ public class ChatSocket {
 		fileIdUsernameSessionMap.get(fileId).put(username, session);
 
 		// Send chat history to the newly connected user
-		sendMessageToPArticularUser(fileId, username, getChatHistory(fileId));
+		sendMessageToPArticularUser(fileId, username, getChatHistory(fileId), "sourceLIVE");
 
 		// Broadcast that new user joined the chat
-		String message = "User: " + username + " has Joined the Chat";
-		broadcast(fileId, message);
+//		String message = "User: " + username + " has Joined the Chat";
+//		broadcast(fileId, message);
 	}
 
 	//@OnMessage: Triggered when a message is received.
@@ -104,28 +104,23 @@ public class ChatSocket {
 	//Saves the message to the message repository.
 	@OnMessage
 	public void onMessage(Session session, @PathParam("fileId") String fileId, String message) throws IOException {
-
-		// Handle new messages
-		logger.info("Entered into Message: Got Message:" + message);
-		String username = sessionUsernameMap.get(session);
-
+		logger.info("Entered into Message: Got Message: " + message);
 		String username = fileIdSessionMap.get(fileId).get(session);
 
-		// Handle AI messages
-		if (message.startsWith("/AI: ")) {
+		if (message.startsWith("/AI:")) {
 			String prompt = message.substring(4);
 			String aiResponse = getAIResponse(prompt);
-			broadcast(fileId, "AI: " + aiResponse);
-		} else if (message.startsWith("@")) { // Direct message logic
+			broadcast(fileId, "AI", aiResponse, "sourceCHAT");
+		} else if (message.startsWith("@")) {
 			String destUsername = message.split(" ")[0].substring(1);
 			if (fileIdUsernameSessionMap.get(fileId).containsKey(destUsername)) {
-				sendMessageToPArticularUser(fileId, destUsername, "[DM] " + username + ": " + message);
+				sendMessageToPArticularUser(fileId, destUsername, "[DM] " + username + ": " + message, "sourceLIVE");
 			}
-		} else { // Broadcast message within the group
-			broadcast(fileId, username + ": " + message);
+		} else {
+			broadcast(fileId, username, message, "sourceLIVE");
 		}
-		// Saving chat history
-		msgRepo.save(new Message(username, message, new Date()));
+
+		msgRepo.save(new Message(username, message, new Date(), fileId));  // Ensure Message entity has a fileId field
 	}
 
 	//Triggered when a user disconnects from the WebSocket.
@@ -147,8 +142,8 @@ public class ChatSocket {
 		fileIdUsernameSessionMap.get(fileId).remove(username);
 
 		// Broadcast that the user disconnected
-		String message = username + " disconnected";
-		broadcast(fileId, message);
+//		String message = username + " disconnected";
+//		broadcast(fileId, message);
 	}
 
 	//onError:
@@ -167,25 +162,36 @@ public class ChatSocket {
 
 	// make sure that the broadcast and sendMessageToPArticularUser methods now accept the fileId as a
 	// parameter to ensure that messages are sent to the correct group.
-	 private void broadcast(String fileId, String message) {
-		 fileIdSessionMap.get(fileId).forEach((session, username) -> {
-			 try {
-				 session.getBasicRemote().sendText(message);
-			 } catch (IOException e) {
-				 logger.info("Exception: " + e.getMessage());
-				 e.printStackTrace();
-			 }
-		 });
-	 }
+	private void broadcast(String fileId, String username, String message, String source) {
+		String jsonResponse = new JSONObject()
+				.put("content", message)
+				.put("username", username)
+				.put("source", source)
+				.toString();
 
-	 private void sendMessageToPArticularUser(String fileId, String username, String message) {
-		 try {
-			 fileIdUsernameSessionMap.get(fileId).get(username).getBasicRemote().sendText(message);
-		 } catch (IOException e) {
-			 logger.info("Exception: " + e.getMessage());
-			 e.printStackTrace();
-		 }
-	 }
+		fileIdSessionMap.get(fileId).forEach((session, sessionUsername) -> { // Renamed 'username' to 'sessionUsername'
+			try {
+				session.getBasicRemote().sendText(jsonResponse);
+			} catch (IOException e) {
+				logger.info("Exception: " + e.getMessage());
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private void sendMessageToPArticularUser(String fileId, String username, String message, String source) {
+		String jsonResponse = new JSONObject()
+				.put("content", message)
+				.put("username", username)
+				.put("source", source)
+				.toString();
+		try {
+			fileIdUsernameSessionMap.get(fileId).get(username).getBasicRemote().sendText(jsonResponse);
+		} catch (IOException e) {
+			logger.info("Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 	
 	//getChatHistory:
 	//Retrieves the chat history from the message repository.
@@ -194,14 +200,19 @@ public class ChatSocket {
   // Gets the Chat history from the repository
 	private String getChatHistory(String fileId) {
 		List<Message> messages = msgRepo.findByFileId(fileId);
+		JSONArray historyArray = new JSONArray();
 
-		StringBuilder sb = new StringBuilder();
 		if (messages != null && !messages.isEmpty()) {
 			for (Message message : messages) {
-				sb.append(message.getSender()).append(": ").append(message.getContent()).append("\n");
+				JSONObject messageJson = new JSONObject()
+						.put("content", message.getContent())
+						.put("username", message.getSender())
+						.put("source", "sourceLIVE");
+				historyArray.put(messageJson);
 			}
 		}
-		return sb.toString();
+		return historyArray.toString();
+
 	}
 
 	// Method to interact with the AI service

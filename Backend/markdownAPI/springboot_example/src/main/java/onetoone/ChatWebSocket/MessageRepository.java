@@ -1,5 +1,8 @@
 package onetoone.ChatWebSocket;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Hashtable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageRepository extends JpaRepository<Message, Long>{
