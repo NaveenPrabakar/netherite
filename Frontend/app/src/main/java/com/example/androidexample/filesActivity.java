@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
+    private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
     private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/update";
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
@@ -215,7 +216,8 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Log.d("File Clicked", "File clicked: " + String.valueOf(item));
-                        getFileString(String.valueOf(item));
+                        getFile(String.valueOf(item));
+
                     }
                 });
 
@@ -354,25 +356,51 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        try {
-                            JSONObject resp = new JSONObject(response);
-                            int id = resp.getInt("id");
-                            content = resp.getString("content");
+                        content = response;
 
-                            String serverUrl = URL_WS + id;
-                            WebSocketManager.getInstance().connectWebSocket(serverUrl);
+                        Intent intent = new Intent(filesActivity.this, TextActivity.class);
+                        intent.putExtra("FILESYSTEM", fileSystem );
+                        intent.putExtra("PATH", path);
+                        intent.putExtra("CONTENT", content);
+                        intent.putExtra("FILEKEY", fileName);
+                        intent.putExtra("EMAIL", email);
+                        intent.putExtra("PASSWORD", password);
+                        startActivity(intent);
 
-                            Intent intent = new Intent(filesActivity.this, TextActivity.class);
-                            intent.putExtra("FILESYSTEM", fileSystem );
-                            intent.putExtra("PATH", path);
-                            intent.putExtra("CONTENT", content);
-                            intent.putExtra("FILEKEY", fileName);
-                            intent.putExtra("EMAIL", email);
-                            intent.putExtra("PASSWORD", password);
-                            startActivity(intent);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+    public void getFile(String fileName){
+        Uri.Builder builder = Uri.parse(URL_ID_REQ).buildUpon();
+        builder.appendQueryParameter("email", email);
+        builder.appendQueryParameter("fileName", fileName );
+        String url = builder.build().toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        int id = Integer.parseInt(response);
+
+                        String serverUrl = URL_WS + id;
+                        WebSocketManager.getInstance().connectWebSocket(serverUrl);
+                        getFileString(fileName);
+
                     }
                 },
                 new Response.ErrorListener() {
