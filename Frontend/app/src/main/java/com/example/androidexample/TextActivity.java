@@ -62,6 +62,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private TextWatcher textWatcher;
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private String previousContent;
 
 
     @Override
@@ -96,6 +97,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if(allowEditorUpdate){
+                    previousContent = content;
                     content = charSequence.toString();
                     updateParsedOutput(content);
                     Log.d("Text changed", content);
@@ -103,7 +105,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 }
                 else{
                     editor.removeTextChangedListener(textWatcher);
+                    int cur = editor.getSelectionStart();
                     editor.setText(content);
+                    editor.setSelection(cur);
                     editor.addTextChangedListener(textWatcher);
                 }
             }
@@ -238,7 +242,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     if(queue.size() > 0 && allowEditorUpdate){
                         allowEditorUpdate = false;
                         String message = queue.peek();
-                        Log.d("THREAD","Processing item: " + message);
+                        Log.d("THREAD","Processing item: " + queue.size());
                         int newCursorPosition = Math.max(getCorrectCursorLocation(content, message, editor.getSelectionStart()), 0);
 
                         Log.d("WebSocket", "Received message: " + message);
@@ -254,7 +258,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
                         editor.addTextChangedListener(textWatcher);
                         queue.take();
-                        Log.d("THREAD","Finished Processing item: " + message);
+                        Log.d("THREAD","Finished Processing item: " + queue.size());
+                        allowEditorUpdate = true;
                     }
                 }catch (Exception e){
                     throw new RuntimeException(e);
