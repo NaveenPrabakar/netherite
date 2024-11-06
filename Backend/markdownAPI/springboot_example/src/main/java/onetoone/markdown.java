@@ -125,10 +125,9 @@ public class markdown {
     @GetMapping("/pull")
     public String pull(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("fileName") String fileName) {
 
-        String contents = "{\"id\": ";
+
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
         String temp = Long.toString(fileEntity.getfileId());
-        contents += temp;
         signEntity user = logs.findByEmail(email);
 
         if (fileEntity == null) {
@@ -143,20 +142,25 @@ public class markdown {
             }
 
             String content = new String(Files.readAllBytes(filePath));
-            contents += ", \"content\":";
-            contents += "\"";
-            contents += content;
 
-            contents += "\"}";
-
-            System.out.println(contents);
-
-            return contents;
+            return content;
 
         } catch (IOException e) {
             return "Failed to retrieve file content due to an IO error: ";
         }
     }
+
+    @GetMapping("/fileid")
+    public String pulled(@RequestParam("email") String email, @RequestParam("fileName") String fileName) {
+
+        FileEntity fileEntity = fileRepository.findByFileName(fileName);
+        String temp = Long.toString(fileEntity.getfileId());
+        signEntity user = logs.findByEmail(email);
+
+        return temp;
+
+    }
+
 
     /**
      * The method grabs the User's associated Json path

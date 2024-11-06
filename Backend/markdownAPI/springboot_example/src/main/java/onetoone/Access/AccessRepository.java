@@ -22,6 +22,7 @@ public interface AccessRepository extends JpaRepository<AccessEntity, Long> {
     @Query("SELECT a.access FROM AccessEntity a WHERE a.file = :file AND a.sign = :owner")
     List<signEntity> sents(@Param("file") FileEntity file, @Param("owner") signEntity owner);
 
+
     @Modifying
     @Transactional
     @Query("DELETE FROM AccessEntity ae WHERE ae.sign = :signEntity")

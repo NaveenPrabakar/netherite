@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * This class gets Access to the Join Table
+ * This class gets Access to the Join Table from the many to many relation
  */
 @Service
 public class FileAccess{
