@@ -31,6 +31,7 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/update";
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
     private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
+    private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
 
     private String fileSystem =  "{\"root\": []}";
     // path is hard coded. make a path lmao. make it dynamic
@@ -399,7 +400,7 @@ public class filesActivity extends AppCompatActivity {
                         int id = Integer.parseInt(response);
 
                         String serverUrl = URL_WS + id;
-                        String aiURL = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/" + id;
+                        String aiURL = URL_AIWS + id;
 
                         WebSocketManager2.getInstance().connectWebSocket(aiURL);
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);

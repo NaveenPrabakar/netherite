@@ -443,33 +443,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
 
-    private void AIWebSocketCode(int method, String contentToSummarize, String email, String prompt, String URL)
-    {
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.POST,
-                URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Volley Response", response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
-                        Log.e("Email", email);
-
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-        );
-
-        // Add the string request to the Volley Queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-    }
-
-
     /*
     This stupid ass function takes a file, path, and the system of phone.
     It puts the file into the path, and the path is in the file system.
