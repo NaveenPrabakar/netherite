@@ -35,6 +35,8 @@ public class TesseractTest {
     @Autowired
     private ImageRepository im;
 
+    private ArrayList<String> types = new ArrayList<>(Arrays.asList("jpeg", "jpg", "png", "gif"));
+
     /**
      * The following method works well for printed images
      *
@@ -115,6 +117,11 @@ public class TesseractTest {
 
             MediaType mediaType;
             String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+
+            //added
+            if(types.contains(extension)){
+                return ResponseEntity.notFound().build();
+            }
 
             //cases to check which file extension
             switch (extension) {
