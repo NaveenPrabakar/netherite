@@ -66,6 +66,7 @@ public class DocServer {
         Long l = Long.parseLong(fileName);
         Optional<FileEntity> allOptional = f.findById(l);
         FileEntity all = allOptional.orElse(null);
+
         // Update the document with the new content
         Path filePath = location.resolve(all.getName());
         Files.write(filePath, content.getBytes());
