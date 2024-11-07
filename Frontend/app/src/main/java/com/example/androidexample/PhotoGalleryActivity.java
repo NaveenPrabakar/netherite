@@ -27,7 +27,6 @@ import okhttp3.Response;
 public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
     private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
-    private final String getPhotoImage = "http://coms-3090-068.class.las.iastate.edu:8080/getImage/"; // and then + filename
     private List<String> photos;
     private RecyclerView galleryView;
 
@@ -90,7 +89,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
                     // Populate the gallery with the photos
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        GalleryPopulator gallery = new GalleryPopulator(photos);
+                        GalleryPopulator gallery = new GalleryPopulator(photos, PhotoGalleryActivity.this);
                         galleryView.setAdapter(gallery);
                     });
                 }
