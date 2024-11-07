@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import okhttp3.Response;
 public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
     private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
+    private Button backButt;
     private List<String> photos;
     private RecyclerView galleryView;
 
@@ -44,6 +47,17 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 email = extras.getString("EMAIL");
             }
         }
+
+        backButt = findViewById(R.id.backButt);
+        backButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(PhotoGalleryActivity.this, MainActivity.class);
+                i.putExtra("EMAIL", email);
+                startActivity(i);
+            }
+        });
 
         galleryView = findViewById(R.id.recyclerGalleryView);
         galleryView.setLayoutManager(new LinearLayoutManager(this));
