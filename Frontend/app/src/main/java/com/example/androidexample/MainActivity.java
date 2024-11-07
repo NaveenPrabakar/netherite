@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -168,6 +169,12 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
+
+    }
+
+    @Override
+    public void onWebSocketJsonMessage(JSONObject Jsonmessage)
+    {
 
     }
 

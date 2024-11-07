@@ -83,6 +83,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String aiCount;
     private TextWatcher textWatcher;
     private String source;
+    private String history = "";
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private String previousContent;
@@ -100,11 +101,19 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
-        AIText.setVisibility(View.INVISIBLE);
+        //AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
         aiInputButt = findViewById(R.id.AIInputButt);
         AIInputText = findViewById(R.id.AIChatBar);
+
+        saveButt = findViewById(R.id.saveButt);
+        summarizeButt = findViewById(R.id.summarizeButt);
+        acceptButt = findViewById(R.id.acceptButt);
+        acceptButt.setVisibility(View.INVISIBLE);
+
+        rejectButt = findViewById(R.id.rejectButt);
+        rejectButt.setVisibility(View.INVISIBLE);
 
         // This is the AI chat button
         aiInputButt.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +122,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (!AIInputText.getText().toString().isEmpty())
                 {
                     String msg = AIInputText.getText().toString();
+                    Log.d("Socket Message:", msg);
                     WebSocketManager2.getInstance().sendMessage(msg);
                 }
             }
@@ -169,6 +179,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (extras.getString("IMAGETEXT") != null)
                 {
                     AIText.setText(extras.getString("IMAGETEXT"));
+                    //mainText.setText(extras.getString("IMAGETEXT"));
                     acceptButt.setVisibility(View.VISIBLE);
                     rejectButt.setVisibility(View.VISIBLE);
                     summarizeButt.setVisibility(View.INVISIBLE);
@@ -202,7 +213,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        saveButt = findViewById(R.id.saveButt);
+
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,7 +232,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        summarizeButt = findViewById(R.id.summarizeButt);
+
         summarizeButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -235,8 +246,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        acceptButt = findViewById(R.id.acceptButt);
-        acceptButt.setVisibility(View.INVISIBLE);
+
         acceptButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -254,8 +264,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        rejectButt = findViewById(R.id.rejectButt);
-        rejectButt.setVisibility(View.INVISIBLE);
+
         rejectButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -546,6 +555,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         return cursorPos;
     }
 
+    // I can also get history whenever another user loads it up
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.d("WebSocket", "Connected");
@@ -583,15 +593,30 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             // Example: extract data from the JSON object
             source = jsonMessage.getString("source");
             String stuff = jsonMessage.getString("content");
-            if (source == "AI")
+            String user = jsonMessage.getString("username");
+            history += stuff + ":" + user + " ";
+            Log.d("History: ", history);
+            Log.d("Source", source);
+
+            // Supposed to be sourceCHAT but im just testing rn
+            if (source.equals("sourceAI"))
             {
+                // User process function
+                //chatBox.setText(chatHistory + stuff);
+                AIText.setText(history);
+            }
+            if (source.equals("sourceCHAT")){
                 // jamey shit
                 AISingletonUser.getInstance(getApplicationContext()).AIMessage(stuff);
+                //chatBox.setText(chatHistory + stuff);
+                AIText.setText(history);
             }
-            else
+            if (source.equals("sourceLIVE"))
             {
                 // nicholas shit
-                onWebSocketMessage(stuff);
+                //onWebSocketMessage(stuff);
+                Log.d("SET AITEXT", history);
+                AIText.setText(history);
             }
         } catch (JSONException e) {
             e.printStackTrace();

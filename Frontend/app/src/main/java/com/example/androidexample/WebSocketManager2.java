@@ -80,6 +80,7 @@ public class WebSocketManager2 {
      * @param message The message to be sent to the WebSocket server.
      */
     public void sendMessage(String message) {
+        Log.d("Websocket", "Sending message: " + message);
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
         }
@@ -128,6 +129,8 @@ public class WebSocketManager2 {
          * Called when a WebSocket message is received from the server. This method is
          * invoked to handle incoming WebSocket messages and allows the application to
          * process and respond to messages as needed.
+         *
+         * Should onMessage(String message) actually be JSONObject?
          *
          * @param message The WebSocket message received from the server as a string.
          */
