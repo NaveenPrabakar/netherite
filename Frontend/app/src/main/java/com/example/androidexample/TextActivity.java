@@ -89,6 +89,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private int offset;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,10 +165,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (extras.getString("CONTENT") != null){
                     Log.d("content", extras.getString("CONTENT"));
                     editor.setText(extras.getString("CONTENT"));
+                    content = extras.getString("CONTENT");
                 }
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
+                }
+                if (extras.getString("RECORDED") != null){
+                    Log.d("recorded", extras.getString("RECORDED"));
+                    editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
                 }
                 if (extras.getString("IMAGETEXT") != null)
                 {
@@ -283,9 +289,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             public void onClick(View v) {
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(TextActivity.this, VoiceRecordActivity.class);
-                intent.putExtra("FILESYSTEM", fileSystem.toString());
                 intent.putExtra("EMAIL", email);
                 intent.putExtra("PASSWORD", password);
+                intent.putExtra("USERNAME", username);
+                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("PATH", filePath.toString());
+                intent.putExtra("CONTENT", content);
                 startActivity(intent);
             }
         });

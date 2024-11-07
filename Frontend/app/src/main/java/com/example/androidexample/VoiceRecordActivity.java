@@ -1,5 +1,6 @@
 package com.example.androidexample;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,15 +26,31 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import com.android.volley.Request;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class VoiceRecordActivity extends AppCompatActivity {
 
     private TextView startTV, stopTV, playTV, stopplayTV, statusTV, txthead;
+    private Button accept, reject;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private static String mFileName = null;
     public static final int REQUEST_AUDIO_PERMISSION_CODE = 1;
 
     private static final String UPLOAD_URL = "http://coms-3090-068.class.las.iastate.edu:8080/SpeechToTextAIuse/transcribe2";
+    private static final String UPLOAD_EMAIL_URL = "http://coms-3090-068.class.las.iastate.edu:8080/SpeechToTextAIuse/createSpeechUser/";
+
+    private String email;
+    private String content;
+    private String password;
+    private String username;
+    private String fileSystem;
+    private String filePath;
+
+    private String recorded = "";
+
+    private byte[] voiceData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +64,38 @@ public class VoiceRecordActivity extends AppCompatActivity {
         stopplayTV = findViewById(R.id.btnStopPlay);
         txthead = findViewById(R.id.txthead);
 
+        accept = findViewById(R.id.accept);
+        reject = findViewById(R.id.reject);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        fileSystem = extras.getString("FILESYSTEM");
+        filePath = extras.getString("PATH");
+        email = extras.getString("EMAIL");
+        password = extras.getString("PASSWORD");
+        username = extras.getString("USERNAME");
+        Log.d("EMAIL", extras.getString("EMAIL"));
+        Log.d("PASSWORD", extras.getString("PASSWORD"));
+        Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+        Log.d("PATH", extras.getString("PATH"));
+        content = extras.getString("CONTENT");
+
         startTV.setOnClickListener(v -> startRecording());
         stopTV.setOnClickListener(v -> stopRecording());
         playTV.setOnClickListener(v -> playAudio());
         stopplayTV.setOnClickListener(v -> stopPlaying());
+
+        accept.setOnClickListener(v -> {
+            uploadVoiceEmail();
+        });
+
+        reject.setOnClickListener(v -> {
+            recorded = "";
+            txthead.setText("");
+        });
+
+
     }
 
     private void startRecording() {
@@ -137,6 +183,7 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
     private void uploadVoice() {
         byte[] voiceData = convertAudioUriToBytes(Uri.fromFile(new File(mFileName)));
+        this.voiceData = voiceData;
         if (voiceData == null) {
             Log.e("Upload", "Conversion to bytes failed");
             return;
@@ -146,7 +193,40 @@ public class VoiceRecordActivity extends AppCompatActivity {
                 Request.Method.POST,
                 UPLOAD_URL,
                 voiceData,
-                response -> Log.d("Upload", "Response: " + response),
+                response -> {
+                    Log.d("Upload", "Response: " + response);
+                    txthead.setText(response);
+                    recorded = response;
+                },
+                error -> Log.e("Upload", "Error: " + error.getMessage())
+        );
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
+    }
+
+    private void uploadVoiceEmail() {
+        String url = UPLOAD_EMAIL_URL + email;
+        if (voiceData == null) {
+            Log.e("Upload", "Conversion to bytes failed");
+            return;
+        }
+
+        MultipartAudioRequest multipartRequest = new MultipartAudioRequest(
+                Request.Method.POST,
+                url,
+                voiceData,
+                response -> {
+                    Log.d("Upload", "Response: " + response);
+                    Intent intent2 = new Intent(VoiceRecordActivity.this, TextActivity.class);
+                    intent2.putExtra("EMAIL", email);
+                    intent2.putExtra("PASSWORD", password);
+                    intent2.putExtra("USERNAME", username);
+                    intent2.putExtra("FILESYSTEM", fileSystem);
+                    intent2.putExtra("PATH", filePath);
+                    intent2.putExtra("CONTENT", content);
+                    intent2.putExtra("RECORDED", recorded);
+                    startActivity(intent2);
+                    },
                 error -> Log.e("Upload", "Error: " + error.getMessage())
         );
 
