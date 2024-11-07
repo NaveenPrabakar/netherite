@@ -15,6 +15,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 
+/*
+* The Photo View activity will display a single photo.
+ */
 public class PhotoViewActivity extends AppCompatActivity {
     private ImageView imageView;
     private Button goBackButt;

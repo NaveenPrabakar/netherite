@@ -26,6 +26,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+/*
+* The Photo Gallery activity will display a list of photos.
+* It does this by using a RecyclerView to display the photos dynamically.
+* The RecyclerView is populated with the list of photos from the server, and the user can click on a link to view the photo.
+ */
 public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
     private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
@@ -62,12 +68,13 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         galleryView = findViewById(R.id.recyclerGalleryView);
         galleryView.setLayoutManager(new LinearLayoutManager(this));
 
-
-        // How to get that same list of photo file names from getPhotoList?
         getPhotos();
 
     }
 
+    /*
+    * Gets the list of photos from the server at the URL 'getPhotoList'. It would call getPhotoList + email as a userparam.
+     */
     private void getPhotos()
     {
         /*
@@ -101,7 +108,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     Type classType = new TypeToken<List<String>>(){}.getType();
                     photos = gson.fromJson(listOfNames, classType);
 
-                    // Populate the gallery with the photos
+                    /*
+                    * Populate the (RecyclerView) galleryView with the list of photos, using 'GalleryPopulator'.
+                     */
                     new Handler(Looper.getMainLooper()).post(() -> {
                         GalleryPopulator gallery = new GalleryPopulator(photos, PhotoGalleryActivity.this);
                         galleryView.setAdapter(gallery);
