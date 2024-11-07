@@ -21,7 +21,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="33-image-to-text-api-implementation" />
+        <entry key="$PROJECT_DIR$" value="35-live-editing-back-end" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -63,7 +63,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "35-live-editing-back-end",
+    "git-widget-placeholder": "33-image-to-text-api-implementation",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/annabelle/Desktop/4_rasel_2",
     "node.js.detected.package.eslint": "true",
