@@ -598,26 +598,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             Log.d("History: ", history);
             Log.d("Source", source);
 
-            // Supposed to be sourceCHAT but im just testing rn
-            if (source.equals("sourceAI"))
-            {
-                // User process function
-                //chatBox.setText(chatHistory + stuff);
-                AIText.setText(history);
-            }
-            if (source.equals("sourceCHAT")){
-                // jamey shit
-                AISingletonUser.getInstance(getApplicationContext()).AIMessage(stuff);
-                //chatBox.setText(chatHistory + stuff);
-                AIText.setText(history);
-            }
-            if (source.equals("sourceLIVE"))
-            {
-                // nicholas shit
-                //onWebSocketMessage(stuff);
-                Log.d("SET AITEXT", history);
-                AIText.setText(history);
-            }
+            AIText.setText(stuff);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

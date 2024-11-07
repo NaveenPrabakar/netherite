@@ -81,8 +81,14 @@ public class WebSocketManager2 {
      */
     public void sendMessage(String message) {
         Log.d("Websocket", "Sending message: " + message);
+
+        if (webSocketClient.isClosed())
+        {
+            Log.d("Client Status",  "Down");
+        }
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
+            Log.d("Websocket", "Message sent: " + message);
         }
     }
 
