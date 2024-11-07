@@ -91,7 +91,7 @@ public class SpeechToTextController{
     //parameter need to have the user email in order to access to sign entity to find the userid
     //return
     @PostMapping("/createSpeechUser/{email}")
-    public ResponseEntity<String> createSpeechUser(@PathVariable String email, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> createSpeechUser(@PathVariable String email, @RequestParam("audio") MultipartFile file) {
         try {
             //calling the speech to text method
             //Map <
