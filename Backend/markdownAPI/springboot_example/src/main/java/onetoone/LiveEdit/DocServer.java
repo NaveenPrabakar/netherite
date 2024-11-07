@@ -30,38 +30,13 @@ import onetoone.FileEntity;
 @Component
 public class DocServer {
 
-    // Static reference to the FileRepository instance
     public static FileRepository f;
-
-
     private static Map<Session, String> sessionFileMap = new Hashtable<>();
-
-
-    private static BlockingQueue<MessageTask> messageQueue = new LinkedBlockingQueue<>();
-
-
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-
     private static final Logger logger = LoggerFactory.getLogger(DocServer.class);
-
     private static final Path location = Paths.get("root");
 
-    //the thread to execute cursor position
-    static {
-        // Start processing tasks in the queue
-        executor.execute(() -> {
-            while (true) {
-                try {
-                    MessageTask task = messageQueue.take();  // Retrieve and remove task from the queue
-                    task.process();
-                } catch (InterruptedException e) {
-                    logger.error("[Queue Processing Interrupted] " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
-    }
+    // Queue to store incoming document changes in sequential order
+    private static final BlockingQueue<Runnable> editQueue = new LinkedBlockingQueue<>();
 
     @Autowired
     public void setFileRepository(FileRepository repo) {
@@ -76,8 +51,33 @@ public class DocServer {
 
     @OnMessage
     public void onMessage(Session session, String content) {
-        // Queue the task for processing
-        messageQueue.add(new MessageTask(session, content));
+        editQueue.offer(() -> {
+            try {
+                String fileName = sessionFileMap.get(session);
+                logger.info("[onMessage] File: " + fileName + " Content: " + content);
+
+                Long l = Long.parseLong(fileName);
+                Optional<FileEntity> allOptional = f.findById(l);
+                FileEntity all = allOptional.orElse(null);
+
+                Path filePath = location.resolve(all.getName());
+                String previousContent = Files.readString(filePath);
+                Files.write(filePath, content.getBytes());
+
+                // Calculate the updated cursor position (add the cursor position)
+                int updatedCursorPos = getCorrectCursorLocation(previousContent, content, 0);
+
+                // Broadcast the change with the updated cursor position
+                String jsonMessage = String.format(
+                        "{ \"source\": \"live edit\", \"content\": \"%s\", \"cursor\": {\"user\": %d}}",
+                        content, updatedCursorPos
+                );
+                broadcast(jsonMessage, session);
+
+            } catch (Exception e) {
+                logger.error("[Queue Processing Error] " + e.getMessage());
+            }
+        });
     }
 
     @OnClose
@@ -105,45 +105,54 @@ public class DocServer {
     }
 
     /**
-     * Internal class for processing messages in sequence.
+     * Calculates the correct cursor location after an edit based on the before and after content,
+     * and the current cursor position of the user.
+     *
+     * @param before Original content before the edit
+     * @param after Content after the edit
+     * @param cursorPos Initial cursor position of the user before the edit
+     * @return Updated cursor position after the edit
      */
-    private class MessageTask {
-        private final Session session;
-        private final String content;
+    public int getCorrectCursorLocation(String before, String after, int cursorPos) {
+        int lenBefore = before.length();
+        int lenAfter = after.length();
+        int minLen = Math.min(lenBefore, lenAfter);
+        int diffIndex = minLen;
 
-        public MessageTask(Session session, String content) {
-            this.session = session;
-            this.content = content;
-        }
-
-        public void process() {
-            String fileName = sessionFileMap.get(session);
-            logger.info("[onMessage] File: " + fileName + " Content: " + content);
-
-            try {
-                // Fetch the document entity
-                Long l = Long.parseLong(fileName);
-                Optional<FileEntity> fileOptional = f.findById(l);
-                FileEntity fileEntity = fileOptional.orElse(null);
-                if (fileEntity == null) {
-                    logger.error("[File Not Found] ID: " + l);
-                    return;
+        if (lenBefore != lenAfter) {
+            for (int i = 0; i < minLen; i++) {
+                if (before.charAt(i) != after.charAt(i)) {
+                    diffIndex = i;
+                    break;
                 }
-
-                // Update the file with new content
-                Path filePath = location.resolve(fileEntity.getName());
-                Files.write(filePath, content.getBytes());
-
-                //need to cursor calc
-
-                // Prepare the JSON payload
-                String jsonResponse = "{ \"source\": \"live edit\", \"content\": \"" + content + "\", \"cursor\": [{ \"user\": \"" + session.getId() + "\", \"position\": /* calculated position */ }] }";
-
-                // Broadcast updated content to other connected clients
-                broadcast(jsonResponse, session);
-            } catch (Exception e) {
-                logger.error("[Message Processing Error] " + e.getMessage());
+            }
+            int lenChanged = lenAfter - lenBefore;
+            if (lenChanged > 0) {
+                if (diffIndex < cursorPos) {
+                    return cursorPos + lenChanged;
+                }
+            } else if (lenChanged < 0) {
+                if (diffIndex <= cursorPos) {
+                    return cursorPos + lenChanged;
+                }
             }
         }
+        return cursorPos;
+    }
+
+    // Thread to process the edit queue for sequential processing
+    private static final Thread editProcessingThread = new Thread(() -> {
+        while (true) {
+            try {
+                editQueue.take().run();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    });
+
+    static {
+        editProcessingThread.start();
     }
 }
