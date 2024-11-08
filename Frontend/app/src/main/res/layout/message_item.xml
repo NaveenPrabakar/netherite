@@ -7,13 +7,13 @@
     android:padding="8dp">
 
     <!-- Optional: Display the sender's name -->
-<!--    <TextView-->
-<!--        android:id="@+id/sender_name"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textColor="#333333"-->
-<!--        android:textSize="14sp"-->
-<!--        android:textStyle="bold"-->
+    <TextView
+        android:id="@+id/sender_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 <!--        android:visibility="gone" /> &lt;!&ndash; Hide this if you don't need to show sender names &ndash;&gt;-->
 
     <!-- Display the message content -->

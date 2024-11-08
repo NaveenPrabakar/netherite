@@ -34,6 +34,7 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
         }
         messages.add(message);
         //notifyItemInserted(messages.size());
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -46,8 +47,10 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         String content = messages.get(position).getContent();
+        String user = messages.get(position).getUsername();
         //String content = messages.get(position).getString("content");
         holder.messageTextView.setText(content);
+        holder.usernameTextView.setText(user);
     }
 
     @Override
@@ -64,10 +67,12 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
+        TextView usernameTextView;
 
         public MessageViewHolder(View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.message_text);
+            usernameTextView = itemView.findViewById(R.id.sender_name);
         }
     }
 }
