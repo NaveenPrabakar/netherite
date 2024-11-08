@@ -220,7 +220,10 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
                 //messages.add(m);
                 //MessagePopulator pop = new MessagePopulator(messages, ChatActivity.this);
                 Log.d("MOHTERFUCKER YOU BETTER UPDATE", "updated");
-                chatHistory.swapAdapter(messagePopulator, true);
+
+                // Recent change: 11/8
+                //chatHistory.swapAdapter(messagePopulator, true);
+                chatHistory.setAdapter(messagePopulator);
             }
 
             // SUS !! DONTT OUCH
