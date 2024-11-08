@@ -24,6 +24,7 @@ import java.io.IOException;
 import onetoone.signupAPI.signup;
 import onetoone.signupAPI.signRepository;
 import onetoone.loginAPI.logs;
+import org.springframework.beans.factory.annotation.Autowired;
 import onetoone.loginAPI.loginRepository;
 import java.util.*;
 import onetoone.signupAPI.signEntity;  // Ensure the correct package path
