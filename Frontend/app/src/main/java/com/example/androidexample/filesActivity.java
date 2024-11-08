@@ -42,6 +42,7 @@ public class filesActivity extends AppCompatActivity {
     private String password;
     private String content;
     private Button goback;
+    private Button OCRButt;
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
     private LinearLayout fileLayout;
@@ -109,6 +110,19 @@ public class filesActivity extends AppCompatActivity {
             createUI(rootLayout);
         });
 
+        OCRButt = findViewById(R.id.OCRButt);
+        OCRButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(filesActivity.this, OCRActivity.class);
+                i.putExtra("FILESYSTEM", fileSystem);
+                i.putExtra("PATH", path);
+                i.putExtra("EMAIL", email);
+                i.putExtra("PASSWORD", password);
+                i.putExtra("USERNAME", username);
+                startActivity(i);
+            }
+        });
     }
 
     private void createUI(LinearLayout parentLayout) {

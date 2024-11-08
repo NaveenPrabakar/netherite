@@ -98,8 +98,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
 
-
-
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
         //AIText.setVisibility(View.INVISIBLE);
@@ -125,6 +123,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 startActivity(i);
             }
         });
+
 
         markwon = Markwon.create(this);
 
@@ -210,6 +209,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 Intent intent = new Intent(TextActivity.this, MainActivity.class);
                 intent.putExtra("FILESYSTEM", fileSystem.toString());
                 intent.putExtra("EMAIL", email);
+                intent.putExtra("USERNAME", username);
                 intent.putExtra("PASSWORD", password);
                 startActivity(intent);  // go to SignupActivity
             }

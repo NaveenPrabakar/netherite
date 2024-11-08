@@ -19,15 +19,21 @@ import java.util.List;
 public class GalleryPopulator extends RecyclerView.Adapter<GalleryPopulator.ViewHolder> {
     private List<String> photoNames;
     private Context context;
+    private String username;
+    private String password;
+    private String email;
 
     /*
     * @param photoNames list of photo file names to display, retrieved from the server.
     * @param context context of the started activity.
      */
-    public GalleryPopulator(List<String> photoNames, Context context)
+    public GalleryPopulator(List<String> photoNames, Context context, String username, String email, String password)
     {
         this.photoNames = photoNames;
         this.context = context;
+        this.username = username;
+        this.email = email;
+        this.password = password;
     }
 
     /*
@@ -57,6 +63,9 @@ public class GalleryPopulator extends RecyclerView.Adapter<GalleryPopulator.View
         holder.itemView.setOnClickListener(v -> {
             Intent i = new Intent(context, PhotoViewActivity.class);
             i.putExtra("FILENAME", photoNames.get(position));
+            i.putExtra("EMAIL", email);
+            i.putExtra("USERNAME", username);
+            i.putExtra("PASSWORD", password);
             context.startActivity(i);
         });
     }
