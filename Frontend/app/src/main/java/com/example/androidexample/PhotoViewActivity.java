@@ -22,6 +22,10 @@ public class PhotoViewActivity extends AppCompatActivity {
     private ImageView imageView;
     private Button goBackButt;
     private String filename;
+
+    private String username;
+    private String password;
+    private String email;
     private final String getPhotoImageURL = "http://coms-3090-068.class.las.iastate.edu:8080/getImage/"; // and then + filename
 
     @Override
@@ -43,6 +47,18 @@ public class PhotoViewActivity extends AppCompatActivity {
                 filename = extras.getString("FILENAME");
                 Log.d("FILENAME", filename);
             }
+            if (extras.getString("EMAIL") != null)
+            {
+                email = extras.getString("EMAIL");
+            }
+            if (extras.getString("USERNAME") != null)
+            {
+                username = extras.getString("USERNAME");
+            }
+            if (extras.getString("PASSWORD") != null)
+            {
+                password = extras.getString("PASSWORD");
+            }
         }
         // Needs to wait for image to fully load though.
         loadImage();
@@ -52,6 +68,9 @@ public class PhotoViewActivity extends AppCompatActivity {
             public void onClick(View view)
             {
                 Intent i = new Intent(PhotoViewActivity.this, PhotoGalleryActivity.class);
+                i.putExtra("EMAIL", email);
+                i.putExtra("USERNAME", username);
+                i.putExtra("PASSWORD", password);
                 startActivity(i);
             }
         });

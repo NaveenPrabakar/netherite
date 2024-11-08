@@ -41,6 +41,7 @@
         <activity android:name=".OCRActivity" />
         <activity android:name=".PhotoGalleryActivity" />
         <activity android:name=".PhotoViewActivity" />
+        <activity android:name=".ChatActivity" />
         <activity android:name=".VoiceRecordActivity" />
 
 

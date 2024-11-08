@@ -34,6 +34,8 @@ import okhttp3.Response;
  */
 public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
+    private String username;
+    private String password;
     private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
     private Button backButt;
     private List<String> photos;
@@ -51,6 +53,17 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             if (extras.getString("EMAIL") != null)
             {
                 email = extras.getString("EMAIL");
+                Log.d("EMAIL",email);
+            }
+            if (extras.getString("USERNAME") != null)
+            {
+                username = extras.getString("USERNAME");
+                Log.d("username",username);
+            }
+            if (extras.getString("PASSWORD") != null)
+            {
+                password = extras.getString("PASSWORD");
+                Log.d("password",password);
             }
         }
 
@@ -61,6 +74,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             {
                 Intent i = new Intent(PhotoGalleryActivity.this, MainActivity.class);
                 i.putExtra("EMAIL", email);
+                i.putExtra("USERNAME", username);
+                i.putExtra("PASSWORD", password);
                 startActivity(i);
             }
         });
@@ -71,6 +86,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         getPhotos();
 
     }
+
 
     /*
     * Gets the list of photos from the server at the URL 'getPhotoList'. It would call getPhotoList + email as a userparam.
@@ -112,7 +128,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     * Populate the (RecyclerView) galleryView with the list of photos, using 'GalleryPopulator'.
                      */
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        GalleryPopulator gallery = new GalleryPopulator(photos, PhotoGalleryActivity.this);
+                        GalleryPopulator gallery = new GalleryPopulator(photos, PhotoGalleryActivity.this, username, email, password);
                         galleryView.setAdapter(gallery);
                     });
                 }

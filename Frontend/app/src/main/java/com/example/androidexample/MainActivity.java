@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
         if(extras != null){
             email = extras.getString("EMAIL");
-            //username = extras.getString("USERNAME");
+            username = extras.getString("USERNAME");
             password = extras.getString("PASSWORD");
             emailDisplay.setText(email);
             passwordDisplay.setText(password);
@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             {
                 Intent i = new Intent(MainActivity.this, PhotoGalleryActivity.class);
                 i.putExtra("EMAIL", email);
+                i.putExtra("USERNAME", username);
+                i.putExtra("PASSWORD", password);
                 startActivity(i);
             }
         });
