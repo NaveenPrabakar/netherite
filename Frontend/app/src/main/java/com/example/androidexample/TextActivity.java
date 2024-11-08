@@ -66,7 +66,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private Button saveButt;
     private Button summarizeButt;
     private Button acceptButt;
-    private Button aiInputButt;
+    private Button liveChatButt;
     private Button rejectButt;
     private EditText mainText;
     private EditText editor;
@@ -104,7 +104,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         //AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
-        aiInputButt = findViewById(R.id.AIInputButt);
+        liveChatButt = findViewById(R.id.liveChatButt);
         AIInputText = findViewById(R.id.AIChatBar);
 
         saveButt = findViewById(R.id.saveButt);
@@ -115,16 +115,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         rejectButt = findViewById(R.id.rejectButt);
         rejectButt.setVisibility(View.INVISIBLE);
 
-        // This is the AI chat button
-        aiInputButt.setOnClickListener(new View.OnClickListener() {
+        // This is the live chat button
+        liveChatButt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (!AIInputText.getText().toString().isEmpty())
-                {
-                    String msg = AIInputText.getText().toString();
-                    Log.d("Socket Message:", msg);
-                    WebSocketManager2.getInstance().sendMessage(msg);
-                }
+            public void onClick(View view) {
+                Intent i = new Intent(TextActivity.this, ChatActivity.class);
+                startActivity(i);
             }
         });
 
