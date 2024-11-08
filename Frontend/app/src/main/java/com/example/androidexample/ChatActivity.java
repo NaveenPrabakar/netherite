@@ -93,6 +93,10 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
      */
     private void getHistory(String history)
     {
+        if (!WebSocketManager2.getInstance().isConnected())
+        {
+            WebSocketManager2.getInstance().connectWebSocket(aiUrl);
+        }
         Log.d("History HERE BITCH ASS", "Processed value: " + history);
         // history is an arrayJsonObject
 //            JSONObject historyJson = new JSONObject(history);
@@ -189,6 +193,11 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
     public void onWebSocketJsonMessage(JSONObject jsonMessage) {
         Log.d("YES, I SHOULD BE PARSING HISTORY", "HELL YEA");
 
+        if (!WebSocketManager2.getInstance().isConnected())
+        {
+            Log.d("Websocket Connection", "Not Connected");
+        }
+
         try {
             String source = jsonMessage.getString("source");
             String ctn = jsonMessage.getString("content");
@@ -205,11 +214,13 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
             {
                 // RECENT CHANGES
                 Message m = new Message(source, ctn, user);
+
+                // THIS ADD MESSAGE IS SCUFFED!
                 messagePopulator.addMessage(m);
                 //messages.add(m);
                 //MessagePopulator pop = new MessagePopulator(messages, ChatActivity.this);
                 Log.d("MOHTERFUCKER YOU BETTER UPDATE", "updated");
-                chatHistory.setAdapter(messagePopulator);
+                chatHistory.swapAdapter(messagePopulator, true);
             }
 
             // SUS !! DONTT OUCH

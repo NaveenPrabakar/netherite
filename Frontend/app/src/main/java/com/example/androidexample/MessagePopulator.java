@@ -33,7 +33,7 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
             messages = new ArrayList<>();
         }
         messages.add(message);
-        notifyDataSetChanged();
+        //notifyItemInserted(messages.size());
     }
 
     @NonNull
