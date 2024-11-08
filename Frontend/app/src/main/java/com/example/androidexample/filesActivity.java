@@ -45,6 +45,7 @@ public class filesActivity extends AppCompatActivity {
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
     private LinearLayout fileLayout;
+    private String aiURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +160,7 @@ public class filesActivity extends AppCompatActivity {
                 i.putExtra("CONTENT", "");
                 i.putExtra("EMAIL", email);
                 i.putExtra("PASSWORD", password);
+                i.putExtra("AIWSURL", aiURL);
                 startActivity(i);
             }
         });
@@ -369,6 +371,7 @@ public class filesActivity extends AppCompatActivity {
                         intent.putExtra("FILEKEY", fileName);
                         intent.putExtra("EMAIL", email);
                         intent.putExtra("PASSWORD", password);
+                        intent.putExtra("AIWSURL", aiURL);
                         startActivity(intent);
 
                     }
@@ -402,9 +405,8 @@ public class filesActivity extends AppCompatActivity {
                         int id = Integer.parseInt(response);
 
                         String serverUrl = URL_WS + id;
-                        String aiURL = URL_AIWS + id + "/" + username;
+                        aiURL = URL_AIWS + id + "/" + username;
 
-                        WebSocketManager2.getInstance().connectWebSocket(aiURL);
                         Log.d("Instance URL", aiURL);
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);
                         getFileString(fileName);

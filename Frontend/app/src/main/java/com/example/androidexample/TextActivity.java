@@ -84,6 +84,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private TextWatcher textWatcher;
     private String source;
     private String history = "";
+    private String aiURL;
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private String previousContent;
@@ -96,7 +97,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
 
         WebSocketManager.getInstance().setWebSocketListener(TextActivity.this);
-        WebSocketManager2.getInstance().setWebSocketListener(TextActivity.this);
+
 
 
         mainText = findViewById(R.id.textViewMarkdown);
@@ -120,6 +121,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(TextActivity.this, ChatActivity.class);
+                i.putExtra("AIWSURL", aiURL);
                 startActivity(i);
             }
         });
@@ -179,6 +181,10 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     acceptButt.setVisibility(View.VISIBLE);
                     rejectButt.setVisibility(View.VISIBLE);
                     summarizeButt.setVisibility(View.INVISIBLE);
+                }
+                if (extras.getString("AIWSURL") != null)
+                {
+                    aiURL = extras.getString("AIWSURL");
                 }
 
             } catch (JSONException e) {
