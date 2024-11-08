@@ -52,8 +52,11 @@ public class login{
             return response;
         }
 
+        String userName= temp.getUsername();
+
         if(temp.getPassword().equals(l.getPassword())){
             response.put("response", "ok");
+            response.put("userName", userName);
             return response;
         }
 
