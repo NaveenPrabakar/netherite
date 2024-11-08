@@ -8,7 +8,6 @@
   <artifactId>onetoone</artifactId>
   <version>1.0.0</version>
 
-  <!-- Spring Boot project -->
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -18,12 +17,10 @@
   <name>one-to-one</name>
 
   <properties>
-    <!-- Set Java version -->
     <java.version>17</java.version>
   </properties>
 
   <dependencies>
-
     <!-- Spring Boot Web dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -49,7 +46,7 @@
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
 
-    <!-- Spring Boot DevTools (Optional, for faster development) -->
+    <!-- Spring Boot DevTools -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -57,7 +54,7 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Lombok (Optional, for reducing boilerplate code) -->
+    <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -77,11 +74,44 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
-  <!--for json open api-->
+    <!-- JSON Open API -->
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20210307</version>
+    </dependency>
+
+    <!-- Tess4J for Tesseract OCR -->
+    <dependency>
+      <groupId>net.sourceforge.tess4j</groupId>
+      <artifactId>tess4j</artifactId>
+      <version>4.1.1</version>
+    </dependency>
+
+    <!-- Jackson Databind for JSON processing -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <!--org.apache.http.entity.mime in speechtotextcontroller-->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version> <!-- or latest version compatible with your setup -->
+    </dependency>
+
+    <!-- websockets -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.13</version> <!-- or latest version compatible with your setup -->
     </dependency>
 
   </dependencies>
@@ -96,4 +126,3 @@
   </build>
 
 </project>
-

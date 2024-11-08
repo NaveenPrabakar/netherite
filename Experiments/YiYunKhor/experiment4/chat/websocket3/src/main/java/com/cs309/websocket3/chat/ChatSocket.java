@@ -1,4 +1,4 @@
-package com.cs309.websocket3.chat;
+package onetoone.ChatWebSocket;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -13,14 +13,27 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import java.util.Date;
 
-@Controller      // this is needed for this to be an endpoint to springboot
-@ServerEndpoint(value = "/chat/{username}")  // this is Websocket url
+// this is needed for this to be an endpoint to springboot
+@ServerEndpoint("/chat/{fileId}/{username}")  // this is Websocket url
 @Component //make sures tht spring will scan this class
 public class ChatSocket {
 
@@ -40,11 +53,10 @@ public class ChatSocket {
 		msgRepo = repo;  // we are setting the static variable
 	}
 
-	//Store all socket session and their corresponding username.
-	//These mappings make it easy to locate a session based on a username or retrieve
-	//the username associated with a session.
-	private static Map<Session, String> sessionUsernameMap = new Hashtable<>();
-	private static Map<String, Session> usernameSessionMap = new Hashtable<>();
+	//store session information by fileId (group chat)
+	//each fileId will have its own list of sessions and associated usernames.
+	private static Map<String, Map<Session, String>> fileIdSessionMap = new Hashtable<>();
+	private static Map<String, Map<String, Session>> fileIdUsernameSessionMap = new Hashtable<>();
 
 	//Logger: An instance of the SLF4J Logger for logging messages throughout the code.
 	private final Logger logger = LoggerFactory.getLogger(ChatSocket.class);
@@ -59,9 +71,8 @@ public class ChatSocket {
 	//Sends the chat history to the new user.
 	//Broadcasts a message to all users that someone has joined the chat.
 	@OnOpen
-	public void onOpen(Session session, @PathParam("username") String username) 
-      throws IOException {
-
+	public void onOpen(Session session, @PathParam("fileId") String fileId, @PathParam("username") String username)
+			throws IOException {
 		//logger.info is a method used in Java logging frameworks, particularly with SLF4J
 		//(Simple Logging Facade for Java) and Logback or Log4j as the underlying logging implementation.
 		// It is used to log informational messages at the INFO leve
@@ -69,18 +80,20 @@ public class ChatSocket {
 		//about the application's flow or state.
 		logger.info("Entered into Open");
 
-    // store connecting user information
-		sessionUsernameMap.put(session, username);
-		usernameSessionMap.put(username, session);
+		// Ensure that the map for the fileId exists
+		fileIdSessionMap.putIfAbsent(fileId, new Hashtable<>());
+		fileIdUsernameSessionMap.putIfAbsent(fileId, new Hashtable<>());
 
-		//Send chat history to the newly connected user
-		//This line sends the complete chat history to the new user by calling sendMessageToPArticularUser,
-		//ensuring they see past messages.
-		sendMessageToPArticularUser(username, getChatHistory());
-		
-    // broadcast that new user joined
-		String message = "User:" + username + " has Joined the Chat";
-		broadcast(message);
+		// Store user session and username by fileId
+		fileIdSessionMap.get(fileId).put(session, username);
+		fileIdUsernameSessionMap.get(fileId).put(username, session);
+
+		// Send chat history to the newly connected user
+		sendMessageToPArticularUser(fileId, username, getChatHistory(fileId), "sourceHistory");
+
+		// Broadcast that new user joined the chat
+//		String message = "User: " + username + " has Joined the Chat";
+//		broadcast(fileId, message);
 	}
 
 	//@OnMessage: Triggered when a message is received.
@@ -90,40 +103,24 @@ public class ChatSocket {
 	//Otherwise, it broadcasts the message to all users.
 	//Saves the message to the message repository.
 	@OnMessage
-	public void onMessage(Session session, String message) throws IOException {
+	public void onMessage(Session session, @PathParam("fileId") String fileId, String message) throws IOException {
+		logger.info("Entered into Message: Got Message: " + message);
+		String username = fileIdSessionMap.get(fileId).get(session);
 
-		// Handle new messages
-		logger.info("Entered into Message: Got Message:" + message);
-		String username = sessionUsernameMap.get(session);
-
-		// Check if message is a username change command
-		if (message.startsWith("!changeusername ")) {
-			String newUsername = message.split(" ")[1];
-			changeUsername(session, username, newUsername);
-			return;
+		if (message.startsWith("/AI: ")) {
+			String prompt = message.substring(4);
+			String aiResponse = getAIResponse(prompt);
+			broadcast(fileId, "AI", aiResponse, "sourceCHAT");
+		} else if (message.startsWith("@")) {
+			String destUsername = message.split(" ")[0].substring(1);
+			if (fileIdUsernameSessionMap.get(fileId).containsKey(destUsername)) {
+				sendMessageToPArticularUser(fileId, destUsername, "[DM] " + username + ": " + message, "sourceCHAT");
+			}
+		} else {
+			broadcast(fileId, username, message, "sourceCHAT");
 		}
 
-    // Direct message to a user using the format "@username <message>"
-		//message.startsWith("@")
-		//This method checks if the message string begins with the character "@".
-		//If it does, it indicates that the sender is trying to send a direct message to another user.
-		//message.split(" "): This method splits the message into an array of strings using a space (" ") as the delimiter. For example, if the message is "@john Hello!", it would be split into an array: ["@john", "Hello!"].
-		//[0]: This accesses the first element of the resulting array, which is expected to be the username (e.g., "@john").
-		//substring(1): This method returns a substring of the username starting from index 1, effectively removing the "@" character. For example, substring(1) on "@john" would return "john".
-		if (message.startsWith("@")) {
-			String destUsername = message.split(" ")[0].substring(1); 
-
-      // send the message to the sender and receiver
-			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
-			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
-
-		} 
-    else { // broadcast
-			broadcast(username + ": " + message);
-		}
-
-		// Saving chat history to repository
-		msgRepo.save(new Message(username, message));
+		msgRepo.save(new Message(username, message, new Date(), fileId));  // Ensure Message entity has a fileId field
 	}
 
 	//Triggered when a user disconnects from the WebSocket.
@@ -135,17 +132,18 @@ public class ChatSocket {
 	//Broadcasts a message that the user has disconnected.
 
 	@OnClose
-	public void onClose(Session session) throws IOException {
+	public void onClose(Session session, @PathParam("fileId") String fileId) throws IOException {
 		logger.info("Entered into Close");
 
-    // remove the user connection information
-		String username = sessionUsernameMap.get(session);
-		sessionUsernameMap.remove(session);
-		usernameSessionMap.remove(username);
+		String username = fileIdSessionMap.get(fileId).get(session);
 
-    // broadcase that the user disconnected
-		String message = username + " disconnected";
-		broadcast(message);
+		// Remove the user from the session map
+		fileIdSessionMap.get(fileId).remove(session);
+		fileIdUsernameSessionMap.get(fileId).remove(username);
+
+		// Broadcast that the user disconnected
+//		String message = username + " disconnected";
+//		broadcast(fileId, message);
 	}
 
 	//onError:
@@ -162,54 +160,37 @@ public class ChatSocket {
 		throwable.printStackTrace();
 	}
 
-	//sendMessageToPArticularUser:
-	//Sends a direct message to a specific user.
-	//Parameters:
-	//String username: The recipient's username.
-	//String message: The message to send.
-	//Functionality:
-	//Retrieves the session associated with the username and sends the message.
-	//Handles any IOException that may occur while sending.
-	//This sendMessageToPArticularUser method is used to send a private (direct)
-	// message to a specific user in the chat by their username.
-	private void sendMessageToPArticularUser(String username, String message) {
-		try {
+	// make sure that the broadcast and sendMessageToPArticularUser methods now accept the fileId as a
+	// parameter to ensure that messages are sent to the correct group.
+	private void broadcast(String fileId, String username, String message, String source) {
+		String jsonResponse = new JSONObject()
+				.put("content", message)
+				.put("username", username)
+				.put("source", source)
+				.toString();
 
-			//getBasicRemote() obtains a RemoteEndpoint.Basic instance, which allows
-			//sending messages synchronously to the client associated with this session.
-
-			//sendText(message) sends the specified message as a text message to the client.
-			usernameSessionMap.get(username).getBasicRemote().sendText(message);
-		}
-
-		//Error Handling with IOException
-    catch (IOException e) {
-
-			//If an exception occurs, it's logged using logger.info and the stack trace is printed,
-			// which helps in diagnosing what went wrong.
-			logger.info("Exception: " + e.getMessage().toString());
-			e.printStackTrace();
-		}
-	}
-	//broadcast:
-	//Sends a message to all connected users.
-	//Parameters:
-	//String message: The message to broadcast.
-	//Functionality:
-	//Iterates over all sessions and sends the message to each.
-
-	private void broadcast(String message) {
-		sessionUsernameMap.forEach((session, username) -> {
+		fileIdSessionMap.get(fileId).forEach((session, sessionUsername) -> { // Renamed 'username' to 'sessionUsername'
 			try {
-				session.getBasicRemote().sendText(message);
-			} 
-      catch (IOException e) {
-				logger.info("Exception: " + e.getMessage().toString());
+				session.getBasicRemote().sendText(jsonResponse);
+			} catch (IOException e) {
+				logger.info("Exception: " + e.getMessage());
 				e.printStackTrace();
 			}
-
 		});
+	}
 
+	private void sendMessageToPArticularUser(String fileId, String username, String message, String source) {
+		String jsonResponse = new JSONObject()
+				.put("content", message)
+				.put("username", username)
+				.put("source", source)
+				.toString();
+		try {
+			fileIdUsernameSessionMap.get(fileId).get(username).getBasicRemote().sendText(jsonResponse);
+		} catch (IOException e) {
+			logger.info("Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	//getChatHistory:
@@ -217,35 +198,71 @@ public class ChatSocket {
 	//Functionality:
 	//Gets all messages, formats them as a string, and returns it.
   // Gets the Chat history from the repository
-	private String getChatHistory() {
-		List<Message> messages = msgRepo.findAll();
-    
-    // convert the list to a string
-		StringBuilder sb = new StringBuilder();
-		if(messages != null && messages.size() != 0) {
+	private String getChatHistory(String fileId) {
+		List<Message> messages = msgRepo.findByFileId(fileId);
+		JSONArray historyArray = new JSONArray();
+
+		if (messages != null && !messages.isEmpty()) {
 			for (Message message : messages) {
-				sb.append(message.getUserName() + ": " + message.getContent() + "\n");
+				JSONObject messageJson = new JSONObject()
+						.put("content", message.getContent())
+						.put("username", message.getSender())
+						.put("source", "sourceCHAT");
+				historyArray.put(messageJson);
 			}
 		}
-		return sb.toString();
+		return historyArray.toString();
+
 	}
 
-	//helper method
-	private void changeUsername(Session session, String oldUsername, String newUsername) throws IOException {
-		// Check if the new username is already taken
-		if (usernameSessionMap.containsKey(newUsername)) {
-			sendMessageToPArticularUser(oldUsername, "Username '" + newUsername + "' is already taken. Please choose another one.");
-			return;
+	// Method to interact with the AI service
+	private String getAIResponse(String prompt) {
+		String openaiApiUrl = "https://api.openai.com/v1/chat/completions"; // Endpoint for chat-based models
+		String apiKey = "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"; // Replace with your OpenAI API key
+
+		// Initialize RestTemplate
+		RestTemplate restTemplate = new RestTemplate();
+
+		// Set up headers
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + apiKey);
+		headers.set("Content-Type", "application/json");
+
+		// Create the request body
+		JSONObject requestBody = new JSONObject();
+		requestBody.put("model", "gpt-3.5-turbo-0125"); // Using GPT-3.5 Turbo model
+		requestBody.put("messages", new JSONArray()
+				.put(new JSONObject().put("role", "system").put("content", "You are a helpful assistant."))
+				.put(new JSONObject().put("role", "user").put("content", prompt))
+		);
+
+		requestBody.put("max_tokens", 50); // Set max tokens for the response
+		requestBody.put("temperature", 0.7); // Adjust creativity level
+
+		// Create an HTTP entity with headers and body
+		HttpEntity<String> entity = new HttpEntity<>(requestBody.toString(), headers);
+
+		// Make the POST request
+		try {
+			ResponseEntity<String> response = restTemplate.exchange(
+					openaiApiUrl,
+					HttpMethod.POST,
+					entity,
+					String.class
+			);
+
+			// Extract the response body
+			JSONObject responseBody = new JSONObject(response.getBody());
+			String generatedText = responseBody.getJSONArray("choices")
+					.getJSONObject(0)
+					.getJSONObject("message")
+					.getString("content");
+
+			return generatedText.trim(); // Return the trimmed response text
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error calling OpenAI API: " + e.getMessage();
 		}
-
-		// Update the username in the mappings
-		sessionUsernameMap.put(session, newUsername);
-		usernameSessionMap.remove(oldUsername);
-		usernameSessionMap.put(newUsername, session);
-
-		// Notify all users about the username change
-		String message = oldUsername + " changed their username to " + newUsername;
-		broadcast(message);
 	}
-
 } // end of Class

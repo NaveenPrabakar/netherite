@@ -134,6 +134,18 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
             app:layout_constraintVertical_bias="0.994" />
 
+        <Button
+            android:id="@+id/voiceButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="24dp"
+            android:text="Voice"
+            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
+            app:layout_constraintLeft_toRightOf="@+id/acceptButt"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
+            app:layout_constraintVertical_bias="0.994" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

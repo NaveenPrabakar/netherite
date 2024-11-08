@@ -9,6 +9,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -26,7 +29,7 @@ public class signEntity{
     public signEntity(String username, String email, String password){
         this.username = username;
         this.email = email;
-        this.password = this.password;
+        this.password = password;
     }
 
     public signEntity(){
