@@ -6,7 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Map;
-
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -18,14 +19,26 @@ import jakarta.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import onetoone.*;
+import jakarta.persistence.Entity;
 
 @ServerEndpoint("/document/{fileName}")
 @Component
 public class DocServer {
 
+    public static FileRepository f;
+
     private static Map<Session, String> sessionFileMap = new Hashtable<>();
     private static final Logger logger = LoggerFactory.getLogger(DocServer.class);
     private static final Path location = Paths.get("root");
+
+
+
+    @Autowired
+    public void setFileRepository(FileRepository repo) {
+        f = repo;  // we are setting the static variable
+    }
+
 
     /**
      * The method updates which people are currently joining the document to edit
@@ -52,13 +65,16 @@ public class DocServer {
         String fileName = sessionFileMap.get(session);
         logger.info("[onMessage] File: " + fileName + " Content: " + content);
 
-        // Update the document with the new content
-        Path filePath = location.resolve(fileName);
+        // Convert the file name to a long value and fetch the document from the repository
+        Long l = Long.parseLong(fileName);
+        Optional<FileEntity> allOptional = f.findById(l);
+        FileEntity all = allOptional.orElse(null);
+        Path filePath = location.resolve(all.getName());
         Files.write(filePath, content.getBytes());
 
-        // Broadcast the updated content to other connected users
         broadcast(content, session);
     }
+
 
     /**
      * Updating the session of a user leaves
