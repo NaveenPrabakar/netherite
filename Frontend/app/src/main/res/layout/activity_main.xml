@@ -121,6 +121,17 @@
             android:text="OCR"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/galleryButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="35dp"
+            android:text="Gallery"
+            app:layout_constraintBottom_toBottomOf="@+id/settingsButt"
+            app:layout_constraintEnd_toEndOf="@+id/OCRButt"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

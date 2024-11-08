@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button signupButt;
     private Button FileView;
     private Button OCRButt;
+    private Button galleryButt;
     private TextView emailDisplay;
     private TextView passwordDisplay;
     private Button makeFile;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         emailDisplay = findViewById(R.id.usernameDisplay);
         passwordDisplay = findViewById(R.id.passwordDisplay);
         FileView = findViewById(R.id.FileView);
+
+        galleryButt = findViewById(R.id.galleryButt);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -124,6 +128,16 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                 startActivity(i);
             }
         });
+
+        galleryButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(MainActivity.this, PhotoGalleryActivity.class);
+                i.putExtra("EMAIL", email);
+                startActivity(i);
+            }
+        });
     }
 
     public void getFileSystem(String email, String password){
@@ -168,6 +182,12 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
     @Override
     public void onWebSocketMessage(String message) {
+
+    }
+
+    @Override
+    public void onWebSocketJsonMessage(JSONObject Jsonmessage)
+    {
 
     }
 

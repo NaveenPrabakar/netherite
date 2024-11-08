@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 
@@ -78,6 +80,7 @@ public class WebSocketManager2 {
      * @param message The message to be sent to the WebSocket server.
      */
     public void sendMessage(String message) {
+        Log.d("Websocket", "Sending message: " + message);
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
         }
@@ -127,13 +130,22 @@ public class WebSocketManager2 {
          * invoked to handle incoming WebSocket messages and allows the application to
          * process and respond to messages as needed.
          *
+         * Should onMessage(String message) actually be JSONObject?
+         *
          * @param message The WebSocket message received from the server as a string.
          */
         @Override
         public void onMessage(String message) {
             Log.d("WebSocket", "Received message: " + message);
             if (webSocketListener != null) {
-                webSocketListener.onWebSocketMessage(message);
+                try {
+                    // Attempt to parse the message as JSON
+                    JSONObject jsonMessage = new JSONObject(message);
+                    webSocketListener.onWebSocketJsonMessage(jsonMessage); // Send JSON message to listener
+                } catch (JSONException e) {
+                    // If it's not JSON, handle as plain text
+                    webSocketListener.onWebSocketMessage(message);
+                }
             }
         }
 

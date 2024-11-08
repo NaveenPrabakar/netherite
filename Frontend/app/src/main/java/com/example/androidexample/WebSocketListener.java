@@ -1,6 +1,7 @@
 package com.example.androidexample;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONObject;
 
 /**
  * Interface defining methods for handling WebSocket events.
@@ -22,6 +23,13 @@ public interface WebSocketListener {
      * @param message The received WebSocket message.
      */
     void onWebSocketMessage(String message);
+
+    /**
+     * Called when a JSON WebSocket message is received.
+     *
+     * @param jsonMessage The received WebSocket message as a JSON object.
+     */
+    void onWebSocketJsonMessage(JSONObject jsonMessage);
 
     /**
      * Called when the WebSocket connection is closed.
