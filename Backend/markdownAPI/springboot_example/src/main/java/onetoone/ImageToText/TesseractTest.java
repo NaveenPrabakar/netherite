@@ -98,32 +98,19 @@ public class TesseractTest {
         }
     }
 
-    /**
-     * Method to get a specific photo by filename.
-     *
-     * @param filename the name of the image file to retrieve
-     * @return the image file as a Resource
-     */
     @GetMapping("/getImage/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
+            String uploadDir = "uploaded_images/";  // Folder where images are saved
+            File file = new File(uploadDir + filename);  // Use the filename passed in the URL
 
-            String uploadDir = "uploaded_images/";
-            File file = new File(uploadDir + filename);
 
-            if (!file.exists()) {
-                return ResponseEntity.notFound().build();
-            }
-
+            // Get the extension and set the appropriate media type
             MediaType mediaType;
             String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 
-            //added
-            if(types.contains(extension)){
-                return ResponseEntity.notFound().build();
-            }
 
-            //cases to check which file extension
+            // Determine content type based on the extension
             switch (extension) {
                 case "jpg":
                 case "jpeg":
@@ -136,17 +123,19 @@ public class TesseractTest {
                     mediaType = MediaType.IMAGE_GIF;
                     break;
                 default:
-                    mediaType = MediaType.APPLICATION_OCTET_STREAM; // Fallback for unknown types
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;
                     break;
             }
 
+            // Serve the image file as a resource
             Resource resource = new FileSystemResource(file);
             return ResponseEntity.ok().contentType(mediaType).body(resource);
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).body(null);  // Return 500 if there is an internal server error
         }
     }
+
 
     @GetMapping("/getImageNamesByUser/{email}")
     public ResponseEntity<List<String>> getImageNamesByUser(@PathVariable String email) {

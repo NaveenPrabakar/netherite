@@ -32,16 +32,12 @@ public class Message {
     @Column(name = "sent")
     private Date sent = new Date();
 
-    @Column(name = "file_id")  // Add a fileId column to link messages to files
-    private String fileId;
-
     public Message() {}
 
-    public Message(String sender, String content, Date sent,String fileId) {
+    public Message(String sender, String content, Date sent) {
         this.sender = sender;
         this.content = content;
         this.sent = sent;
-        this.fileId = fileId;
     }
 
     public Long getId() {
@@ -76,11 +72,4 @@ public class Message {
         this.sent = sent;
     }
 
-    public String getFileId() {
-        return fileId;
-    }
-
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
 }

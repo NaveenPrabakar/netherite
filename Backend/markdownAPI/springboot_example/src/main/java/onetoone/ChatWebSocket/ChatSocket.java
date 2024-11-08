@@ -89,7 +89,7 @@ public class ChatSocket {
 		fileIdUsernameSessionMap.get(fileId).put(username, session);
 
 		// Send chat history to the newly connected user
-		sendMessageToPArticularUser(fileId, username, getChatHistory(fileId), "sourceHistory");
+		sendMessageToPArticularUser(fileId, username, getChatHistory(fileId), "sourceLIVE");
 
 		// Broadcast that new user joined the chat
 //		String message = "User: " + username + " has Joined the Chat";
@@ -107,17 +107,17 @@ public class ChatSocket {
 		logger.info("Entered into Message: Got Message: " + message);
 		String username = fileIdSessionMap.get(fileId).get(session);
 
-		if (message.startsWith("/AI: ")) {
+		if (message.startsWith("/AI:")) {
 			String prompt = message.substring(4);
 			String aiResponse = getAIResponse(prompt);
 			broadcast(fileId, "AI", aiResponse, "sourceCHAT");
 		} else if (message.startsWith("@")) {
 			String destUsername = message.split(" ")[0].substring(1);
 			if (fileIdUsernameSessionMap.get(fileId).containsKey(destUsername)) {
-				sendMessageToPArticularUser(fileId, destUsername, "[DM] " + username + ": " + message, "sourceCHAT");
+				sendMessageToPArticularUser(fileId, destUsername, "[DM] " + username + ": " + message, "sourceLIVE");
 			}
 		} else {
-			broadcast(fileId, username, message, "sourceCHAT");
+			broadcast(fileId, username, message, "sourceLIVE");
 		}
 
 		msgRepo.save(new Message(username, message, new Date(), fileId));  // Ensure Message entity has a fileId field
@@ -207,7 +207,7 @@ public class ChatSocket {
 				JSONObject messageJson = new JSONObject()
 						.put("content", message.getContent())
 						.put("username", message.getSender())
-						.put("source", "sourceCHAT");
+						.put("source", "sourceLIVE");
 				historyArray.put(messageJson);
 			}
 		}

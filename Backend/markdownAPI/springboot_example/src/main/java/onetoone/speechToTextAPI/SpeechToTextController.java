@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Arrays;
 
@@ -55,7 +56,9 @@ import java.util.Map;
 @RequestMapping("/SpeechToTextAIuse")
 public class SpeechToTextController{
 
-    private static final MediaType APPLICATION_M4A = MediaType.parseMediaType("audio/mpeg");
+    //System.out.println("Hi u r using the api for speech to text!");
+
+    //private static final MediaType APPLICATION_M4A = MediaType.parseMediaType("audio/m4a");
 
 
     @Value("${openai.api.key}")
@@ -80,12 +83,15 @@ public class SpeechToTextController{
             "mp3", "mp4", "mpeg", "mpga", "m4a", "wav", "webm"
     };
 
+    //global variable
+    String uploadDir2 = "upload_speech/";
+
     //post-CreateUser
     //front end passing parameter (email and file)
     //parameter need to have the user email in order to access to sign entity to find the userid
     //return
-    @PostMapping("/createSpeechUser")
-    public ResponseEntity<String> createSpeechUser(@RequestParam("email") String email, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/createSpeechUser/{email}")
+    public ResponseEntity<String> createSpeechUser(@PathVariable String email, @RequestParam("audio") MultipartFile file) {
         try {
             //calling the speech to text method
             //Map <
@@ -120,21 +126,25 @@ public class SpeechToTextController{
             String extension = fileName.substring(fileName.lastIndexOf("."));
             String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
 
-            //create the path with both of the info (file name and file type)
+            //create the path with both of the info (file type and file name)
             Path tempFile = Files.createTempFile(fileType, extension);
 
-            //add the file using the path
-            file.transferTo(tempFile.toFile());
-
-            //save the file into the server
-            //folder named "upload_speech" in server
-            String uploadDir = "upload_Speech/";
-            File uploadDirFile = new File(uploadDir);
-            if (!uploadDirFile.exists()) {
-                uploadDirFile.mkdirs();
+            // define the main upload directory
+            //String uploadDir2 = "upload_Speech/";
+            File uploadDir2File = new File(uploadDir2);
+            if (!uploadDir2File.exists()) {
+                uploadDir2File.mkdirs();
             }
 
-            File savedSpeechFile = new File(uploadDir + fileName);
+            // create subdirectory for the user ID inside the upload_speech folder
+            String userSubDirPath = uploadDir2 + userID + "/";
+            File userSubDir = new File(userSubDirPath);
+            if (!userSubDir.exists()) {
+                userSubDir.mkdirs();
+            }
+
+            // create the full path for saving the file inside the user ID directory
+            File savedSpeechFile = new File(userSubDirPath + fileName);
             Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             //delete the path
@@ -147,8 +157,8 @@ public class SpeechToTextController{
     }
 
     // This parameter accepts a file input from the user, specifically an MP3 file in this case
-    @GetMapping("/transcribe")
-    public ResponseEntity<String> transcribeAudio(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping("/transcribesssss")
+    public ResponseEntity<String> transcribeAudio(@RequestParam("audio") MultipartFile file) throws IOException {
 
         // Validate the file type
         String fileName = file.getOriginalFilename();
@@ -203,6 +213,94 @@ public class SpeechToTextController{
         }
     }
 
+    @PostMapping("/transcribe2")
+    public ResponseEntity<String> transcribeAudio2(@RequestParam("audio") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("No file was uploaded");
+        }
+
+        try {
+            String fileName = file.getOriginalFilename();
+            long size = file.getSize();
+            String contentType = file.getContentType();
+
+            String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            File tempFile = File.createTempFile("audio", "." + fileExtension);
+            file.transferTo(tempFile);
+
+            // Create temporary file with file extension
+            String extension = fileName.substring(fileName.lastIndexOf("."));
+            String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
+
+            // Create the path with both file type and name
+            Path tempFile2 = Files.createTempFile(fileType, extension);
+
+            // Define the main upload directory
+            File uploadDir2File = new File(uploadDir2);
+            if (!uploadDir2File.exists()) {
+                uploadDir2File.mkdirs();
+            }
+
+            // Create subdirectory for the user ID inside the upload_speech folder
+            String userSubDirPath = uploadDir2 +  "/";
+            File userSubDir = new File(userSubDirPath);
+            if (!userSubDir.exists()) {
+                userSubDir.mkdirs();
+            }
+
+            // Create the full path for saving the file inside the user ID directory
+            File savedSpeechFile = new File(userSubDirPath + fileName);
+            Files.copy(tempFile2, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // Delete the temporary file after processing
+            Files.delete(tempFile2);
+
+            // Log file info
+            System.out.println("Received file: " + fileName + ", size: " + size + ", contentType: " + contentType);
+
+            // OpenAI Whisper API integration for transcription
+            String transcription = transcribeWithOpenAI(tempFile);
+
+            // Return transcription or failure response
+            if (transcription != null) {
+                return ResponseEntity.ok(transcription);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to transcribe audio.");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process file");
+        }
+    }
+
+    private String transcribeWithOpenAI(File audioFile) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost uploadFile = new HttpPost(openAiApiUrl);
+            uploadFile.setHeader("Authorization", "Bearer " + openAiApiKey);
+
+            HttpEntity entity = MultipartEntityBuilder.create()
+                    .addBinaryBody("file", audioFile, ContentType.DEFAULT_BINARY, audioFile.getName())
+                    .addTextBody("model", "whisper-1")
+                    .build();
+            uploadFile.setEntity(entity);
+
+            try (CloseableHttpResponse response = httpClient.execute(uploadFile)) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    JsonNode jsonResponse = objectMapper.readTree(response.getEntity().getContent());
+                    return jsonResponse.path("text").asText();
+                } else {
+                    System.err.println("Failed to connect to Whisper API: " + statusCode);
+                    return null;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error during API request: " + e.getMessage());
+            return null;
+        }
+    }
+
+
 
 //    @GetMapping("/getFileNames")
 //    public Map<String, String> getFileName(@RequestParam String email) {
@@ -236,13 +334,6 @@ public class SpeechToTextController{
     @GetMapping("/getSpeechFile")
     public ResponseEntity<Resource> getSpeechFile(@RequestParam("email") String email, @RequestParam("speechFile") String speechFile) {
         try {
-            String uploadDir = "upload_Speech/";
-            File file = new File(uploadDir + speechFile);
-
-            if (!file.exists()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
-            }
-
             signEntity temp = sign.findByEmail(email);
             if (temp == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null for user not found
@@ -250,6 +341,15 @@ public class SpeechToTextController{
 
             Long userID = temp.getId();
             //SpeechUserEntity speechUserEntity = api.findBySpeechUserId(userID);
+
+            //String uploadDir2 = "upload_speech/";
+            String filePath = uploadDir2 + userID + "/" + speechFile;
+            File file = new File(filePath);
+
+            if (!file.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there's no resource to send
+            }
+
             SpeechUserEntity speechUserEntity = api.findBySpeechFile(speechFile);
 
             if (speechUserEntity != null) {

@@ -23,23 +23,27 @@ public class AccessEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //Foreign Key to Owner
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private signEntity sign;
 
+    //Foreign Key to File
     @ManyToOne
     @JoinColumn(name = "file_id", referencedColumnName = "id")
     private FileEntity file;
 
+    //Foreign Key to Editor
     @ManyToOne
     @JoinColumn(name = "access_id", referencedColumnName = "id")
     private signEntity access;
 
+    //Many to Many relation to join two tables
     @ManyToMany
     @JoinTable(
             name = "file_access", // Name of the join table
-            joinColumns = @JoinColumn(name = "access_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id")
+            joinColumns = @JoinColumn(name = "access_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id", referencedColumnName = "id")
     )
 
     private Set<FileEntity> files = new HashSet<>();

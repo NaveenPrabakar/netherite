@@ -43,7 +43,7 @@ public class signup{
 
         signup.save(sign); //Saves the users
 
-        String path = "{'root' : [['shared']]}";
+        String path = "{'root' : []}";
 
         temp = signup.findByEmail(sign.getEmail());
         JsonEntity je = new JsonEntity(path, temp.getId());
