@@ -161,10 +161,17 @@ public class WebSocketManager2 {
                     JSONObject jsonMessage = new JSONObject(message);
                     String contentString = jsonMessage.getString("content");
                     Log.d("Content String Check", contentString);
-                    webSocketListener.onWebSocketMessage(contentString);
 
-                    // Something is going wrong here, not sure why. I should double check my json.
+
+                    // RECENT CHANGES
+                    // SUS
+                    //webSocketListener.onWebSocketMessage(contentString);
+
+                    // Crewmate
                     webSocketListener.onWebSocketJsonMessage(jsonMessage);
+
+
+
                     Log.d("MORE SANITY", "I AM STILL HERRE");// Send JSON message to listener
                 } catch (JSONException e) {
                     // If it's not JSON, handle as plain text

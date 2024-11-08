@@ -23,17 +23,18 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
     public MessagePopulator(List<Message> messages, Context context) {
         this.messages = messages;
         this.context = context;
+        setHasStableIds(true);
     }
 
-//    public MessagePopulator(Message message, Context context)
-//    {
-//        if (messages == null)
-//        {
-//            messages = new ArrayList<>();
-//        }
-//        messages.add(message);
-//        this.context = context;
-//    }
+    public void addMessage(Message message)
+    {
+        if (messages == null)
+        {
+            messages = new ArrayList<>();
+        }
+        messages.add(message);
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -52,6 +53,13 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        // Use a unique ID for each message. Here, we’re assuming each message has a unique `content` and `username` combination.
+        Message message = messages.get(position);
+        return (message.getContent() + message.getUsername()).hashCode();
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {

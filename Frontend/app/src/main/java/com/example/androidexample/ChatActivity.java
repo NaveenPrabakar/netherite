@@ -36,6 +36,7 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
     private RecyclerView chatHistory;
     private List<Message> messages;
     private String aiUrl;
+    private MessagePopulator messagePopulator;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -114,8 +115,8 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
          */
 
         runOnUiThread(() -> {
-            MessagePopulator msg = new MessagePopulator(messages, ChatActivity.this);
-            chatHistory.setAdapter(msg);
+            messagePopulator = new MessagePopulator(messages, ChatActivity.this);
+            chatHistory.setAdapter(messagePopulator);
         });
     }
 
@@ -191,6 +192,8 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         try {
             String source = jsonMessage.getString("source");
             String ctn = jsonMessage.getString("content");
+            String user = jsonMessage.getString("username");
+
             Log.d("The source of the message on connection", source);
             Log.d("The content of the message on connection", ctn);
             if (source.equals("sourceHISTORY"))
@@ -198,6 +201,21 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
                 Log.d("I am calling history", ctn);
                 getHistory(ctn);
             }
+            else
+            {
+                // RECENT CHANGES
+                Message m = new Message(source, ctn, user);
+                messagePopulator.addMessage(m);
+                //messages.add(m);
+                //MessagePopulator pop = new MessagePopulator(messages, ChatActivity.this);
+                Log.d("MOHTERFUCKER YOU BETTER UPDATE", "updated");
+                chatHistory.setAdapter(messagePopulator);
+            }
+
+            // SUS !! DONTT OUCH
+//            chatHistory.setAdapter(pop);
+
+
         } catch (JSONException e) {
             Log.e("History", "Failed to process JSON: " + e.getMessage());
         }
