@@ -36,6 +36,8 @@
         <activity android:name=".ExterminateUserActivity" />
         <activity android:name=".EditorDisplayActivity" />
         <activity android:name=".OCRActivity" />
+        <activity android:name=".PhotoGalleryActivity" />
+        <activity android:name=".PhotoViewActivity" />
 
 
         <activity
