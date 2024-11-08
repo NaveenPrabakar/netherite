@@ -93,20 +93,30 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
     private void getHistory(String history)
     {
         Log.d("History HERE BITCH ASS", "Processed value: " + history);
-
+        // history is an arrayJsonObject
+//            JSONObject historyJson = new JSONObject(history);
+//            String content = historyJson.getString("content");
         Gson gson = new Gson();
 
+        Log.d("Type of History", history.getClass().toString());
+
         // Reflection Library
-        Type classType = new TypeToken<List<Message>>(){}.getType();
+        Type classType = new TypeToken<List<Message>>() {
+        }.getType();
         messages = gson.fromJson(history, classType);
 
+
+        if (messages == null) {
+            messages = new ArrayList<>();
+        }
         /*
          * Populate the (RecyclerView) galleryView with the list of photos, using 'GalleryPopulator'.
          */
 
-        MessagePopulator msg = new MessagePopulator(messages, ChatActivity.this);
-        chatHistory.setAdapter(msg);
-
+        runOnUiThread(() -> {
+            MessagePopulator msg = new MessagePopulator(messages, ChatActivity.this);
+            chatHistory.setAdapter(msg);
+        });
     }
 
 
@@ -136,9 +146,18 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
             return;
         }
 
-        String user = "";
+        String user = "jamey";
         String ctn = "";
         String source = "";
+
+//        if (msg.contains("/AI:"))
+//        {
+//            source = "sourceAI";
+//        }
+//        else {
+//            source = "sourceLIVE";
+//        }
+
         String[] cover = msg.split(",");
 
         for (String c : cover){

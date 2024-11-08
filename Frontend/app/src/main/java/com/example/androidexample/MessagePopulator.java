@@ -25,15 +25,15 @@ public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.Mess
         this.context = context;
     }
 
-    public MessagePopulator(Message message, Context context)
-    {
-        if (messages == null)
-        {
-            messages = new ArrayList<>();
-        }
-        messages.add(message);
-        this.context = context;
-    }
+//    public MessagePopulator(Message message, Context context)
+//    {
+//        if (messages == null)
+//        {
+//            messages = new ArrayList<>();
+//        }
+//        messages.add(message);
+//        this.context = context;
+//    }
 
     @NonNull
     @Override
