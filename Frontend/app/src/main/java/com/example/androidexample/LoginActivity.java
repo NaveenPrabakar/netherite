@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("EMAIL", email);
                                 intent.putExtra("PASSWORD", password);
+                                intent.putExtra("USERNAME", resp.getString("userName"));
                                 intent.putExtra("FILESYSTEM", resp.toString());
                                 startActivity(intent);
                             }
