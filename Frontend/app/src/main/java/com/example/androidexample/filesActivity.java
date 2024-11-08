@@ -38,6 +38,7 @@ public class filesActivity extends AppCompatActivity {
     // when i click a file or a folder, it should update the path.
     private String path = "{\"path\": [\"root\"]}";
     private String email;
+    private String username;
     private String password;
     private String content;
     private Button goback;
@@ -63,6 +64,7 @@ public class filesActivity extends AppCompatActivity {
             if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
+                username = extras.getString("USERNAME");
                 Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
             }
@@ -400,9 +402,10 @@ public class filesActivity extends AppCompatActivity {
                         int id = Integer.parseInt(response);
 
                         String serverUrl = URL_WS + id;
-                        String aiURL = URL_AIWS + id;
+                        String aiURL = URL_AIWS + id + "/" + username;
 
                         WebSocketManager2.getInstance().connectWebSocket(aiURL);
+                        Log.d("Instance URL", aiURL);
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);
                         getFileString(fileName);
 
