@@ -81,10 +81,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String password;
     private String username;
     private String aiCount;
+    private Button voiceButt;
     private TextWatcher textWatcher;
+    private String source;
+    private String history = "";
     private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private String previousContent;
+    private int offset;
+
 
 
     @Override
@@ -99,11 +104,21 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         mainText = findViewById(R.id.textViewMarkdown);
         AIText = findViewById(R.id.AITextView);
-        AIText.setVisibility(View.INVISIBLE);
+        //AIText.setVisibility(View.INVISIBLE);
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.fileName);
         aiInputButt = findViewById(R.id.AIInputButt);
         AIInputText = findViewById(R.id.AIChatBar);
+        voiceButt = findViewById(R.id.voiceButt);
+
+
+        saveButt = findViewById(R.id.saveButt);
+        summarizeButt = findViewById(R.id.summarizeButt);
+        acceptButt = findViewById(R.id.acceptButt);
+        acceptButt.setVisibility(View.INVISIBLE);
+
+        rejectButt = findViewById(R.id.rejectButt);
+        rejectButt.setVisibility(View.INVISIBLE);
 
         // This is the AI chat button
         aiInputButt.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +127,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (!AIInputText.getText().toString().isEmpty())
                 {
                     String msg = AIInputText.getText().toString();
-                    AISingletonUser.getInstance(getApplicationContext()).AIMessage(msg);
+                    Log.d("Socket Message:", msg);
+                    WebSocketManager2.getInstance().sendMessage(msg);
                 }
             }
         });
@@ -160,14 +176,20 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 if (extras.getString("CONTENT") != null){
                     Log.d("content", extras.getString("CONTENT"));
                     editor.setText(extras.getString("CONTENT"));
+                    content = extras.getString("CONTENT");
                 }
                 if (extras.getString("FILEKEY") != null){
                     Log.d("filekey", extras.getString("FILEKEY"));
                     fileName.setText(extras.getString("FILEKEY"));
                 }
+                if (extras.getString("RECORDED") != null){
+                    Log.d("recorded", extras.getString("RECORDED"));
+                    editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
+                }
                 if (extras.getString("IMAGETEXT") != null)
                 {
                     AIText.setText(extras.getString("IMAGETEXT"));
+                    //mainText.setText(extras.getString("IMAGETEXT"));
                     acceptButt.setVisibility(View.VISIBLE);
                     rejectButt.setVisibility(View.VISIBLE);
                     summarizeButt.setVisibility(View.INVISIBLE);
@@ -201,7 +223,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        saveButt = findViewById(R.id.saveButt);
+
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +242,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        summarizeButt = findViewById(R.id.summarizeButt);
+
         summarizeButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -231,11 +253,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 rejectButt.setVisibility(View.VISIBLE);
                 AIText.setVisibility(View.VISIBLE);
                 summarizeButt.setVisibility(View.INVISIBLE);
+                voiceButt.setVisibility(View.INVISIBLE);
+
+
             }
         });
 
-        acceptButt = findViewById(R.id.acceptButt);
-        acceptButt.setVisibility(View.INVISIBLE);
+
         acceptButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -245,6 +269,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 rejectButt.setVisibility(View.INVISIBLE);
                 AIText.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
+                voiceButt.setVisibility(View.VISIBLE);
                 //markwon.setMarkdown(mainText, mainText.getText().toString() + "\nAI Response: " + AIText.getText().toString());
 //                mainText.append("\nAI Response: " + AIText.getText());
 //                content += "\nAI Response: " + AIText.getText().toString();
@@ -253,8 +278,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        rejectButt = findViewById(R.id.rejectButt);
-        rejectButt.setVisibility(View.INVISIBLE);
+
         rejectButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -264,7 +288,24 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
+                voiceButt.setVisibility(View.VISIBLE);
                 AIText.setText("");
+            }
+        });
+
+        voiceButt.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                /* when signup button is pressed, use intent to switch to Signup Activity */
+                Intent intent = new Intent(TextActivity.this, VoiceRecordActivity.class);
+                intent.putExtra("EMAIL", email);
+                intent.putExtra("PASSWORD", password);
+                intent.putExtra("USERNAME", username);
+                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("PATH", filePath.toString());
+                intent.putExtra("CONTENT", content);
+                startActivity(intent);
             }
         });
 
@@ -545,6 +586,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         return cursorPos;
     }
 
+    // I can also get history whenever another user loads it up
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.d("WebSocket", "Connected");
@@ -571,6 +613,45 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             Log.d("THREAD","Finished Processing item: " + queue.size());
 
         });
+    }
+
+    @Override
+    public void onWebSocketJsonMessage(JSONObject jsonMessage) {
+        Log.d("WebSocket", "JSON message: " + jsonMessage.toString());
+        // At this point in time, I should have the JSON object
+        // Lets try to actually parse the JSON object
+        try {
+            // Example: extract data from the JSON object
+            source = jsonMessage.getString("source");
+            String stuff = jsonMessage.getString("content");
+            String user = jsonMessage.getString("username");
+            history += stuff + ":" + user + " ";
+            Log.d("History: ", history);
+            Log.d("Source", source);
+
+            // Supposed to be sourceCHAT but im just testing rn
+            if (source.equals("sourceAI"))
+            {
+                // User process function
+                //chatBox.setText(chatHistory + stuff);
+                AIText.setText(history);
+            }
+            if (source.equals("sourceCHAT")){
+                // jamey shit
+                AISingletonUser.getInstance(getApplicationContext()).AIMessage(stuff);
+                //chatBox.setText(chatHistory + stuff);
+                AIText.setText(history);
+            }
+            if (source.equals("sourceLIVE"))
+            {
+                // nicholas shit
+                //onWebSocketMessage(stuff);
+                Log.d("SET AITEXT", history);
+                AIText.setText(history);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
