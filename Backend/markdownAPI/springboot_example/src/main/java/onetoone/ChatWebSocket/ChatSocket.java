@@ -63,11 +63,15 @@ public class ChatSocket {
 
 		String username = fileIdSessionMap.get(fileId).get(session);
 		String escapedMessage = escapeSpecialCharacters(message);
+		String escapedAIMessage="";
 
 		if (escapedMessage.startsWith("/AI:")) {
 			String prompt = escapedMessage.substring(4);
 			String aiResponse = getAIResponse(prompt);
-			broadcast(fileId, "AI", aiResponse, "sourceAI");
+			escapedAIMessage = escapeSpecialCharacters(aiResponse);
+			//need to broadcast the user message and also the ai
+			broadcast(fileId, username, escapedMessage, "sourceLIVE");
+			broadcast(fileId, "AI", escapedAIMessage, "sourceAI");
 		} else if (escapedMessage.startsWith("@")) {
 			String destUsername = escapedMessage.split(" ")[0].substring(1);
 			if (fileIdUsernameSessionMap.get(fileId).containsKey(destUsername)) {
@@ -77,7 +81,12 @@ public class ChatSocket {
 			broadcast(fileId, username, escapedMessage, "sourceLIVE");
 		}
 
-		msgRepo.save(new Message(username, message, new Date(), fileId));
+		msgRepo.save(new Message(username, escapedMessage, new Date(), fileId));
+
+		//if there is an ai response save to the data entity, it has to be later then the user
+		if (escapedMessage.startsWith("/AI:")){
+			msgRepo.save(new Message("AI",  escapedAIMessage, new Date(), fileId));
+		}
 	}
 
 	@OnClose
@@ -141,7 +150,7 @@ public class ChatSocket {
 
 	private String getAIResponse(String prompt) {
 		String openaiApiUrl = "https://api.openai.com/v1/chat/completions";
-		String apiKey = "your-api-key";
+		String apiKey = "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";
 
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
