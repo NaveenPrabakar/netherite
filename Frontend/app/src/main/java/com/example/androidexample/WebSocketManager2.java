@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,8 +82,14 @@ public class WebSocketManager2 {
      */
     public void sendMessage(String message) {
         Log.d("Websocket", "Sending message: " + message);
+
+        if (webSocketClient.isClosed())
+        {
+            Log.d("Client Status",  "Down");
+        }
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
+            Log.d("Websocket", "Message sent: " + message);
         }
     }
 
@@ -94,6 +101,15 @@ public class WebSocketManager2 {
         if (webSocketClient != null) {
             webSocketClient.close();
         }
+    }
+
+    /**
+     * Checks if the WebSocket connection is currently open.
+     *
+     * @return true if the WebSocket is connected, false otherwise.
+     */
+    public boolean isConnected() {
+        return webSocketClient != null && webSocketClient.isOpen();
     }
 
 
@@ -137,13 +153,29 @@ public class WebSocketManager2 {
         @Override
         public void onMessage(String message) {
             Log.d("WebSocket", "Received message: " + message);
+            Log.d("Sanity Check Websocket", "I am here");
             if (webSocketListener != null) {
                 try {
                     // Attempt to parse the message as JSON
+                    Log.d("JSON message Check", message);
                     JSONObject jsonMessage = new JSONObject(message);
-                    webSocketListener.onWebSocketJsonMessage(jsonMessage); // Send JSON message to listener
+                    String contentString = jsonMessage.getString("content");
+                    Log.d("Content String Check", contentString);
+
+
+                    // RECENT CHANGES
+                    // SUS
+                    //webSocketListener.onWebSocketMessage(contentString);
+
+                    // Crewmate
+                    webSocketListener.onWebSocketJsonMessage(jsonMessage);
+
+
+
+                    Log.d("MORE SANITY", "I AM STILL HERRE");// Send JSON message to listener
                 } catch (JSONException e) {
                     // If it's not JSON, handle as plain text
+                    Log.e("NOT JSON", "bad");
                     webSocketListener.onWebSocketMessage(message);
                 }
             }
@@ -177,7 +209,7 @@ public class WebSocketManager2 {
          */
         @Override
         public void onError(Exception ex) {
-            Log.d("WebSocket", "Error");
+            Log.d("WebSocket Error", "Error");
             if (webSocketListener != null) {
                 webSocketListener.onWebSocketError(ex);
             }

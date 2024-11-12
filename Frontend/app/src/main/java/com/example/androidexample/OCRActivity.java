@@ -30,6 +30,7 @@ public class OCRActivity extends AppCompatActivity {
     Uri selectiedUri;
     String email = "takuli@iastate.edu";
     String language = "english";
+    private String username;
 
     private String fileSystem;
     private String filePath;
@@ -53,7 +54,8 @@ public class OCRActivity extends AppCompatActivity {
             try {
                 fileSystem = extras.getString("FILESYSTEM");
                 filePath = extras.getString("PATH");
-                //email = extras.getString("EMAIL");
+                email = extras.getString("EMAIL");
+                username = extras.getString("USERNAME");
                 password = extras.getString("PASSWORD");
                 //Log.d("EMAIL", extras.getString("EMAIL"));
                 Log.d("PASSWORD", extras.getString("PASSWORD"));
@@ -116,6 +118,7 @@ public class OCRActivity extends AppCompatActivity {
                     i.putExtra("PATH", "{\"path\": []}");
                     i.putExtra("EMAIL", email);
                     i.putExtra("PASSWORD", password);
+                    i.putExtra("USERNAME", username);
                     startActivity(i);
                 },
                 error -> {

@@ -60,9 +60,9 @@ public class TesseractTest {
         try {
             String originalFilename = image.getOriginalFilename();
 
-            if (originalFilename == null) {
-                return ResponseEntity.badRequest().body("Invalid file name.");
-            }
+//            if (originalFilename == null) {
+//                return ResponseEntity.badRequest().body("Invalid file name.");
+//            }
 
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
