@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                         err_msg.setText(response.toString());
                         try {
                             if (resp.getString("response").equals("ok")){
-                                Intent intent = new Intent(LoginActivity.this, MegaMainClass.class);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("EMAIL", email);
                                 intent.putExtra("PASSWORD", password);
                                 intent.putExtra("USERNAME", resp.getString("userName"));
