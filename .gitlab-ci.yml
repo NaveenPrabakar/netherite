@@ -41,7 +41,8 @@ auto-deploy:
   tags:
   - CI/CD      # change to your runner's tag
   script:               # script to run the deployment service you created
-    - cd Backend/markdownAPI/springboot_example        # change 'Backend' to to where you have the 
+    - cd Backend/markdownAPI/springboot_example  
+    - apk add --no-cache sudo      # change 'Backend' to to where you have the 
     - sudo mv target/*.jar /target/web-demo.jar 
     - sudo systemctl stop system-web-demo
     - sudo systemctl start system-web-demo
