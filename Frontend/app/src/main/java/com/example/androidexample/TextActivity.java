@@ -3,35 +3,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Pair;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -41,22 +23,15 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.android.volley.toolbox.Volley;
-
-import org.commonmark.node.Node;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.noties.markwon.Markwon;
-import io.noties.markwon.editor.MarkwonEditor;
-import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
 
-public class TextActivity extends AppCompatActivity implements WebSocketListener {
+public class TextActivity extends MegaMainClass implements WebSocketListener {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
@@ -75,21 +50,17 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private TextView AIText;
     private Markwon markwon;
     private String content = " ";
-    private JSONObject fileSystem;
-    private JSONObject filePath;
-    private String email;
-    private String password;
-    private String username;
+    private JSONObject fileSystemJSON;
+    private JSONObject filePathJSON;
+
+
     private String aiCount;
     private Button voiceButt;
     private TextWatcher textWatcher;
     private String source;
     private String history = "";
     private String aiURL;
-    private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-    private String previousContent;
-    private int offset;
 
 
 
@@ -143,7 +114,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 
-                previousContent = content;
                 content = charSequence.toString();
                 updateParsedOutput(content);
                 Log.d("Text changed", content);
@@ -160,8 +130,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         if(extras != null) {
             try {
-                fileSystem = new JSONObject(extras.getString("FILESYSTEM"));
-                filePath = new JSONObject(extras.getString("PATH"));
+                fileSystemJSON = new JSONObject(fileSystem);
+                filePathJSON = new JSONObject(path);
                 email = extras.getString("EMAIL");
                 password = extras.getString("PASSWORD");
                 username = extras.getString("USERNAME");
@@ -200,11 +170,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 throw new RuntimeException(e);
             }
         }else{
-            filePath = new JSONObject();
-            fileSystem = new JSONObject();
+            filePathJSON = new JSONObject();
+            fileSystemJSON = new JSONObject();
             try {
-                filePath.put("path", new JSONArray());
-                fileSystem.put("root", new JSONArray());
+                filePathJSON.put("path", new JSONArray());
+                fileSystemJSON.put("root", new JSONArray());
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -217,7 +187,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(TextActivity.this, MainActivity.class);
-                intent.putExtra("FILESYSTEM", fileSystem.toString());
+                intent.putExtra("FILESYSTEM", fileSystemJSON.toString());
                 intent.putExtra("EMAIL", email);
                 intent.putExtra("USERNAME", username);
                 intent.putExtra("PASSWORD", password);
@@ -234,7 +204,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 } else {
 
                     try {
-                        sendFileString(fileName.getText().toString(), String.valueOf(fileLocator(fileSystem, filePath, fileName.getText().toString())));
+                        sendFileString(fileName.getText().toString(), String.valueOf(fileLocator(fileSystemJSON, filePathJSON, fileName.getText().toString())));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -304,8 +274,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 intent.putExtra("EMAIL", email);
                 intent.putExtra("PASSWORD", password);
                 intent.putExtra("USERNAME", username);
-                intent.putExtra("FILESYSTEM", fileSystem.toString());
-                intent.putExtra("PATH", filePath.toString());
+                intent.putExtra("FILESYSTEM", fileSystemJSON.toString());
+                intent.putExtra("PATH", filePathJSON.toString());
                 intent.putExtra("CONTENT", content);
                 startActivity(intent);
             }

@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity implements WebSocketListener {
+public class MainActivity extends MegaMainClass implements WebSocketListener {
 
     private TextView messageText;
     private Button loginButt;
@@ -34,11 +34,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button makeFile;
     private Button settingsButt;
     // the whole ass system full of paths
-    private String fileSystem = "{\"root\": [] }";
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
-    private String username = "takulibruh";
-    private String email = "takuli@iastate.edu";
-    private String password = "admin123!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

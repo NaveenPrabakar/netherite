@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 
-public class filesActivity extends AppCompatActivity {
+public class filesActivity extends MegaMainClass {
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
     private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
@@ -33,18 +33,11 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
     private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
 
-    private String fileSystem =  "{\"root\": []}";
-    // path is hard coded. make a path lmao. make it dynamic
-    // when i click a file or a folder, it should update the path.
-    private String path = "{\"path\": [\"root\"]}";
-    private String email;
-    private String username;
-    private String password;
     private String content;
     private Button goback;
     private Button OCRButt;
     private LinearLayout rootLayout;
-    private String currentArray = "{\"root\": []}";
+    private String currentArray = fileSystem;
     private LinearLayout fileLayout;
     private String aiURL;
 
@@ -53,24 +46,6 @@ public class filesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-
-
-        if(extras != null) {
-            if (!extras.getString("FILESYSTEM").equals("User does not exist")){
-                fileSystem = extras.getString("FILESYSTEM");
-                currentArray = fileSystem;
-                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-            }
-            if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
-                email = extras.getString("EMAIL");
-                password = extras.getString("PASSWORD");
-                username = extras.getString("USERNAME");
-                Log.d("EMAIL", extras.getString("EMAIL"));
-                Log.d("PASSWORD", extras.getString("PASSWORD"));
-            }
-        }
         goback = findViewById(R.id.goback);
         goback.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -379,12 +354,8 @@ public class filesActivity extends AppCompatActivity {
                         content = response;
 
                         Intent intent = new Intent(filesActivity.this, TextActivity.class);
-                        intent.putExtra("FILESYSTEM", fileSystem );
-                        intent.putExtra("PATH", path);
                         intent.putExtra("CONTENT", content);
                         intent.putExtra("FILEKEY", fileName);
-                        intent.putExtra("EMAIL", email);
-                        intent.putExtra("PASSWORD", password);
                         intent.putExtra("AIWSURL", aiURL);
                         startActivity(intent);
 
