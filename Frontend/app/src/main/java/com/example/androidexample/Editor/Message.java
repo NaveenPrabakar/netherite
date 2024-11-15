@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Editor;
 
 public class Message {
     private String source;

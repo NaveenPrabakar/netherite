@@ -1,8 +1,9 @@
-package com.example.androidexample;
+package com.example.androidexample.Editor;
 
 import android.content.Context;
-import android.text.Editable;
 import android.util.Log;
+
+import com.example.androidexample.WebSockets.WebSocketManager2;
 
 /*
 * There should only be one AI user so I created a single instance of it at any time.

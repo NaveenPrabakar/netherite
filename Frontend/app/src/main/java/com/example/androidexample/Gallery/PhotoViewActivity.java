@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Gallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,11 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.VolleySingleton;
 
 /*
 * The Photo View activity will display a single photo.

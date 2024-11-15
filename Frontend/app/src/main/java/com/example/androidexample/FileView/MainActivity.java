@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.FileView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,18 +8,23 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.androidexample.Editor.TextActivity;
+import com.example.androidexample.Gallery.PhotoGalleryActivity;
+import com.example.androidexample.LoginActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Settings.SettingsActivity;
+import com.example.androidexample.SignupActivity;
+import com.example.androidexample.Volleys.VolleySingleton;
+import com.example.androidexample.WebSockets.WebSocketListener;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
-
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements WebSocketListener {
 

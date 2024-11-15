@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Settings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,33 +14,34 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ForgetPasswordActivity extends AppCompatActivity {
-
-    // Button takes you back home
+public class ChangeEmailActivity extends AppCompatActivity {
     private Button backToMain;
-    private Button changePassword;
-    private EditText o_password;
+    private Button changeEmail;
+    private EditText password;
+    private EditText n_email;
     private EditText email;
-    private EditText n_password;
     private TextView msgResponse;
-    private String new_password;
 
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/forgotPassword";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changeemail/";
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forget_password);
+        setContentView(R.layout.activity_changeemail);
 
-        email = findViewById(R.id.login_email_edt);
+        password = findViewById(R.id.password_edt);
+        email = findViewById(R.id.email_edt);
+        n_email = findViewById(R.id.new_email_edt);
+
         msgResponse = findViewById(R.id.err_msg);
 
         backToMain = findViewById(R.id.back2main);
@@ -48,63 +49,60 @@ public class ForgetPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ForgetPasswordActivity.this, MainActivity.class);
+                Intent intent = new Intent(ChangeEmailActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
-        changePassword = findViewById(R.id.forget_password);
-        changePassword.setOnClickListener(new View.OnClickListener() {
+        changeEmail = findViewById(R.id.change_email);
+        changeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Email", email.getText().toString());
-                makeJsonObjPost(email.getText().toString());
+
+                String user_email = email.getText().toString();
+                String user_password = password.getText().toString();
+                String new_email = n_email.getText().toString();
+
+                makeJsonObjPost(user_email, user_password, new_email);
             }
         });
     }
 
-    // Update the password. Put email, old_password in the body, and new_password to change.
-    private void makeJsonObjPost(String email) {
+    // Update the username. Put email, password in the body, and new_username to change.
+    private void makeJsonObjPost(String email, String password, String new_email) {
 
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("email", email);
+            requestBody.put("password", password);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         JsonObjectRequest jsonObjPost = new JsonObjectRequest(
-                Request.Method.POST,
-                URL_JSON_OBJECT,
+                Request.Method.PUT,
+                URL_JSON_OBJECT + new_email,
                 requestBody, // Pass body because its a post request
-                new Response.Listener<JSONObject>(){
+                new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("Change Password", response.toString());
                         JSONObject resp = response;
-                        Log.d("Change Password", resp.toString());
-                        try{
-                            if (resp.has("message")){
-                                Intent intent = new Intent(ForgetPasswordActivity.this, VerificationActivity.class);
-                                try {
-                                    intent.putExtra("EMAIL", email);
-                                    intent.putExtra("verificationCode", resp.getString("verificationCode"));
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                startActivity(intent);
-                            }
-                        }catch (Exception e){
-                            Log.d("Error", e.toString());
+                        try {
+                            msgResponse.setText(resp.getString("response"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
                         }
-
+                        Intent intent = new Intent(ChangeEmailActivity.this, SettingsActivity.class);
+                        // Bring in extras ?
+                        startActivity(intent);  // go to MainActivity with the key-value data
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", error.toString());
-                        msgResponse.setText(error.toString());
                     }
                 }
         ) {
@@ -119,7 +117,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", email);
+                params.put("email", email);
+                params.put("password", password);
                 return params;
             }
         };

@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Gallery;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,8 @@ import java.util.List;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Call;

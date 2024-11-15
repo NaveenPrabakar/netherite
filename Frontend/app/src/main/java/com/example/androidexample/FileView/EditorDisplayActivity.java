@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.FileView;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,9 +7,10 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.androidexample.R;
 
 import org.commonmark.node.Node;
 

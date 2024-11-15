@@ -1,37 +1,21 @@
-package com.example.androidexample;
+package com.example.androidexample.Editor;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Pair;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -41,15 +25,14 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.android.volley.toolbox.Volley;
 
-import org.commonmark.node.Node;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.VolleySingleton;
+import com.example.androidexample.WebSockets.WebSocketListener;
+import com.example.androidexample.WebSockets.WebSocketManager;
 
 import io.noties.markwon.Markwon;
-import io.noties.markwon.editor.MarkwonEditor;
-import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
