@@ -20,6 +20,7 @@ import com.example.androidexample.LoginActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.Settings.SettingsActivity;
 import com.example.androidexample.SignupActivity;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 
@@ -76,7 +77,12 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onClick(View view){
                 getFileSystem(email, password);
-
+                Intent i = new Intent(MainActivity.this, filesActivity.class);
+                i.putExtra("FILESYSTEM", fileSystem);
+                i.putExtra("EMAIL", email);
+                i.putExtra("PASSWORD", password);
+                i.putExtra("USERNAME", username);
+                startActivity(i);
             }
         });
 
@@ -161,12 +167,6 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                     public void onResponse(String response) {
                         Log.d("File System from Server", response);
                         fileSystem = response;
-                        Intent i = new Intent(MainActivity.this, filesActivity.class);
-                        i.putExtra("FILESYSTEM", fileSystem);
-                        i.putExtra("EMAIL", email);
-                        i.putExtra("PASSWORD", password);
-                        i.putExtra("USERNAME", username);
-                        startActivity(i);
                     }
                 },
                 new Response.ErrorListener() {

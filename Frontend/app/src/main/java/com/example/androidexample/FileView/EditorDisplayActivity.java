@@ -7,7 +7,8 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
-
+import android.content.Context;
+import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.R;
