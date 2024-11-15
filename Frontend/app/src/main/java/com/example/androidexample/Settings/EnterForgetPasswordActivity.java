@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Settings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,86 +14,94 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.VolleySingleton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChangeEmailActivity extends AppCompatActivity {
+public class EnterForgetPasswordActivity extends AppCompatActivity {
+
+    // Button takes you back home
     private Button backToMain;
-    private Button changeEmail;
-    private EditText password;
-    private EditText n_email;
-    private EditText email;
+    private Button changePassword;
+    private TextView email;
+    private EditText n_password;
     private TextView msgResponse;
+    private String new_password;
 
-    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changeemail/";
+    private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/resetPassword";
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_changeemail);
+        setContentView(R.layout. activity_enter_forget_password);
 
-        password = findViewById(R.id.password_edt);
-        email = findViewById(R.id.email_edt);
-        n_email = findViewById(R.id.new_email_edt);
-
+        email = findViewById(R.id.login_email_edt);
+        n_password = findViewById(R.id.new_password_edt);
         msgResponse = findViewById(R.id.err_msg);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String emailIntent = intent.getStringExtra("EMAIL");
+            Log.d("Email", intent.getStringExtra("EMAIL"));
+            email.setText(emailIntent);
+
+        }
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ChangeEmailActivity.this, MainActivity.class);
+                Intent intent = new Intent(EnterForgetPasswordActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
-        changeEmail = findViewById(R.id.change_email);
-        changeEmail.setOnClickListener(new View.OnClickListener() {
+        changePassword = findViewById(R.id.change_password);
+        changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                String user_email = email.getText().toString();
-                String user_password = password.getText().toString();
-                String new_email = n_email.getText().toString();
-
-                makeJsonObjPost(user_email, user_password, new_email);
+                Log.d("Password", n_password.getText().toString());
+                makeJsonObjPost(email.getText().toString(),  n_password.getText().toString());
             }
         });
     }
-
-    // Update the username. Put email, password in the body, and new_username to change.
-    private void makeJsonObjPost(String email, String password, String new_email) {
+    private void makeJsonObjPost(String email, String new_password) {
 
         // Create the request body as a JSON object
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("email", email);
-            requestBody.put("password", password);
+            requestBody.put("password", new_password);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         JsonObjectRequest jsonObjPost = new JsonObjectRequest(
                 Request.Method.PUT,
-                URL_JSON_OBJECT + new_email,
+                URL_JSON_OBJECT,
                 requestBody, // Pass body because its a post request
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONObject>(){
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Change Password", response.toString());
                         JSONObject resp = response;
-                        try {
-                            msgResponse.setText(resp.getString("response"));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
+                        Log.d("Change Password", resp.toString());
+                        try{
+                            if (resp.has("responses")){
+                                Intent intent = new Intent(EnterForgetPasswordActivity.this, MainActivity.class);
+                                intent.putExtra("EMAIL", email);
+                                intent.putExtra("PASSWORD", new_password);
+                                startActivity(intent);
+                            }
+                        }catch (Exception e){
+                            Log.d("Error", e.toString());
                         }
-                        Intent intent = new Intent(ChangeEmailActivity.this, SettingsActivity.class);
-                        // Bring in extras ?
-                        startActivity(intent);  // go to MainActivity with the key-value data
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -115,7 +123,6 @@ public class ChangeEmailActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
-                params.put("password", password);
                 return params;
             }
         };

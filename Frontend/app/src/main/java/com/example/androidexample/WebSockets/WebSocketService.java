@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.WebSockets;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

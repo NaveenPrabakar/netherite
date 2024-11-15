@@ -1,10 +1,9 @@
-package com.example.androidexample;
+package com.example.androidexample.WebSockets;
 
 import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

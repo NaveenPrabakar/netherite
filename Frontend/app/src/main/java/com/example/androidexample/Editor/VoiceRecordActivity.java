@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Editor;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,10 +7,8 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,9 +23,9 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import com.android.volley.Request;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.MultipartAudioRequest;
+import com.example.androidexample.Volleys.VolleySingleton;
 
 public class VoiceRecordActivity extends AppCompatActivity {
 

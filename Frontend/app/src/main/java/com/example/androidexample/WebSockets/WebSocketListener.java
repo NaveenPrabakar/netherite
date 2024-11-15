@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.WebSockets;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;

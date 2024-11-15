@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.Editor;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,14 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
+import com.example.androidexample.R;
+import com.example.androidexample.WebSockets.WebSocketListener;
+import com.example.androidexample.WebSockets.WebSocketManager2;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

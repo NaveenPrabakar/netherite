@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.FileView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -10,13 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.androidexample.Editor.TextActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.MultipartRequest;
+import com.example.androidexample.Volleys.VolleySingleton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

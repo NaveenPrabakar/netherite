@@ -1,4 +1,4 @@
-package com.example.androidexample;
+package com.example.androidexample.FileView;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +17,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.androidexample.Editor.TextActivity;
+import com.example.androidexample.R;
+import com.example.androidexample.Volleys.VolleySingleton;
+import com.example.androidexample.WebSockets.WebSocketManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
