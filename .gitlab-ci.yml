@@ -9,8 +9,7 @@ maven-build:
   stage: mavenbuild     # one of the stages listed above
   tags:                 # to specify which runner to execute this job
     - CI/CD    # change to your runner's tag
-  script:               # what to execute for this job
-    - cd Backend/markdownAPI/springboot_example        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+  script:               # what to execute for this job        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
     - mvn clean package       # maven package
   artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
     paths:
