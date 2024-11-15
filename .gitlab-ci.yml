@@ -11,7 +11,7 @@ maven-build:
     - CI/CD    # change to your runner's tag
   script:               # what to execute for this job
     - cd Backend/markdownAPI/springboot_example        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - mvn package       # maven package
+    - mvn clean package       # maven package
   artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
     paths:
     - Backend/markdownAPI/springboot_example/target/*.jar # change 'Backend' to where you have 'target' (do not add a / in the beginning)
