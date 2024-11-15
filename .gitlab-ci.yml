@@ -24,7 +24,7 @@ maven-build:
 maven-test:             
   stage: maventest     # one of the stages listed above
   tags:
-     - springboot_tag   # change to your runner's tag
+     - CI/CD   # change to your runner's tag
   script:
      - cd Backend/markdownAPI/springboot_example       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
      - mvn test         # maven test
@@ -37,7 +37,7 @@ maven-test:
 auto-deploy:
   stage: mavendeploy    # one of the stages listed above
   tags:
-  - springboot_tag      # change to your runner's tag
+  - CI/CD      # change to your runner's tag
   script:               # script to run the deployment service you created
     - cd Backend/markdownAPI/springboot_example        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
     - sudo mv target/*.jar /target/web-demo.jar 
@@ -53,7 +53,7 @@ android-build:
   image: afirefly/android-ci:java17 # Docker image that has Android environments installed     gjandres/android-ci:latest
   stage: androidbuild               # one of the stages listed above
   tags:
-   - mini                   # change to your runner's tag
+   - CI/CD                   # change to your runner's tag
   before_script:                    # enable gradlew, change 'Frontend' to where you have 'gradlew'
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
@@ -70,7 +70,7 @@ android-test:
   image: afirefly/android-ci:java17
   stage: androidtest               # one of the stages listed above
   tags:
-    - mini                   # change to your runner's tag
+    - CI/CD                   # change to your runner's tag
   before_script:                   # enable gradlew, change 'Frontend' to where you have 'gradlew'
      - export GRADLE_USER_HOME=`pwd`/.gradle
      - chmod +x ./Frontend/gradlew
