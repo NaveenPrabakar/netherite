@@ -10,10 +10,8 @@ maven-build:
   tags:                 # to specify which runner to execute this job
     - CI/CD    # change to your runner's tag
   script:               # what to execute for this job        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - ls
     - cd Backend/markdownAPI/springboot_example
-    - ls
-    - mvn clean package       # maven package
+    - mvn package       # maven package
   artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
     paths:
     - Backend/markdownAPI/springboot_example/target/*.jar # change 'Backend' to where you have 'target' (do not add a / in the beginning)
@@ -21,7 +19,7 @@ maven-build:
     refs:
       - main            # only to trigger the pipeline when changes are pushed to 'main'
     changes:
-      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+      - Backend/markdownAPI/springboot_example/**/*    # more specifically - only when changes are made inside the 'Backend' folder
 
 maven-test:             
   stage: maventest     # one of the stages listed above
@@ -34,7 +32,7 @@ maven-test:
     refs:
       - main            # only to trigger the pipeline when changes are pushed to 'main'
     changes:
-      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+      - Backend/markdownAPI/springboot_example/**/*    # more specifically - only when changes are made inside the 'Backend' folder
 
 auto-deploy:
   stage: mavendeploy    # one of the stages listed above
@@ -42,7 +40,6 @@ auto-deploy:
   - CI/CD      # change to your runner's tag
   script:               # script to run the deployment service you created
     - cd Backend/markdownAPI/springboot_example  
-    - apk add --no-cache sudo      # change 'Backend' to to where you have the 
     - sudo mv target/*.jar /target/web-demo.jar 
     - sudo systemctl stop system-web-demo
     - sudo systemctl start system-web-demo
@@ -50,7 +47,7 @@ auto-deploy:
     refs:
       - main            # only to trigger the pipeline when changes are pushed to 'main'
     changes:
-      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+      - Backend/markdownAPI/springboot_example/**/*    # more specifically - only when changes are made inside the 'Backend' folder
 
 android-build:
   image: afirefly/android-ci:java17 # Docker image that has Android environments installed     gjandres/android-ci:latest
