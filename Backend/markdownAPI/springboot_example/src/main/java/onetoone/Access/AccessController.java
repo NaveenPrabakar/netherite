@@ -18,51 +18,133 @@ import onetoone.FileEntity;
 import onetoone.Access.AccessRepository;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.json.*;
+import onetoone.*;
 
 @RestController
 @RequestMapping("/share")
 
 public class AccessController{
 
+    // To access the list of files
     @Autowired
     private FileRepository files;
 
+    //To get user info
     @Autowired
     private loginRepository logs;
 
+    //To add to access table
     @Autowired
     private AccessRepository access;
 
+    //To add to the join table
+    @Autowired
+    private FileAccess fileAccessService;
+
+    //To get the json directory
+    @Autowired
+    private JsonRepository json;
+
     @PostMapping("/new")
-    public HashMap<String, String> share(@RequestParam("owner") String owner, @RequestParam("fileName") String fileName, @RequestParam("Access") String Access){
+    public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
-        HashMap<String, String> response = new HashMap<>();
+        signEntity sign2 = logs.findByEmail(toUser);
+        signEntity sign = logs.findByEmail(fromUser);
 
-        signEntity sign = logs.findByEmail(owner);
+        String jsons = json.getSystem(sign2.getId());
 
-        if(sign == null){
-            response.put("response", "User does not exist");
-            return response;
+        System.out.println(jsons);
+
+        String updates = updateJson(jsons, docName);
+        json.updatepath(sign2.getId(), updates);
+
+
+
+        if(sign2 == null){
+            return ResponseEntity.badRequest().body("The user does not exist");
         }
 
-        FileEntity file = files.findByFileName(fileName);
+        FileEntity file = files.findByFileName(docName);
 
         if(file.getId() != sign.getId()){
-            response.put("response", "User does not have this file");
-            return response;
+            return ResponseEntity.badRequest().body("The user does not have this file");
         }
 
-        signEntity acc = logs.findByEmail(Access);
-
-        if(acc == null){
-            response.put("response", "This user does not exist");
-            return response;
-        }
-
-        AccessEntity a = new AccessEntity(sign, file, acc);
+        AccessEntity a = new AccessEntity(sign, file, sign2);
         access.save(a);
 
-        response.put("response", "File has been shared");
-        return response;
+        file.addAccessEntity(a);
+
+        return ResponseEntity.ok("The file was shared");
     }
-}
+
+    /**
+     * Returns a list of people the user shared the file with
+     * @param email
+     * @param fileName
+     * @return
+     */
+    @GetMapping("/sent")
+    public ResponseEntity<List<String>> sent(@RequestParam("email") String email, @RequestParam("fileName") String fileName){
+
+        signEntity user = logs.findByEmail(email);
+        FileEntity file = files.findByFileName(fileName);
+
+        List<String> error = new ArrayList<>();
+
+        if(file == null || user == null) {
+
+            error.add("the user or file does not exist");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        List<String> names = access.sent(file, user);
+
+        return ResponseEntity.ok(names);
+
+
+    }
+
+    @GetMapping("/filenames/{email}")
+    public List<String> getFileNamesByAccessId(@PathVariable String email) {
+
+        signEntity user = logs.findByEmail(email);
+        return fileAccessService.getFileNamesByAccessId(user.getId());
+    }
+
+
+    private String updateJson(String json, String fileName){
+
+        JSONObject fs = new JSONObject(json);
+        JSONArray fsArr = fs.getJSONArray("root");
+
+        for(int i = 0; i < fsArr.length(); i++){
+            Object item = fsArr.get(i);
+            if(item instanceof JSONObject){
+                JSONObject temp = (JSONObject) item;
+                String internalKey = temp.keys().next();
+                if(internalKey.equals("share")){
+                    JSONArray sha  = temp.getJSONArray("share");
+                    sha.put(fileName);
+                    return fs.toString();
+                }
+            }
+        }
+
+        JSONObject share = new JSONObject();
+        JSONArray shareArr = new JSONArray();
+        shareArr.put(fileName);
+        share.put("share",shareArr);
+
+        fsArr.put(share);
+        System.out.println(fs.toString());
+
+        return fs.toString();
+
+    }
+
+
+
+    }
