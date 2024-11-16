@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("File System from Server", response);
-                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response);
+                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"root\": [] }");
                         Intent i = new Intent(LoginActivity.this, filesActivity.class);
                         startActivity(i);
                     }
