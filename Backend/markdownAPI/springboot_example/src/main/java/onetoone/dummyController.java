@@ -7,6 +7,9 @@ import onetoone.signupAPI.*;
 import onetoone.ImageToText.*;
 import onetoone.Access.*;
 
+/**
+ * To display the schemes
+ */
 @RestController
 public class dummyController {
 
