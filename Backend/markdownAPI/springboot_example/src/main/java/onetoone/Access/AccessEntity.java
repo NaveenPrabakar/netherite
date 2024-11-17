@@ -1,6 +1,7 @@
 package onetoone.Access;
 
 import jakarta.persistence.Entity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.*;
 
 @Entity
+@Schema(description = "Entity representing access relationships between users and files")
 public class AccessEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
