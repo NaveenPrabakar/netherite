@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.android.volley.Request;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.MultipartRequest;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -46,29 +47,35 @@ public class OCRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
+//
+//        if(extras != null) {
+//            try {
+//                fileSystem = extras.getString("FILESYSTEM");
+//                filePath = extras.getString("PATH");
+//                email = extras.getString("EMAIL");
+//                username = extras.getString("USERNAME");
+//                password = extras.getString("PASSWORD");
+//                //Log.d("EMAIL", extras.getString("EMAIL"));
+//                Log.d("PASSWORD", extras.getString("PASSWORD"));
+//                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+//                Log.d("PATH", extras.getString("PATH"));
+//
+//
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }else{
+//            filePath = "{\"path\": []}";
+//            fileSystem = "{\"root\": [] }";
+//        }
 
-        if(extras != null) {
-            try {
-                fileSystem = extras.getString("FILESYSTEM");
-                filePath = extras.getString("PATH");
-                email = extras.getString("EMAIL");
-                username = extras.getString("USERNAME");
-                password = extras.getString("PASSWORD");
-                //Log.d("EMAIL", extras.getString("EMAIL"));
-                Log.d("PASSWORD", extras.getString("PASSWORD"));
-                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-                Log.d("PATH", extras.getString("PATH"));
-
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }else{
-            filePath = "{\"path\": []}";
-            fileSystem = "{\"root\": [] }";
-        }
+        email = UserPreferences.getEmail(this);
+        username = UserPreferences.getUsername(this);
+        password = UserPreferences.getPassword(this);
+        filePath = UserPreferences.getFilePath(this);
+        fileSystem = UserPreferences.getFileSystem(this);
 
         mImageView = findViewById(R.id.imageSelView);
         selectBtn = findViewById(R.id.selectBtn);

@@ -19,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketManager;
 
@@ -57,24 +58,31 @@ public class filesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
+//
+//
+//        if(extras != null) {
+//            if (!extras.getString("FILESYSTEM").equals("User does not exist")){
+//                fileSystem = extras.getString("FILESYSTEM");
+//                currentArray = fileSystem;
+//                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+//            }
+//            if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
+//                email = extras.getString("EMAIL");
+//                password = extras.getString("PASSWORD");
+//                username = extras.getString("USERNAME");
+//                Log.d("EMAIL", extras.getString("EMAIL"));
+//                Log.d("PASSWORD", extras.getString("PASSWORD"));
+//            }
+//        }
 
+        email = UserPreferences.getEmail(this);
+        password = UserPreferences.getPassword(this);
+        username = UserPreferences.getUsername(this);
+        fileSystem = UserPreferences.getFileSystem(this);
+        currentArray = fileSystem;
 
-        if(extras != null) {
-            if (!extras.getString("FILESYSTEM").equals("User does not exist")){
-                fileSystem = extras.getString("FILESYSTEM");
-                currentArray = fileSystem;
-                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-            }
-            if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
-                email = extras.getString("EMAIL");
-                password = extras.getString("PASSWORD");
-                username = extras.getString("USERNAME");
-                Log.d("EMAIL", extras.getString("EMAIL"));
-                Log.d("PASSWORD", extras.getString("PASSWORD"));
-            }
-        }
         goback = findViewById(R.id.goback);
         goback.setOnClickListener(new View.OnClickListener() {
             @Override

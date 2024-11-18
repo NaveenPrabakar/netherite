@@ -61,17 +61,21 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
         galleryButt = findViewById(R.id.galleryButt);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+//        Intent intent = getIntent();
+//        Bundle extras = intent.getExtras();
 
-        if(extras != null){
-            email = extras.getString("EMAIL");
-            username = extras.getString("USERNAME");
-            password = extras.getString("PASSWORD");
-            emailDisplay.setText(email);
-            passwordDisplay.setText(password);
-
-        }
+//        if(extras != null){
+//            email = extras.getString("EMAIL");
+//            username = extras.getString("USERNAME");
+//            password = extras.getString("PASSWORD");
+//            emailDisplay.setText(email);
+//            passwordDisplay.setText(password);
+//        }
+        email = UserPreferences.getEmail(this);
+        username = UserPreferences.getUsername(this);
+        password = UserPreferences.getPassword(this);
+        emailDisplay.setText(email);
+        passwordDisplay.setText(password);
 
         FileView.setOnClickListener(new View.OnClickListener() {
             @Override
