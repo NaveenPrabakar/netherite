@@ -22,129 +22,115 @@
             android:id="@+id/fileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:ems="10"
             android:inputType="text"
             android:text="Name"
-            tools:layout_editor_absoluteY="4dp" />
+            app:layout_constraintStart_toStartOf="@+id/textViewMarkdown"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/saveButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
             android:text="Save"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.891"
-            app:layout_constraintStart_toEndOf="@+id/fileName"
-            tools:layout_editor_absoluteY="1dp" />
+            app:layout_constraintBottom_toTopOf="@+id/textViewMarkdown"
+            app:layout_constraintEnd_toEndOf="@+id/textViewMarkdown" />
 
         <EditText
             android:id="@+id/textViewMarkdown"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="635dp"
             android:ems="10"
             android:gravity="start|top"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/EditMarkdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/EditMarkdown"
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fileName" />
 
 
         <TextView
             android:id="@+id/AITextView"
-            android:layout_width="fill_parent"
+            android:layout_width="0dp"
             android:layout_height="250dp"
             android:layout_marginBottom="44dp"
             android:background="@color/white"
             android:gravity="start|top"
             android:text="AI Usage"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
             android:id="@+id/AIChatBar"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="4dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@color/white"
             android:gravity="start|top"
             android:text="Input Prompt Here"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/AITextView" />
+            app:layout_constraintTop_toBottomOf="@+id/AITextView" />
 
         <Button
             android:id="@+id/liveChatButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="16dp"
             android:text="Live Chat"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.827"
-            app:layout_constraintStart_toEndOf="@+id/rejectButt"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
-            app:layout_constraintVertical_bias="0.555" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/summarizeButt" />
 
         <Button
             android:id="@+id/summarizeButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="3dp"
             android:text="Summarize"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/rejectButt"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
-            app:layout_constraintVertical_bias="0.994" />
+            app:layout_constraintBottom_toTopOf="@+id/liveChatButt"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/acceptButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="280dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="38dp"
             android:text="Accept"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
-            app:layout_constraintEnd_toEndOf="@+id/AITextView"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
-            app:layout_constraintVertical_bias="0.994" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/rejectButt"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/rejectButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="21dp"
             android:text="Reject"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
-            app:layout_constraintLeft_toRightOf="@+id/acceptButt"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
-            app:layout_constraintVertical_bias="0.994" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/voiceButt"
+            app:layout_constraintStart_toEndOf="@+id/acceptButt" />
 
         <Button
             android:id="@+id/voiceButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="18dp"
             android:text="Voice"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
-            app:layout_constraintLeft_toRightOf="@+id/acceptButt"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMarkdown"
-            app:layout_constraintVertical_bias="0.994" />
+            app:layout_constraintBottom_toTopOf="@+id/AIChatBar"
+            app:layout_constraintStart_toStartOf="@+id/rejectButt" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
