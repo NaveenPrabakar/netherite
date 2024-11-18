@@ -3,6 +3,7 @@ package com.example.androidexample.Editor;
 /**
  * Represents a message in a chat box.
  * It's displayed as an .xml file, {@code message_item.xml} which serves as a div to be populated.
+ * @author Jamey Nguyen
  */
 public class Message {
     /**

@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Used to populate RecyclerViews with {@link Message} objects.
  * This class requires a list of Message Objects to be passed in and creates a ViewHolder for each Message.
+ * @author Jamey Nguyen
  */
 public class MessagePopulator extends RecyclerView.Adapter<MessagePopulator.MessageViewHolder> {
     /**

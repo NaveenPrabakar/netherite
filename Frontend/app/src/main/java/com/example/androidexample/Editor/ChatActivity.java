@@ -29,6 +29,7 @@ import java.util.List;
 /**
  * This represents a live chat box associated with a note file that numerous users can interact with.
  * It keeps a chat history of previous messages sent and the user associated with the message.
+ * @author Jamey Nguyen
  */
 public class ChatActivity extends AppCompatActivity implements WebSocketListener {
     /**
