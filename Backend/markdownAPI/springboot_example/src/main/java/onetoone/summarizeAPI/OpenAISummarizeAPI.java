@@ -55,6 +55,18 @@ public class OpenAISummarizeAPI{
     //GET method to retrive the times the user use openai api
     //front end giving the username or usergmail
     //need to tell front end to use a condition for post and put entity because diff API
+
+    /**
+     * Retrieves the OpenAI API usage count for a specific user by email.
+     *
+     * @param email The email of the user
+     * @return A map containing the usage count or an error message if the user is not found
+     */
+    @Operation(summary = "Get OpenAI API usage count for a user", description = "Fetches the usage count of OpenAI API for a specific user based on their email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved usage count", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @GetMapping("/getUsageAPICount/{email}")
     public Map<String, String>  getUsageAPICount(@PathVariable String email) {
 
@@ -85,6 +97,18 @@ public class OpenAISummarizeAPI{
     //Post method to create the users entity in AI table (never use before)
     //using the class created AI.java for requestBody
     //front end giving json for username,promt and content
+
+    /**
+     * Creates a new OpenAI API user entry and makes the first API call.
+     *
+     * @param body The request body containing user's email and prompt
+     * @return A map with the API response or an error message if the user is not found
+     */
+    @Operation(summary = "Create a new OpenAI API user", description = "Creates a new entry for a user in the OpenAI API usage table")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created and first API call made", content = @Content),
+            @ApiResponse(responseCode = "400", description = "User not found", content = @Content)
+    })
     @PostMapping("/createAIUser")
     public Map<String, String> getFeedBack1(@RequestBody AI body){
 
@@ -110,6 +134,18 @@ public class OpenAISummarizeAPI{
     //Post method to create the users entity in AI table
     //using the class created AI.java for requestBody
     //front end giving json for username,promt and content
+
+    /**
+     * Updates the usage count of a user when they make an API call.
+     *
+     * @param body The request body containing user's email and prompt
+     * @return A map with the API response or an error message if the limit is exceeded
+     */
+    @Operation(summary = "Update usage count", description = "Increments the usage count for a user making an API call")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usage count updated successfully", content = @Content),
+            @ApiResponse(responseCode = "429", description = "You have exceed the daily limit of using Open AI api, please wait for 24 hours later", content = @Content)
+    })
     @PutMapping("/updateAIUser")
     public Map<String, String> getFeedBack2(@RequestBody AI body){
 
@@ -145,6 +181,17 @@ public class OpenAISummarizeAPI{
     }
 
     // DELETE method to reset usage count after 24 hours
+    /**
+     * Resets the usage count of OpenAI API calls for a user.
+     *
+     * @param email The email of the user whose usage count will be reset
+     * @return A map indicating the status of the reset operation
+     */
+    @Operation(summary = "Reset API usage count", description = "Resets the usage count of OpenAI API calls for a user after 24 hours")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "API usage has been reset for the user.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "The user does not exist", content = @Content)
+    })
     @DeleteMapping("/resetUsage/{email}")
     public Map<String, String> resetUsage(@PathVariable String email) {
 
@@ -168,6 +215,13 @@ public class OpenAISummarizeAPI{
     }
 
     //helper method
+    /**
+     * Calls the OpenAI API with the given prompt and content.
+     *
+     * @param prompt The prompt text for summarization
+     * @param content The content text to summarize
+     * @return The summarized text from OpenAI
+     */
     private String callOpenAI(String prompt, String content) {
         String openaiApiUrl = "https://api.openai.com/v1/chat/completions";  // Endpoint for chat-based models
         String apiKey = "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";  // Replace with your OpenAI API key
