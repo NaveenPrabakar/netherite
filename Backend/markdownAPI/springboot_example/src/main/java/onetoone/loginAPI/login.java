@@ -1,5 +1,14 @@
 package onetoone.loginAPI;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 import java.util.List;
 import onetoone.signupAPI.signEntity;
@@ -42,7 +51,7 @@ public class login{
     /**
      * Logs in a user by verifying the email and password.
      *
-     * @param l The login details containing email and password
+     * @param l  The login details containing email and password
      * @return A map containing the response message and username
      */
     @Operation(summary = "Login User", description = "Checks if the username and password are correct")
