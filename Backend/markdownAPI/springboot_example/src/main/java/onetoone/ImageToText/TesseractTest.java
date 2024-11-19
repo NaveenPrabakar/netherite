@@ -23,10 +23,18 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+
 
 
 
 @RestController
+@Tag(name = "OCR API", description = "Done By Naveen Prabakar")
 public class TesseractTest {
 
     @Autowired
@@ -44,6 +52,19 @@ public class TesseractTest {
      * @return response
      */
 
+    @Operation(
+            summary = "Extract text from an image using Tesseract OCR",
+            description = "Uploads an image and extracts text using Tesseract OCR. Returns the extracted text or error messages.",
+            parameters = {
+                    @Parameter(name = "email", description = "The email of the user", required = true),
+                    @Parameter(name = "language", description = "The language for OCR (e.g., 'eng' for English)", required = true),
+                    @Parameter(name = "image", description = "The image file for text extraction", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully extracted text from the image"),
+            @ApiResponse(responseCode = "500", description = "Error processing the image")
+    })
     @PostMapping("/extractText/{email}/{language}")
     public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) {
 
@@ -98,6 +119,17 @@ public class TesseractTest {
         }
     }
 
+    @Operation(
+            summary = "Retrieve an image by filename",
+            description = "Retrieves an image file by its filename and returns it as a response.",
+            parameters = {
+                    @Parameter(name = "filename", description = "The name of the image file", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Image successfully retrieved"),
+            @ApiResponse(responseCode = "500", description = "Error retrieving image")
+    })
     @GetMapping("/getImage/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
@@ -137,6 +169,17 @@ public class TesseractTest {
     }
 
 
+    @Operation(
+            summary = "Retrieve image filenames associated with a user",
+            description = "Returns a list of image filenames that are associated with the specified user by email.",
+            parameters = {
+                    @Parameter(name = "email", description = "The email of the user", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of image filenames retrieved"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/getImageNamesByUser/{email}")
     public ResponseEntity<List<String>> getImageNamesByUser(@PathVariable String email) {
 

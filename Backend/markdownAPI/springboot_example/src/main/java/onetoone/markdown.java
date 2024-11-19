@@ -39,11 +39,13 @@ import java.nio.charset.StandardCharsets;
 import org.json.*;
 import onetoone.*;
 import onetoone.Access.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 
 @RestController
 @RequestMapping("/files")
+@Tag(name = "File System API", description = "Done By Naveen Prabakar")
 public class markdown {
 
     //Main directory for the files

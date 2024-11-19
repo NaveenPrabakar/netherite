@@ -6,11 +6,13 @@ import onetoone.speechToTextAPI.*;
 import onetoone.signupAPI.*;
 import onetoone.ImageToText.*;
 import onetoone.Access.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * To display the schemes
  */
 @RestController
+@Tag(name = "dummy", description = "Ignore this, this is here to display all schemes")
 public class dummyController {
 
     @GetMapping("/api/dummy-file")
