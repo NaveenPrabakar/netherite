@@ -16,8 +16,15 @@ import java.util.*;
 import onetoone.JsonRepository;
 import onetoone.JsonEntity;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/user")
+@Tag(name = "Sign-Up API", description = "Done By Naveen Prabakar")
 public class signup{
 
     @Autowired
@@ -26,6 +33,16 @@ public class signup{
     @Autowired
     private JsonRepository j;
 
+
+
+    @Operation(
+            summary = "Create User",
+            description = "Registers a new user with the provided details. If the email is already registered, an error is returned.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User successfully created"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input")
+            }
+    )
     @PostMapping("/create")
     public Map<String, String> createUser(@RequestBody signEntity sign){
 

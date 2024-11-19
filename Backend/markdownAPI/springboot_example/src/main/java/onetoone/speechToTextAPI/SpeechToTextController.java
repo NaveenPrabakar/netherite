@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 //import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,6 +64,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/SpeechToTextAIuse")
+@Tag(name = "SpeechToText API", description = "Done By Yi Yun Khor")
 public class SpeechToTextController{
 
     //System.out.println("Hi u r using the api for speech to text!");

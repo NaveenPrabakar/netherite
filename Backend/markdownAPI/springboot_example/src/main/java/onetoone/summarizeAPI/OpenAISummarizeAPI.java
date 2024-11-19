@@ -41,7 +41,7 @@ import org.json.JSONArray;
 import java.util.HashMap;
 import java.util.Map;
 import java.time.LocalDateTime;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 //GET method to retrive the times the user use
 //POST-create the user with times they use API
 //PUT-Update the time they use
@@ -49,6 +49,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/OpenAIAPIuse")
+@Tag(name = "AI/Summarize API", description = "Done By Yi Yun Khor")
 public class OpenAISummarizeAPI{
 
     //api key.....

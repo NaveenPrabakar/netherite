@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/userLogin")
+@Tag(name = "Login API", description = "Done By Yi Yun Khor")
 public class login{
 
     @Autowired
