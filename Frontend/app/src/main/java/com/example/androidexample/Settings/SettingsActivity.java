@@ -25,6 +25,12 @@ public class SettingsActivity extends AppCompatActivity {
     //private EditText password;
     private TextView msgResponse;
 
+    /**
+     * Initializes the activity and sets up the UI components for accessing account settings.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

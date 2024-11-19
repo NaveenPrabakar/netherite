@@ -37,6 +37,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changepassword";
 
+    /**
+     * Initializes the activity and sets up the UI components for changing the password.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +85,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sends a PUT request to the server to update the user's password.
+     *
+     * @param email        the email address associated with the user's account
+     * @param old_password the user's current password
+     * @param new_password the new password to update to
+     */
     // Update the password. Put email, old_password in the body, and new_password to change.
     private void makeJsonObjPost(String email, String old_password, String new_password) {
 

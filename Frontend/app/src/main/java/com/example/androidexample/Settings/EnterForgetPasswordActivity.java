@@ -35,6 +35,12 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/resetPassword";
 
+    /**
+     * Initializes the activity and sets up the UI components for entering a new password.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +77,13 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Sends a PUT request to the server to reset the user's password.
+     *
+     * @param email        the email address associated with the user's account
+     * @param new_password the new password to update to
+     */
     private void makeJsonObjPost(String email, String new_password) {
 
         // Create the request body as a JSON object

@@ -27,6 +27,12 @@ public class VerificationActivity extends AppCompatActivity {
     private String email;
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/resetPassword";
 
+    /**
+     * Initializes the activity and sets up the UI components for verifying the code.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

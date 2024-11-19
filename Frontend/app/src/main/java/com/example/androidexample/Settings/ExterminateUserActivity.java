@@ -31,6 +31,12 @@ public class ExterminateUserActivity extends AppCompatActivity {
 
     private static final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/edit/exterminateUser";
 
+    /**
+     * Initializes the activity and sets up the UI components for account deletion.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exterminateuser);
@@ -62,6 +68,12 @@ public class ExterminateUserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sends a DELETE request to the server to permanently delete the user's account.
+     *
+     * @param email    the email address associated with the user's account
+     * @param password the password of the user to authenticate the deletion request
+     */
     // find email and password and send to server to kill user.
     private void killUser(String email, String password) {
 

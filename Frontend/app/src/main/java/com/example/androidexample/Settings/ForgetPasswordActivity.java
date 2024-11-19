@@ -37,6 +37,12 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/forgotPassword";
 
+    /**
+     * Initializes the activity and sets up the UI components for the "Forgot Password" functionality.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +71,11 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sends a POST request to the server to initiate the "Forgot Password" process.
+     *
+     * @param email the email address associated with the user's account
+     */
     // Update the password. Put email, old_password in the body, and new_password to change.
     private void makeJsonObjPost(String email) {
 

@@ -35,6 +35,12 @@ public class ChangeUsernameActivity extends AppCompatActivity {
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/edit/changeusername/";
 
+    /**
+     * Initializes the activity and sets up the UI components for changing the username.
+     *
+     * @param savedInstanceState if the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied; otherwise, it is null.
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_changeusername);
@@ -68,6 +74,13 @@ public class ChangeUsernameActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sends a PUT request to the server to update the user's username.
+     *
+     * @param email        the email address associated with the user's account
+     * @param password     the user's password
+     * @param new_username the new username to update to
+     */
     // Update the username. Put email, password in the body, and new_username to change.
     private void makeJsonObjPost(String email, String password, String new_username) {
 
