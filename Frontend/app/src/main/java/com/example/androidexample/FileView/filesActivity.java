@@ -53,6 +53,13 @@ public class filesActivity extends AppCompatActivity {
     private LinearLayout fileLayout;
     private String aiURL;
 
+
+    /**
+     * Initializes the activity and sets up the user interface.
+     * Retrieves user preferences and initializes necessary variables, such as the file system and user credentials.
+     *
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +144,12 @@ public class filesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Creates the user interface dynamically, including buttons for creating new folders and files.
+     * Also initializes the current folder view and displays its contents.
+     *
+     * @param parentLayout the root layout to which the UI elements are added
+     */
     private void createUI(LinearLayout parentLayout) {
         LinearLayout newFolderLayout = new LinearLayout(this);
         newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -212,7 +225,15 @@ public class filesActivity extends AppCompatActivity {
         }
 
     }
-
+    /**
+     * Dynamically creates a folder view along with its files and subfolders.
+     * Adds functionality to open, delete, and share files or folders.
+     *
+     * @param parentLayout the parent layout to which the folder view is added
+     * @param folderName   the name of the current folder
+     * @param filesArray   the array of files or folders within the current folder
+     * @throws JSONException if an error occurs while parsing the JSON
+     */
     private void createFolderWithFiles(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException {
         // Create a LinearLayout to hold the files and set its visibility to GONE initially
         // Iterate over the files array
@@ -374,6 +395,12 @@ public class filesActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Retrieves the file's content as a string from the server and starts the `TextActivity`
+     * to display and edit the file content.
+     *
+     * @param fileName the name of the file to retrieve
+     */
     public void getFileString(String fileName){
         Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
@@ -415,6 +442,12 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * Retrieves the file's unique ID from the server and connects to its WebSocket instance.
+     * Loads the file's content for editing in a `TextActivity`.
+     *
+     * @param fileName the name of the file to retrieve
+     */
     public void getFile(String fileName){
         Uri.Builder builder = Uri.parse(URL_ID_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
@@ -452,6 +485,11 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * Updates the file system on the server after modifications, such as adding or deleting folders.
+     *
+     * @param fileSystem the updated file system JSON string
+     */
     public void folderUpdate(String fileSystem){
         Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
         builder.appendQueryParameter("json", fileSystem);
@@ -482,7 +520,12 @@ public class filesActivity extends AppCompatActivity {
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
-
+    /**
+     * Deletes a file from the server and updates the local file system structure.
+     *
+     * @param fileName       the name of the file to delete
+     * @param newFileSystem  the updated file system JSON string
+     */
     public void deleteFile(String fileName, String newFileSystem){
         Uri.Builder builder = Uri.parse(URL_DELETE_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
@@ -531,6 +574,13 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * Shares a file with another user by sending a request to the server.
+     *
+     * @param fromUser the email of the user sharing the file
+     * @param toUser   the username of the recipient
+     * @param docName  the name of the file to share
+     */
     public void shareToUser(String fromUser, String toUser, String docName){
         Uri.Builder builder = Uri.parse(URL_FRIEND_REQ).buildUpon();
         builder.appendQueryParameter("fromUser", fromUser);
@@ -562,6 +612,12 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    /**
+     * Validates the new folder name to ensure it does not contain illegal characters.
+     *
+     * @param newFileName the name of the folder to validate
+     * @return the validated folder name, or an empty string if invalid
+     */
     public String newFolderCheck(String newFileName){
         if (    newFileName.isEmpty()||
                 newFileName.equals(" ")||
@@ -577,6 +633,15 @@ public class filesActivity extends AppCompatActivity {
         return newFileName;
     }
 
+    /**
+     * Deletes a file from the specified file system and path.
+     *
+     * @param fileSystem the JSON object representing the root of the file system
+     * @param filePath   the JSON object containing the "path" array to locate the file
+     * @param fileName   the name of the file to delete
+     * @return the updated JSON object representing the file system after deletion
+     * @throws JSONException if there is an error parsing the JSON objects
+     */
     public JSONObject fileDeletor(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
         JSONArray pathArray = filePath.getJSONArray("path");
         pathArray.remove(0);
@@ -607,6 +672,15 @@ public class filesActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Creates a new folder in the specified file system and updates the current array.
+     *
+     * @param currentArray the current directory as a JSON string
+     * @param fileSystem   the JSON string representing the root of the file system
+     * @param folderName   the name of the new folder to create
+     * @return the updated JSON string representing the current directory
+     * @throws JSONException if there is an error parsing the JSON objects
+     */
     public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
         JSONObject currentArrayJS = new JSONObject(currentArray);
         String newKey = currentArrayJS.keys().next();
@@ -640,6 +714,14 @@ public class filesActivity extends AppCompatActivity {
         return currentArrayJS.toString();
     }
 
+    /**
+     * Navigates to a specified path in the file system and returns the corresponding JSON object.
+     *
+     * @param currentPath the JSON string representing the path to navigate to
+     * @param fileSystem  the JSON string representing the root of the file system
+     * @return a JSON object representing the directory or file at the specified path
+     * @throws JSONException if there is an error parsing the JSON objects
+     */
     public JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
         JSONArray pathArray = new JSONArray(currentPath);
         JSONObject fileSystemJS = new JSONObject(fileSystem);
