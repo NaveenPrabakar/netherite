@@ -69,12 +69,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String source;
     private String history = "";
     private String aiURL;
-    private boolean allowEditorUpdate = true;
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-    private String previousContent;
-    private int offset;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +121,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 
-                previousContent = content;
                 content = charSequence.toString();
                 updateParsedOutput(content);
                 Log.d("Text changed", content);
@@ -296,6 +290,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+    /**
+     * Processes a Markdown string by replacing newline characters with Markdown line breaks
+     * and updates the parsed content to be rendered using Markwon.
+     *
+     * @param markdown the input Markdown text to be processed
+     * @return the parsed content with newline characters replaced by Markdown line breaks
+     */
     private String updateParsedOutput(String markdown) {
         String contentParsed = "";
         for (int i = 0; i < markdown.length(); i++){
@@ -310,6 +311,14 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         return contentParsed;
     }
 
+    /**
+     * Sends a file string to a remote server using a POST request. Constructs a URL with query parameters
+     * including the file name, content, file system, email, and password, and uses the Volley library to
+     * send the request.
+     *
+     * @param fileName   the name of the file being sent
+     * @param fileSystem the file system as a JSON string
+     */
     public void sendFileString(String fileName, String fileSystem){
             Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
             builder.appendQueryParameter("fileName", fileName);
@@ -342,6 +351,17 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             // Adding request to request queue
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
+
+    /**
+     * Sends a request to summarize content using AI. Based on the method (GET, POST, PUT),
+     * it decides how to interact with the server.
+     *
+     * @param method             the HTTP method to use (e.g., GET, POST, PUT)
+     * @param contentToSummarize the content that needs to be summarized
+     * @param email              the email identifier for the request
+     * @param prompt             the prompt or query for the AI summarization
+     * @param URL                the base URL for the request
+     */
 
     private void TESTsummarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
     {
@@ -404,6 +424,16 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+    /**
+     * Sends a POST or PUT request to summarize content using AI.
+     *
+     * @param method             the HTTP method to use (e.g., POST, PUT)
+     * @param contentToSummarize the content that needs to be summarized
+     * @param email              the email identifier for the request
+     * @param prompt             the prompt or query for the AI summarization
+     * @param URL                the base URL for the request
+     */
+
     private void summarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
     {
         JSONObject requestBody = new JSONObject();
@@ -454,7 +484,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 //                return headers;
 //            }
 
-            // This function?? i don't remember what the fuck it does
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
@@ -469,9 +498,14 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
 
-    /*
-    This stupid ass function takes a file, path, and the system of phone.
-    It puts the file into the path, and the path is in the file system.
+    /**
+     * Locates or adds a file in a hierarchical file system based on the given file path.
+     *
+     * @param fileSystem the root JSON object representing the file system
+     * @param filePath   the JSON object containing the "path" array, representing the file's location
+     * @param fileName   the name of the file to locate or add in the file system
+     * @return the updated JSON object representing the file system
+     * @throws JSONException if there is an error parsing the JSON objects
      */
     public JSONObject fileLocator(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
         JSONArray pathArray = filePath.getJSONArray("path");
@@ -506,6 +540,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     }
 
+    /**
+     * Calculates the correct cursor position after changes are made to a text string.
+     * This assumes that all changes occur either before or after the cursor, not both simultaneously.
+     *
+     * @param before    the original text before the change
+     * @param after     the modified text after the change
+     * @param cursorPos the initial cursor position
+     * @return the updated cursor position after the change
+     */
 
     public int getCorrectCursorLocation(String before, String after, int cursorPos){
         /*
@@ -571,12 +614,22 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         return cursorPos;
     }
 
-    // I can also get history whenever another user loads it up
+    /**
+     * Handles the event when the WebSocket connection is successfully opened.
+     *
+     * @param handshakedata the handshake data from the server
+     */
+
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
         Log.d("WebSocket", "Connected");
     }
 
+    /**
+     * Handles the event when a string message is received over the WebSocket.
+     *
+     * @param message the string message received from the WebSocket
+     */
     @Override
     public void onWebSocketMessage(String message) {
         runOnUiThread(()->{
@@ -600,6 +653,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         });
     }
 
+    /**
+     * Handles the event when a JSON message is received over the WebSocket.
+     *
+     * @param jsonMessage the JSON object received from the WebSocket
+     */
+
     @Override
     public void onWebSocketJsonMessage(JSONObject jsonMessage) {
         Log.d("WebSocket", "JSON message: " + jsonMessage.toString());
@@ -621,11 +680,24 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         }
     }
 
+    /**
+     * Handles the event when the WebSocket connection is closed.
+     *
+     * @param code   the closing code indicating why the WebSocket was closed
+     * @param reason the reason for the WebSocket closure
+     * @param remote indicates whether the closure was initiated by the remote peer
+     */
+
     @Override
     public void onWebSocketClose(int code, String reason, boolean remote) {
         Log.d("WebSocket", "Closed");
     }
 
+    /**
+     * Handles the event when an error occurs on the WebSocket connection.
+     *
+     * @param ex the exception that occurred during the WebSocket operation
+     */
     @Override
     public void onWebSocketError(Exception ex) {
         Log.e("WebSocket", "Error", ex);
