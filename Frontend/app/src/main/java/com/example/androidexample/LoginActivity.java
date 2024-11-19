@@ -3,6 +3,7 @@ package com.example.androidexample;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.FileView.filesActivity;
+import com.example.androidexample.Settings.ForgetPasswordActivity;
+import com.example.androidexample.Volleys.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +38,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button forgetPassword;
     private TextView err_msg;// define signup button variable
     private Button back2main;
-    private Boolean ApiStatus;
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
+    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,12 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                         err_msg.setText(response.toString());
                         try {
                             if (resp.getString("response").equals("ok")){
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.putExtra("EMAIL", email);
-                                intent.putExtra("PASSWORD", password);
-                                intent.putExtra("USERNAME", resp.getString("userName"));
-                                intent.putExtra("FILESYSTEM", resp.toString());
-                                startActivity(intent);
+                                getFileSystem(email, password, resp.getString("userName"));
                             }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
@@ -162,27 +165,35 @@ public class LoginActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
     }
 
-    public HashMap<String, String> jsonToMap(String jsonString) {
-        HashMap<String, String> map = new HashMap<>();
+    public void getFileSystem(String email, String password, String username){
+        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+        builder.appendQueryParameter("email", email);
+        builder.appendQueryParameter("password", password);
+        String url = builder.build().toString();
 
-        try {
-            // Convert JSON string to JSONObject
-            JSONObject jsonObject = new JSONObject(jsonString);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("File System from Server", response);
+                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"root\": [] }");
+                        Intent i = new Intent(LoginActivity.this, filesActivity.class);
+                        startActivity(i);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        );
 
-            // Get the keys of the JSONObject
-            Iterator<String> keys = jsonObject.keys();
-
-            // Loop through the keys and put key-value pairs into the HashMap
-            while (keys.hasNext()) {
-                String key = keys.next();
-                String value = jsonObject.getString(key);
-                map.put(key, value);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();  // Handle the exception
-        }
-
-        return map;
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 }
