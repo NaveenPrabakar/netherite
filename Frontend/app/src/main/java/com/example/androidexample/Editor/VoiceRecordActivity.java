@@ -95,7 +95,11 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
 
     }
-
+    /**
+     * Starts audio recording if the required permissions are granted.
+     * Initializes and configures the MediaRecorder, prepares it, and starts recording.
+     * If permissions are not granted, requests them from the user.
+     */
     private void startRecording() {
         if (checkPermissions()) {
             txthead.setText("Audio Recording");
@@ -124,6 +128,11 @@ public class VoiceRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Stops the audio recording and releases the MediaRecorder resources.
+     * Updates the status to indicate recording has stopped.
+     */
+
     private void stopRecording() {
         try {
             mRecorder.stop();
@@ -135,12 +144,21 @@ public class VoiceRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Releases the MediaRecorder resources.
+     */
+
     private void releaseMediaRecorder() {
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;
         }
     }
+
+    /**
+     * Plays the recorded audio file using the MediaPlayer.
+     * Prepares and starts playback, and updates the status to indicate playback has started.
+     */
 
     private void playAudio() {
         releaseMediaPlayer();
@@ -157,11 +175,20 @@ public class VoiceRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Stops the audio playback and releases the MediaPlayer resources.
+     * Updates the status to indicate playback has stopped and uploads the recorded audio.
+     */
+
     private void stopPlaying() {
         releaseMediaPlayer();
         statusTV.setText("Playback Stopped");
         uploadVoice();
     }
+
+    /**
+     * Releases the MediaPlayer resources.
+     */
 
     private void releaseMediaPlayer() {
         if (mPlayer != null) {
@@ -170,14 +197,29 @@ public class VoiceRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if the necessary audio recording permissions are granted.
+     *
+     * @return true if permissions are granted, false otherwise
+     */
+
     private boolean checkPermissions() {
         int resultAudio = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
         return resultAudio == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Requests audio recording and external storage permissions from the user.
+     */
+
     private void requestPermissions() {
         ActivityCompat.requestPermissions(VoiceRecordActivity.this, new String[]{RECORD_AUDIO, WRITE_EXTERNAL_STORAGE}, REQUEST_AUDIO_PERMISSION_CODE);
     }
+
+    /**
+     * Uploads the recorded audio file to the server as a multipart request.
+     * Converts the audio file to a byte array and sends it via the Volley request.
+     */
 
     private void uploadVoice() {
         byte[] voiceData = convertAudioUriToBytes(Uri.fromFile(new File(mFileName)));
@@ -201,6 +243,11 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
     }
+
+    /**
+     * Uploads the recorded audio file to the server with additional user data.
+     * Redirects to the TextActivity upon successful upload.
+     */
 
     private void uploadVoiceEmail() {
         String url = UPLOAD_EMAIL_URL + email;
@@ -230,6 +277,13 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
     }
+
+    /**
+     * Converts the audio file specified by the URI into a byte array.
+     *
+     * @param audioUri the URI of the audio file to convert
+     * @return a byte array representing the audio file, or null if conversion fails
+     */
 
     private byte[] convertAudioUriToBytes(Uri audioUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(audioUri);
