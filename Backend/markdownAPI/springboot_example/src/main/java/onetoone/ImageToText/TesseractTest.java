@@ -87,6 +87,10 @@ public class TesseractTest {
 
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+            if(!extension.equals("jpeg") && !extension.equals("jeg")){
+                // do some other method
+            }
             Path tempFile = Files.createTempFile("ocr-", extension);
             image.transferTo(tempFile.toFile());
 
@@ -193,6 +197,8 @@ public class TesseractTest {
 
         return ResponseEntity.ok(imageNames);
     }
+
+
 }
 
 
