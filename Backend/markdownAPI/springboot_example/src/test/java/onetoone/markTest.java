@@ -29,21 +29,13 @@ public class markTest {
 
     @Test
     public void uploadFileTest() {
-        // Create request payload
-        String requestBody = """
-                {
-                    "fileName": "test.txt",
-                    "content": "Hello, this is a test file.",
-                    "json": "{\"root\":[]}",
-                    "email": "user@example.com",
-                    "password": "password123"
-                }
-                """;
-
-        // Send request and receive response
+        // Send request and receive response with query parameters
         Response response = RestAssured.given()
-                .header("Content-Type", "application/json")
-                .body(requestBody)
+                .queryParam("fileName", "test.txt")
+                .queryParam("content", "Hello, this is a test file.")
+                .queryParam("json", "{\"root\":[]}")
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("password", "defg")
                 .when()
                 .post("/files/upload");
 
@@ -66,8 +58,9 @@ public class markTest {
         // Send request and receive response
         Response response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .param("email", "user@example.com")
-                .param("password", "password123")
+                .param("email", "takuli@iastate.edu")
+                .param("password", "admin123!")
+                .param("fileName", "yes")
                 .when()
                 .get("/files/pull");
 
@@ -84,4 +77,63 @@ public class markTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testPulled_Success() {
+
+        // Act
+        Response response = RestAssured.given()
+                .queryParam("email", "test@example.com")
+                .queryParam("fileName", "test.txt")
+                .when()
+                .get("/files/fileid");
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+        assertEquals("29", response.getBody().asString());
+    }
+
+    @Test
+    public void testSystem_Success() {
+
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("password", "defg")
+                .when()
+                .get("/files/system");
+
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("{\"root\":[]}", response.getBody().asString());
+    }
+
+    @Test
+    public void testUpdates_Success() {
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("json", "{\"root\":[]}")
+                .when()
+                .put("/files/update");
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Update is done", response.getBody().asString());
+    }
+
+    @Test
+    public void testDeleteFile_FileDoesNotExist() {
+
+        Response response = RestAssured.given()
+                .queryParam("email", "asiandeady5@gmail.com")
+                .queryParam("fileName", "Name123123213")
+                .queryParam("json", "{\"root\":[\"yo what's up\"]}")
+                .when()
+                .delete("/files/deleteFile");
+
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("the file was deleted", response.jsonPath().getString("response"));
+    }
+
 }
