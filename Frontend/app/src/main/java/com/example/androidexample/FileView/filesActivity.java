@@ -395,7 +395,7 @@ public class filesActivity extends AppCompatActivity {
     }
 
 
-    private void createFile(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException
+    private void createFile(String folderName, JSONArray filesArray) throws JSONException
     {
         // Create a LinearLayout to hold the files and set its visibility to GONE initially
         // Iterate over the files array
@@ -404,31 +404,31 @@ public class filesActivity extends AppCompatActivity {
             if (item instanceof String) {
                 // Inflate the XML layout and add it to the parent layout
                 LayoutInflater inflater = LayoutInflater.from(this);
-                LinearLayout parentLayout = findViewById(R.id.parentLayout); // Ensure parentLayout exists in your main XML
+                LinearLayout rootLayout = findViewById(R.id.rootLayout); // Ensure parentLayout exists in your main XML
 
-// Dynamically create a new note item
-                View noteItem = inflater.inflate(R.layout.note_item, parentLayout, false);
+                // Dynamically create a new note item
+                View noteItem = inflater.inflate(R.layout.note_item, rootLayout, false);
 
-// Get references to the child views
+                // Get references to the child views
                 TextView fileTextView = noteItem.findViewById(R.id.fileTextView);
                 Button deleteButton = noteItem.findViewById(R.id.deleteButton);
                 Button shareButton = noteItem.findViewById(R.id.shareButton);
                 EditText toUser = noteItem.findViewById(R.id.toUser);
 
-// Set the note name or data for the TextView
-                fileTextView.setText(item);
+                // Set the note name or data for the TextView
+                fileTextView.setText(String.valueOf(item));
 
-// Set click listeners for each component
+                // Set click listeners for each component
                 fileTextView.setOnClickListener(view -> {
                     Log.d("File Clicked", "File clicked: " + item);
-                    getFile(item); // Call your existing method
+                    getFile(String.valueOf(item)); // Call your existing method
                 });
 
                 deleteButton.setOnClickListener(view -> {
                     Log.d("File Deleted", "File deleted: " + item);
                     try {
-                        JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), item);
-                        deleteFile(item, jsObj.toString());
+                        JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), String.valueOf(item));
+                        deleteFile(String.valueOf(item), jsObj.toString());
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -436,13 +436,14 @@ public class filesActivity extends AppCompatActivity {
 
                 shareButton.setOnClickListener(view -> {
                     String username = toUser.getText().toString();
-                    shareToUser(email, username, item); // Call your existing method
+                    shareToUser(email, username, String.valueOf(item)); // Call your existing method
                 });
 
-// Add the note item to the parent layout
-                parentLayout.addView(noteItem);
+                // Add the note item to the parent layout
+                rootLayout.addView(noteItem);
 
-            } else if (item instanceof JSONObject) {
+            }
+            else if (item instanceof JSONObject) {
                 // Recursively handle nested folders
                 JSONObject nestedObject = (JSONObject) item;
                 for (Iterator<String> it = nestedObject.keys(); it.hasNext(); ) {
@@ -463,7 +464,7 @@ public class filesActivity extends AppCompatActivity {
 
                     linearLayout.addView(folderTextView);
                     linearLayout.addView(deleteButton);
-                    parentLayout.addView(linearLayout);
+                    rootLayout.addView(linearLayout);
 
                     deleteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -504,7 +505,7 @@ public class filesActivity extends AppCompatActivity {
                             Log.d("nestedKey", nestedKey);
                             try{
                                 currentArray = nestedObject.toString();
-                                parentLayout.removeAllViewsInLayout();
+                                rootLayout.removeAllViewsInLayout();
 
                                 JSONObject pathJS = new JSONObject(path);
                                 JSONArray pathArray = pathJS.getJSONArray("path");
