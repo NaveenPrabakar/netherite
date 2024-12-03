@@ -65,24 +65,14 @@ public class filesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
-//        Intent intent = getIntent();
-//        Bundle extras = intent.getExtras();
-//
-//
-//        if(extras != null) {
-//            if (!extras.getString("FILESYSTEM").equals("User does not exist")){
-//                fileSystem = extras.getString("FILESYSTEM");
-//                currentArray = fileSystem;
-//                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-//            }
-//            if (!extras.getString("EMAIL").equals("-1") && !extras.getString("PASSWORD").equals("-1") && !extras.getString("USERNAME").equals("-1")) {
-//                email = extras.getString("EMAIL");
-//                password = extras.getString("PASSWORD");
-//                username = extras.getString("USERNAME");
-//                Log.d("EMAIL", extras.getString("EMAIL"));
-//                Log.d("PASSWORD", extras.getString("PASSWORD"));
-//            }
-//        }
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if(extras != null) {
+            fileSystem = extras.getString("FILESYSTEM");
+            currentArray = fileSystem;
+            Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
+        }
 
         email = UserPreferences.getEmail(this);
         password = UserPreferences.getPassword(this);

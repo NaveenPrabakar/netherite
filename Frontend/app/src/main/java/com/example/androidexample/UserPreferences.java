@@ -60,17 +60,17 @@ public class UserPreferences {
 
     public static String getUsername(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_USERNAME, "");
+        return sharedPreferences.getString(KEY_USERNAME, "takuli");
     }
 
     public static String getEmail(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_EMAIL, "");
+        return sharedPreferences.getString(KEY_EMAIL, "takuli@iastate.edu");
     }
 
     public static String getPassword(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_PASSWORD, "");
+        return sharedPreferences.getString(KEY_PASSWORD, "Bruhmoment123");
     }
 
     public static String getFileSystem(Context context) {
