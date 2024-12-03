@@ -38,6 +38,7 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
     private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
     private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
+    private final String URL_AUTOINDEX = "";
 
     private String fileSystem =  "{\"root\": []}";
     private String path = "{\"path\": [\"root\"]}";
@@ -132,7 +133,7 @@ public class filesActivity extends AppCompatActivity {
         AutoIndex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                autoIndexAPI(fileSystem);
+                autoIndexMOCK(fileSystem);
             }});
 
     }
@@ -792,7 +793,7 @@ public class filesActivity extends AppCompatActivity {
 
 
     public void autoIndexAPI(String fileSys){
-        Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
+        Uri.Builder builder = Uri.parse(URL_AUTOINDEX).buildUpon();
         builder.appendQueryParameter("json", fileSys);
         builder.appendQueryParameter("email", email);
         String url = builder.build().toString();
@@ -808,10 +809,15 @@ public class filesActivity extends AppCompatActivity {
                         UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
                         rootLayout.removeAllViewsInLayout();
                         path = "{\"path\": [\"root\"]}";
-                        runOnUiThread(()->{
-                            createUI(rootLayout);
-                        });
-                        folderUpdate(fileSystem);
+                        try {
+                            currentArray = new JSONObject(fileSystem).toString();
+                            runOnUiThread(()->{
+                                createUI(rootLayout);
+                            });
+                            folderUpdate(fileSystem);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -828,5 +834,23 @@ public class filesActivity extends AppCompatActivity {
 
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+    public void autoIndexMOCK(String fileSys){
+        String response = "{root: [\"sample works\"]}";
+        fileSystem = response;
+        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+        rootLayout.removeAllViewsInLayout();
+        path = "{\"path\": [\"root\"]}";
+        try {
+            currentArray = new JSONObject(fileSystem).toString();
+            runOnUiThread(()->{
+                createUI(rootLayout);
+            });
+            //folderUpdate(fileSystem);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+
     }
 }
