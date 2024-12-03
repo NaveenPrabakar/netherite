@@ -39,8 +39,6 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
 
     private String fileSystem =  "{\"root\": []}";
-    // path is hard coded. make a path lmao. make it dynamic
-    // when i click a file or a folder, it should update the path.
     private String path = "{\"path\": [\"root\"]}";
     private String email;
     private String username;
@@ -67,12 +65,6 @@ public class filesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-
-        if(extras != null) {
-            fileSystem = extras.getString("FILESYSTEM");
-            currentArray = fileSystem;
-            Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-        }
 
         email = UserPreferences.getEmail(this);
         password = UserPreferences.getPassword(this);
@@ -156,7 +148,7 @@ public class filesActivity extends AppCompatActivity {
         newFolderLayout.addView(newFile);
 
         EditText newFolderName = new EditText(this);
-        newFolderName.setHint("New Folder Name");
+        newFolderName.setHint("New Name");
         newFolderName.setPadding(20, 10, 20, 10);
 
         newFolder.setOnClickListener(new View.OnClickListener() {
@@ -184,12 +176,7 @@ public class filesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(filesActivity.this, TextActivity.class);
-                i.putExtra("FILESYSTEM", fileSystem);
-                i.putExtra("PATH", path);
-                i.putExtra("CONTENT", "");
-                i.putExtra("EMAIL", email);
-                i.putExtra("PASSWORD", password);
-                i.putExtra("AIWSURL", aiURL);
+                i.putExtra("FILENAME", newFolderName.getText().toString());
                 startActivity(i);
             }
         });
@@ -325,6 +312,7 @@ public class filesActivity extends AppCompatActivity {
                                 JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), String.valueOf(item));
                                 rootLayout.removeAllViewsInLayout();
                                 fileSystem = jsObj.toString();
+                                UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
                                 Log.d("item", String.valueOf(item));
 
                                 JSONObject currentJS = new JSONObject(currentArray);
@@ -535,6 +523,7 @@ public class filesActivity extends AppCompatActivity {
                             JSONObject jsObj = new JSONObject(newFileSystem);
                             Log.d("JSON OBJECT", jsObj.toString());
                             fileSystem = newFileSystem;
+                            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
                             JSONObject currentJS = new JSONObject(currentArray);
                             JSONArray currentArr = currentJS.getJSONArray(currentJS.keys().next());
                             for (int i = 0; i < currentArr.length(); i++){
@@ -700,6 +689,7 @@ public class filesActivity extends AppCompatActivity {
         }
         currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
         this.fileSystem = fileSystemJS.toString();
+        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
         Log.d("JSON ARRAY", currentArray.toString());
         return currentArrayJS.toString();
     }

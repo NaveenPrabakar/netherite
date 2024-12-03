@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
@@ -97,6 +98,16 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         rejectButt = findViewById(R.id.rejectButt);
         rejectButt.setVisibility(View.INVISIBLE);
 
+        try {
+            fileSystem = new JSONObject(UserPreferences.getFileSystem(this));
+            filePath = new JSONObject(UserPreferences.getFilePath(this));
+            email = UserPreferences.getEmail(this);
+            password = UserPreferences.getPassword(this);
+            username = UserPreferences.getUsername(this);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
         // This is the live chat button
         liveChatButt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +121,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         markwon = Markwon.create(this);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+
 
         textWatcher = new TextWatcher() {
             @Override
@@ -135,55 +145,37 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         editor.addTextChangedListener(textWatcher);
         mainText.setAlpha(0f);
 
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
         if(extras != null) {
-            try {
-                fileSystem = new JSONObject(extras.getString("FILESYSTEM"));
-                filePath = new JSONObject(extras.getString("PATH"));
-                email = extras.getString("EMAIL");
-                password = extras.getString("PASSWORD");
-                username = extras.getString("USERNAME");
-                Log.d("EMAIL", extras.getString("EMAIL"));
-                Log.d("PASSWORD", extras.getString("PASSWORD"));
-                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-                Log.d("PATH", extras.getString("PATH"));
-
-                if (extras.getString("CONTENT") != null){
-                    Log.d("content", extras.getString("CONTENT"));
-                    editor.setText(extras.getString("CONTENT"));
-                    content = extras.getString("CONTENT");
-                }
-                if (extras.getString("FILEKEY") != null){
-                    Log.d("filekey", extras.getString("FILEKEY"));
-                    fileName.setText(extras.getString("FILEKEY"));
-                }
-                if (extras.getString("RECORDED") != null){
-                    Log.d("recorded", extras.getString("RECORDED"));
-                    editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
-                }
-                if (extras.getString("IMAGETEXT") != null)
-                {
-                    AIText.setText(extras.getString("IMAGETEXT"));
-                    //mainText.setText(extras.getString("IMAGETEXT"));
-                    acceptButt.setVisibility(View.VISIBLE);
-                    rejectButt.setVisibility(View.VISIBLE);
-                    summarizeButt.setVisibility(View.INVISIBLE);
-                }
-                if (extras.getString("AIWSURL") != null)
-                {
-                    aiURL = extras.getString("AIWSURL");
-                }
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            if (extras.getString("CONTENT") != null){
+                Log.d("content", extras.getString("CONTENT"));
+                editor.setText(extras.getString("CONTENT"));
+                content = extras.getString("CONTENT");
             }
-        }else{
-            filePath = new JSONObject();
-            fileSystem = new JSONObject();
-            try {
-                filePath.put("path", new JSONArray());
-                fileSystem.put("root", new JSONArray());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            if (extras.getString("FILEKEY") != null){
+                Log.d("filekey", extras.getString("FILEKEY"));
+                fileName.setText(extras.getString("FILEKEY"));
+            }
+            if (extras.getString("RECORDED") != null){
+                Log.d("recorded", extras.getString("RECORDED"));
+                editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
+            }
+            if (extras.getString("IMAGETEXT") != null)
+            {
+                AIText.setText(extras.getString("IMAGETEXT"));
+                //mainText.setText(extras.getString("IMAGETEXT"));
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+            if (extras.getString("AIWSURL") != null)
+            {
+                aiURL = extras.getString("AIWSURL");
+            }
+            if (extras.getString("FILENAME") != null){
+                fileName.setText(extras.getString("FILENAME"));
             }
         }
 
