@@ -20,22 +20,14 @@
 
         <EditText
             android:id="@+id/fileName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
             android:ems="10"
             android:inputType="text"
             android:text="Name"
-            tools:layout_editor_absoluteY="4dp" />
-
-        <Button
-            android:id="@+id/saveButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.891"
-            app:layout_constraintStart_toEndOf="@+id/fileName"
-            tools:layout_editor_absoluteY="1dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="4dp" />
 
         <EditText
             android:id="@+id/textViewMarkdown"
