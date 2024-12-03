@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -393,6 +394,143 @@ public class filesActivity extends AppCompatActivity {
 
     }
 
+
+    private void createFile(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException
+    {
+        // Create a LinearLayout to hold the files and set its visibility to GONE initially
+        // Iterate over the files array
+        for (int i = 0; i < filesArray.length(); i++) {
+            Object item = filesArray.get(i);
+            if (item instanceof String) {
+                // Inflate the XML layout and add it to the parent layout
+                LayoutInflater inflater = LayoutInflater.from(this);
+                LinearLayout parentLayout = findViewById(R.id.parentLayout); // Ensure parentLayout exists in your main XML
+
+// Dynamically create a new note item
+                View noteItem = inflater.inflate(R.layout.note_item, parentLayout, false);
+
+// Get references to the child views
+                TextView fileTextView = noteItem.findViewById(R.id.fileTextView);
+                Button deleteButton = noteItem.findViewById(R.id.deleteButton);
+                Button shareButton = noteItem.findViewById(R.id.shareButton);
+                EditText toUser = noteItem.findViewById(R.id.toUser);
+
+// Set the note name or data for the TextView
+                fileTextView.setText(item);
+
+// Set click listeners for each component
+                fileTextView.setOnClickListener(view -> {
+                    Log.d("File Clicked", "File clicked: " + item);
+                    getFile(item); // Call your existing method
+                });
+
+                deleteButton.setOnClickListener(view -> {
+                    Log.d("File Deleted", "File deleted: " + item);
+                    try {
+                        JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), item);
+                        deleteFile(item, jsObj.toString());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+                shareButton.setOnClickListener(view -> {
+                    String username = toUser.getText().toString();
+                    shareToUser(email, username, item); // Call your existing method
+                });
+
+// Add the note item to the parent layout
+                parentLayout.addView(noteItem);
+
+            } else if (item instanceof JSONObject) {
+                // Recursively handle nested folders
+                JSONObject nestedObject = (JSONObject) item;
+                for (Iterator<String> it = nestedObject.keys(); it.hasNext(); ) {
+                    LinearLayout linearLayout = new LinearLayout(this);
+
+                    String nestedKey = it.next();
+                    TextView folderTextView = new TextView(this);
+                    folderTextView.setText(nestedKey);
+                    folderTextView.setTextSize(18);
+                    folderTextView.setPadding(10, 10, 10, 10);
+                    linearLayout.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                    folderTextView.setClickable(true);
+
+                    // Create a Delete Button
+                    Button deleteButton = new Button(this);
+                    deleteButton.setText("Delete");
+                    deleteButton.setPadding(20, 10, 20, 10);
+
+                    linearLayout.addView(folderTextView);
+                    linearLayout.addView(deleteButton);
+                    parentLayout.addView(linearLayout);
+
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), String.valueOf(item));
+                                rootLayout.removeAllViewsInLayout();
+                                fileSystem = jsObj.toString();
+                                UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                                Log.d("item", String.valueOf(item));
+
+                                JSONObject currentJS = new JSONObject(currentArray);
+                                JSONArray currentArr = currentJS.getJSONArray(currentJS.keys().next());
+                                for (int i = 0; i < currentArr.length(); i++){
+                                    if (currentArr.get(i).toString().equals(String.valueOf(item))){
+                                        currentArr.remove(i);
+                                    }
+                                }
+                                currentArray = currentJS.toString();
+                                runOnUiThread(()->{
+                                    createUI(rootLayout);
+                                });
+                                folderUpdate(fileSystem);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                        };
+                    });
+
+                    // Set an OnClickListener to toggle the visibility of the files
+                    folderTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d("Folder Clicked", "Folder clicked: " + folderName);
+                            Log.d("File System", fileSystem);
+                            Log.d("nestedObject", nestedObject.toString());
+                            Log.d("nestedKey", nestedKey);
+                            try{
+                                currentArray = nestedObject.toString();
+                                parentLayout.removeAllViewsInLayout();
+
+                                JSONObject pathJS = new JSONObject(path);
+                                JSONArray pathArray = pathJS.getJSONArray("path");
+                                pathArray.put(nestedKey);
+                                path = pathJS.toString();
+                                Log.d("PATH", path);
+                                runOnUiThread(()->{
+                                    try {
+                                        createFolderWithFiles(fileLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+
+
+                }
+            }
+        }
+
+    }
     /**
      * Retrieves the file's content as a string from the server and starts the `TextActivity`
      * to display and edit the file content.

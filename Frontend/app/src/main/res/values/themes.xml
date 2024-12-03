@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.AndroidExample" parent="Base.Theme.AndroidExample" />
+    <style name="Theme.YourApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/teal_primary</item>
+        <item name="colorSecondary">@color/teal_secondary</item>
+    </style>
+
 </resources>
