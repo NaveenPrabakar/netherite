@@ -47,6 +47,7 @@ public class filesActivity extends AppCompatActivity {
     private String content;
     private Button goback;
     private Button OCRButt;
+    private Button AutoIndex;
     private LinearLayout rootLayout;
     private String currentArray = "{\"root\": []}";
     private LinearLayout fileLayout;
@@ -71,6 +72,7 @@ public class filesActivity extends AppCompatActivity {
         password = UserPreferences.getPassword(this);
         username = UserPreferences.getUsername(this);
         fileSystem = UserPreferences.getFileSystem(this);
+
         currentArray = fileSystem;
 
         goback = findViewById(R.id.goback);
@@ -125,6 +127,14 @@ public class filesActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        AutoIndex = findViewById(R.id.AutoIndex);
+        AutoIndex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                autoIndexAPI(fileSystem);
+            }});
+
     }
 
     /**
@@ -772,6 +782,46 @@ public class filesActivity extends AppCompatActivity {
                         Log.e("Email", email);
 
                         Log.e("Volley Error", error.toString());
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
+
+
+    public void autoIndexAPI(String fileSys){
+        Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
+        builder.appendQueryParameter("json", fileSys);
+        builder.appendQueryParameter("email", email);
+        String url = builder.build().toString();
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        fileSystem = response;
+                        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                        rootLayout.removeAllViewsInLayout();
+                        path = "{\"path\": [\"root\"]}";
+                        runOnUiThread(()->{
+                            createUI(rootLayout);
+                        });
+                        folderUpdate(fileSystem);
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Email", email);
+                        Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
