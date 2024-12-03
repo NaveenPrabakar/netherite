@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button settingsButt;
     // the whole ass system full of paths
     private String fileSystem = "{\"root\": [] }";
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
+    private final String URL_FILESYSTEM_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
     private String username = "takulibruh";
     private String email = "takuli@iastate.edu";
     private String password = "admin123!";
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     }
 
     public void getFileSystem(String email, String password){
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+        Uri.Builder builder = Uri.parse(URL_FILESYSTEM_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         String url = builder.build().toString();

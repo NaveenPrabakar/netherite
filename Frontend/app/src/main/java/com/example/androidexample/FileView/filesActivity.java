@@ -30,7 +30,8 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 public class filesActivity extends AppCompatActivity {
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
+    private final String URL_STRING_PUSH = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
+    private final String URL_STRING_PULL = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
     private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
     private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/update";
@@ -158,7 +159,7 @@ public class filesActivity extends AppCompatActivity {
                 try {
                     String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
                     if (!correctedFolderName.isEmpty()){
-                        currentArray = newFolder(currentArray, fileSystem, correctedFolderName);
+                        currentArray = newItem(currentArray, fileSystem, correctedFolderName, "folder");
                         rootLayout.removeAllViewsInLayout();
                         runOnUiThread(()->{
                             createUI(rootLayout);
@@ -175,9 +176,18 @@ public class filesActivity extends AppCompatActivity {
         newFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(filesActivity.this, TextActivity.class);
-                i.putExtra("FILENAME", newFolderName.getText().toString());
-                startActivity(i);
+                try {
+                    String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
+                    if (!correctedFolderName.isEmpty()){
+                        currentArray = newItem(currentArray, fileSystem, correctedFolderName, "file");
+                        sendFileString(correctedFolderName, fileSystem);
+
+                    }else{
+                        Toast.makeText(getApplicationContext(), "File Name is invalid", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -380,7 +390,7 @@ public class filesActivity extends AppCompatActivity {
      * @param fileName the name of the file to retrieve
      */
     public void getFileString(String fileName){
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+        Uri.Builder builder = Uri.parse(URL_STRING_PULL).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         builder.appendQueryParameter("fileName", fileName );
@@ -396,12 +406,8 @@ public class filesActivity extends AppCompatActivity {
                         content = response;
 
                         Intent intent = new Intent(filesActivity.this, TextActivity.class);
-                        intent.putExtra("FILESYSTEM", fileSystem );
-                        intent.putExtra("PATH", path);
-                        intent.putExtra("CONTENT", content);
                         intent.putExtra("FILEKEY", fileName);
-                        intent.putExtra("EMAIL", email);
-                        intent.putExtra("PASSWORD", password);
+                        intent.putExtra("CONTENT", content);
                         intent.putExtra("AIWSURL", aiURL);
                         startActivity(intent);
 
@@ -660,12 +666,16 @@ public class filesActivity extends AppCompatActivity {
      * @return the updated JSON string representing the current directory
      * @throws JSONException if there is an error parsing the JSON objects
      */
-    public String newFolder(String currentArray, String fileSystem , String folderName) throws JSONException {
+    public String newItem(String currentArray, String fileSystem , String folderName, String type) throws JSONException {
         JSONObject currentArrayJS = new JSONObject(currentArray);
         String newKey = currentArrayJS.keys().next();
 
         JSONArray newRoot = currentArrayJS.getJSONArray(newKey);
-        newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        if (type.equals("folder")){
+            newRoot.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        }else{
+            newRoot.put(folderName);
+        }
 
         JSONObject pathJS = new JSONObject(this.path);
         JSONArray pathArray = pathJS.getJSONArray("path");
@@ -687,7 +697,11 @@ public class filesActivity extends AppCompatActivity {
                 }
             }
         }
-        currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        if (type.equals("folder")){
+            currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
+        }else{
+            currArrayJS.put(folderName);
+        }
         this.fileSystem = fileSystemJS.toString();
         UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
         Log.d("JSON ARRAY", currentArray.toString());
@@ -725,4 +739,44 @@ public class filesActivity extends AppCompatActivity {
         }
         return new JSONObject('{' + internalKey + " : " + currArrayJS.toString() + '}');
     };
+
+
+    public void sendFileString(String fileName, String fileSystem){
+        Uri.Builder builder = Uri.parse(URL_STRING_PUSH).buildUpon();
+        builder.appendQueryParameter("fileName", fileName);
+        builder.appendQueryParameter("content", "");
+        builder.appendQueryParameter("json", fileSystem);
+        builder.appendQueryParameter("email", email);
+        builder.appendQueryParameter("password", password);
+        String url = builder.build().toString();
+        Log.d("URL", url);
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", response);
+                        rootLayout.removeAllViewsInLayout();
+                        runOnUiThread(()->{
+                            createUI(rootLayout);
+                        });
+                        folderUpdate(fileSystem);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle any errors that occur during the request
+                        Log.e("Email", email);
+
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+    }
 }

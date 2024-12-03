@@ -104,6 +104,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             email = UserPreferences.getEmail(this);
             password = UserPreferences.getPassword(this);
             username = UserPreferences.getUsername(this);
+            Log.d("File System", fileSystem.toString());
+            Log.d("File Path", filePath.toString());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -173,9 +175,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             if (extras.getString("AIWSURL") != null)
             {
                 aiURL = extras.getString("AIWSURL");
-            }
-            if (extras.getString("FILENAME") != null){
-                fileName.setText(extras.getString("FILENAME"));
             }
         }
 
