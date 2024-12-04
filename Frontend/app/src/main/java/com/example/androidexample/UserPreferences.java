@@ -84,11 +84,11 @@ public class UserPreferences {
 
     public static String getFileSystem(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_FILESYSTEM, "{\"root\": [] }");
+        return sharedPreferences.getString(KEY_FILESYSTEM,  "{\"root\": [] }");
     }
 
     public static String getFilePath(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_FILEPATH, "{\"root\": [] }");
+        return sharedPreferences.getString(KEY_FILEPATH, "{\"path\": [\"root\"] }");
     }
 }

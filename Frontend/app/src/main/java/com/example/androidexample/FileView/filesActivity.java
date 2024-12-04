@@ -73,15 +73,11 @@ public class filesActivity extends AppCompatActivity {
      * Initializes instance variables from user preferences or other sources.
      */
     private void initializeVariables() {
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-
         email = UserPreferences.getEmail(this);
         password = UserPreferences.getPassword(this);
         username = UserPreferences.getUsername(this);
         fileSystem = UserPreferences.getFileSystem(this);
-
-        currentArray = fileSystem;
+        path = UserPreferences.getFilePath(this);
     }
 
     /**
@@ -95,9 +91,9 @@ public class filesActivity extends AppCompatActivity {
 
         goback.setOnClickListener(view -> handleGoBack());
         OCRButt.setOnClickListener(view -> navigateToOCR());
-        AutoIndex.setOnClickListener(view -> autoIndexMOCK(fileSystem));
+        AutoIndex.setOnClickListener(view -> autoIndexAPI(fileSystem));
 
-        createUI(rootLayout);
+        refreshLayout();
     }
 
     private void handleGoBack() {
@@ -107,7 +103,7 @@ public class filesActivity extends AppCompatActivity {
 
             if (pathArray.length() > 1) {
                 pathArray.remove(pathArray.length() - 1);
-                path = base.toString();
+                setPath(base.toString());
                 refreshLayout();
                 Log.d("Current Array", currentArray);
             } else {
@@ -121,11 +117,6 @@ public class filesActivity extends AppCompatActivity {
 
     private void navigateToOCR() {
         Intent intent = new Intent(filesActivity.this, OCRActivity.class);
-        intent.putExtra("FILESYSTEM", fileSystem);
-        intent.putExtra("PATH", path);
-        intent.putExtra("EMAIL", email);
-        intent.putExtra("PASSWORD", password);
-        intent.putExtra("USERNAME", username);
         startActivity(intent);
     }
 
@@ -150,10 +141,12 @@ public class filesActivity extends AppCompatActivity {
         Button newFolder = new Button(this);
         newFolder.setText("New Folder");
         newFolder.setPadding(20, 10, 20, 10);
+        newFolder.setId(1000001);
 
         Button newFile = new Button(this);
         newFile.setText("New File");
         newFile.setPadding(20, 10, 20, 10);
+        newFile.setId(1000002);
 
         newFolderLayout.addView(newFolder);
         newFolderLayout.addView(newFile);
@@ -161,6 +154,7 @@ public class filesActivity extends AppCompatActivity {
         EditText newFolderName = new EditText(this);
         newFolderName.setHint("New Name");
         newFolderName.setPadding(20, 10, 20, 10);
+        newFolderName.setId(1000003);
 
         newFolder.setOnClickListener(view -> newButtonFunctionality(newFolderName, "folder"));
         newFile.setOnClickListener(view -> newButtonFunctionality(newFolderName, "file"));
@@ -180,6 +174,7 @@ public class filesActivity extends AppCompatActivity {
         try{
             fileLayout = new LinearLayout(this);
             fileLayout.setOrientation(LinearLayout.VERTICAL);
+            fileLayout.setId(View.generateViewId());
             parentLayout.addView(fileLayout);
             JSONObject currObj = new JSONObject(currentArray);
             String key = currObj.keys().next();
@@ -308,8 +303,7 @@ public class filesActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(view -> {
             try {
                 JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), nestedObject.toString());
-                fileSystem = jsObj.toString();
-                UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                setFileSystem(jsObj.toString());
                 newfolderUpdate(fileSystem);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -324,7 +318,7 @@ public class filesActivity extends AppCompatActivity {
             JSONObject pathJS = new JSONObject(path);
             JSONArray pathArray = pathJS.getJSONArray("path");
             pathArray.put(folderName);
-            path = pathJS.toString();
+            setPath(pathJS.toString());
             refreshLayout();
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -338,7 +332,7 @@ public class filesActivity extends AppCompatActivity {
      *
      * @param fileName the name of the file to retrieve
      */
-    public void getFileString(String fileName){
+    private void getFileString(String fileName){
         Uri.Builder builder = Uri.parse(URL_STRING_PULL).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
@@ -380,7 +374,7 @@ public class filesActivity extends AppCompatActivity {
      *
      * @param fileName the name of the file to retrieve
      */
-    public void getFile(String fileName){
+    private void getFile(String fileName){
         Uri.Builder builder = Uri.parse(URL_ID_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("fileName", fileName );
@@ -422,7 +416,7 @@ public class filesActivity extends AppCompatActivity {
      *
      * @param fileSystem the updated file system JSON string
      */
-    public void newfolderUpdate(String fileSystem){
+    private void newfolderUpdate(String fileSystem){
         Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
         builder.appendQueryParameter("json", fileSystem);
         builder.appendQueryParameter("email", email);
@@ -459,7 +453,7 @@ public class filesActivity extends AppCompatActivity {
      * @param fileName       the name of the file to delete
      * @param newFileSystem  the updated file system JSON string
      */
-    public void deleteFile(String fileName, String newFileSystem){
+    private void deleteFile(String fileName, String newFileSystem){
         Uri.Builder builder = Uri.parse(URL_DELETE_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("fileName", fileName);
@@ -474,8 +468,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         Log.d("JSON OBJECT", newFileSystem);
-                        fileSystem = newFileSystem;
-                        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                        setFileSystem(newFileSystem);
                         refreshLayout();
                     }
                 },
@@ -499,7 +492,7 @@ public class filesActivity extends AppCompatActivity {
      * @param toUser   the username of the recipient
      * @param docName  the name of the file to share
      */
-    public void shareToUser(String fromUser, String toUser, String docName){
+    private void shareToUser(String fromUser, String toUser, String docName){
         Uri.Builder builder = Uri.parse(URL_FRIEND_REQ).buildUpon();
         builder.appendQueryParameter("fromUser", fromUser);
         builder.appendQueryParameter("toUser", toUser);
@@ -536,7 +529,7 @@ public class filesActivity extends AppCompatActivity {
      * @param newFileName the name of the folder to validate
      * @return the validated folder name, or an empty string if invalid
      */
-    public String newFolderCheck(String newFileName){
+    private String newFolderCheck(String newFileName){
         if (    newFileName.isEmpty()||
                 newFileName.equals(" ")||
                 newFileName.contains(",")||
@@ -545,7 +538,10 @@ public class filesActivity extends AppCompatActivity {
                 newFileName.contains("[")||
                 newFileName.contains("]")||
                 newFileName.contains("/")||
-                newFileName.trim().isEmpty()){
+                newFileName.trim().isEmpty() ||
+                fileSystem.contains(newFileName)
+        )
+        {
             return "";
         }
         return newFileName;
@@ -560,7 +556,7 @@ public class filesActivity extends AppCompatActivity {
      * @return the updated JSON object representing the file system after deletion
      * @throws JSONException if there is an error parsing the JSON objects
      */
-    public JSONObject fileDeletor(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
+    private JSONObject fileDeletor(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
         JSONArray pathArray = filePath.getJSONArray("path");
         pathArray.remove(0);
         JSONArray root = fileSystem.getJSONArray("root");
@@ -599,7 +595,7 @@ public class filesActivity extends AppCompatActivity {
      * @return the updated JSON string representing the current directory
      * @throws JSONException if there is an error parsing the JSON objects
      */
-    public String newItem(String currentArray, String fileSystem , String folderName, String type) throws JSONException {
+    private String newItem(String currentArray, String fileSystem , String folderName, String type) throws JSONException {
         JSONObject currentArrayJS = new JSONObject(currentArray);
         String newKey = currentArrayJS.keys().next();
 
@@ -633,13 +629,11 @@ public class filesActivity extends AppCompatActivity {
 
         if (type.equals("folder")){
             currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
-            this.fileSystem = fileSystemJS.toString();
-            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
+            setFileSystem(fileSystemJS.toString());
             newfolderUpdate(this.fileSystem);
         }else{
             currArrayJS.put(folderName);
-            this.fileSystem = fileSystemJS.toString();
-            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
+            setFileSystem(fileSystemJS.toString());
             newFileUpdate(folderName, this.fileSystem);
         }
         Log.d("JSON ARRAY", currentArray.toString());
@@ -654,7 +648,7 @@ public class filesActivity extends AppCompatActivity {
      * @return a JSON object representing the directory or file at the specified path
      * @throws JSONException if there is an error parsing the JSON objects
      */
-    public JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
+    private JSONObject goToPath(String currentPath, String fileSystem) throws JSONException {
         JSONArray pathArray = new JSONArray(currentPath);
         JSONObject fileSystemJS = new JSONObject(fileSystem);
         JSONArray currArrayJS = fileSystemJS.getJSONArray("root");
@@ -679,7 +673,7 @@ public class filesActivity extends AppCompatActivity {
     };
 
 
-    public void newFileUpdate(String fileName, String fileSystem){
+    private void newFileUpdate(String fileName, String fileSystem){
         Uri.Builder builder = Uri.parse(URL_STRING_PUSH).buildUpon();
         builder.appendQueryParameter("fileName", fileName);
         builder.appendQueryParameter("content", "");
@@ -714,7 +708,7 @@ public class filesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-    public void autoIndexAPI(String fileSys){
+    private void autoIndexAPI(String fileSys){
         Uri.Builder builder = Uri.parse(URL_AUTOINDEX).buildUpon();
         builder.appendQueryParameter("json", fileSys);
         builder.appendQueryParameter("email", email);
@@ -727,19 +721,9 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        fileSystem = response;
-                        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
-                        rootLayout.removeAllViewsInLayout();
-                        path = "{\"path\": [\"root\"]}";
-                        try {
-                            currentArray = new JSONObject(fileSystem).toString();
-                            runOnUiThread(()->{
-                                createUI(rootLayout);
-                            });
-                            newfolderUpdate(fileSystem);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                        setFileSystem(response);
+                        refreshLayout();
+                        newfolderUpdate(fileSystem);
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -757,23 +741,15 @@ public class filesActivity extends AppCompatActivity {
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
-    public void autoIndexMOCK(String fileSys){
-        String response = "{root: [\"sample works\"]}";
-        fileSystem = response;
-        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
-        rootLayout.removeAllViewsInLayout();
-        path = "{\"path\": [\"root\"]}";
-        try {
-            currentArray = new JSONObject(fileSystem).toString();
-            runOnUiThread(()->{
-                createUI(rootLayout);
-            });
-            //newfolderUpdate(fileSystem);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
 
+    public void setFileSystem(String fs){
+        this.fileSystem = fs;
+        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+    }
+
+    public void setPath(String p){
+        this.path = p;
+        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
     }
 
     private void refreshLayout() {
