@@ -52,10 +52,8 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         setContentView(R.layout.activity_main);             // link to Main activity XML
 
         /* initialize UI elements */
-        messageText = findViewById(R.id.main_msg);      // link to message textview in the Main activity XML
-        messageText.setText("Hello World");
 
-        emailDisplay = findViewById(R.id.usernameDisplay);
+        emailDisplay = findViewById(R.id.emailDisplay);
         passwordDisplay = findViewById(R.id.passwordDisplay);
         FileView = findViewById(R.id.FileView);
 
