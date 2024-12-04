@@ -29,8 +29,17 @@ public class RecentController {
         signEntity user = loginRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        RecentActivity existingRecent = recentRepository.findByFileAndSign(fileEntity, user);
+
 
         List<RecentActivity> userRecents = recentRepository.findRecentByUserId(userId);
+
+        if (existingRecent != null) {
+            // If the record exists, update the access time
+            existingRecent.setAccessTime(LocalDateTime.now());
+            recentRepository.save(existingRecent);
+            return;
+        }
 
 
         if (userRecents.size() >= 5) {
