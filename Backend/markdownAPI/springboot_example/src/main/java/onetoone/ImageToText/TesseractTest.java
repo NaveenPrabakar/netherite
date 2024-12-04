@@ -70,7 +70,7 @@ public class TesseractTest {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("/usr/share/tesseract/tessdata");
+        tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
 
         tesseract.setLanguage(language.substring(0,3));
         tesseract.setPageSegMode(3);

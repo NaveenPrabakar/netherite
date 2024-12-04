@@ -33,7 +33,7 @@ public class signTest {
         String requestBody = """
                 {
                     "username" : "tests",
-                    "email": "tests@example.com",
+                    "email": "MoreTests@example.com",
                     "password": "passwords"
                 }
                 """;
@@ -75,7 +75,7 @@ public class signTest {
     public void testCreateUser_InvalidInput() {
 
         String requestBody = """
-                {}
+                {gmmdfsl}
                 """;
 
 
@@ -86,7 +86,7 @@ public class signTest {
                 .post("/user/create");
 
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         assertEquals("Invalid input. Please fillout all inputs", response.jsonPath().getString("Response"));
     }
 

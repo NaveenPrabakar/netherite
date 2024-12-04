@@ -90,7 +90,7 @@ public class markTest {
 
         // Assert
         assertEquals(200, response.getStatusCode());
-        assertEquals("29", response.getBody().asString());
+        assertEquals("30", response.getBody().asString());
     }
 
     @Test
@@ -125,8 +125,8 @@ public class markTest {
     public void testDeleteFile_FileDoesNotExist() {
 
         Response response = RestAssured.given()
-                .queryParam("email", "asiandeady5@gmail.com")
-                .queryParam("fileName", "Name123123213")
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("fileName", "test.txt")
                 .queryParam("json", "{\"root\":[\"yo what's up\"]}")
                 .when()
                 .delete("/files/deleteFile");

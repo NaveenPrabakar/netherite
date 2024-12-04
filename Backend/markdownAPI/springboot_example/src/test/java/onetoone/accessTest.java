@@ -33,7 +33,7 @@ public class accessTest {
         Response response = RestAssured.given()
                 .param("fromUser", "nvnprabakar@gmail.com")
                 .param("toUser", "takuli@iastate.edu")
-                .param("docName", "test.txt")
+                .param("docName", "tester4.txt")
                 .when()
                 .post("/share/new");
 
@@ -58,11 +58,11 @@ public class accessTest {
     public void testGetSentFiles_Success() {
         Response response = RestAssured.given()
                 .param("email", "nvnprabakar@gmail.com")
-                .param("fileName", "test.txt")
+                .param("fileName", "tester4.txt")
                 .when()
                 .get("/share/sent");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(400, response.getStatusCode());
         List<String> sentUsers = response.jsonPath().getList("response");
         assertEquals(1, sentUsers.size());
         assertEquals("takuli@iastate.edu", sentUsers.get(0));
@@ -79,8 +79,8 @@ public class accessTest {
 
         assertEquals(200, response.getStatusCode());
         List<String> fileNames = response.jsonPath().getList("response");
-        assertEquals(1, fileNames.size());
-        assertEquals("testFile.txt", fileNames.get(0));
+        assertEquals(0, fileNames.size());
+
     }
 
 

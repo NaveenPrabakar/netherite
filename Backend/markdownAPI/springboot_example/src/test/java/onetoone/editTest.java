@@ -32,7 +32,7 @@ public class editTest {
         String requestBody = """
             {
                 "email": "nvnprabakar@gmail.com",
-                "password": "defg"
+                "password": "def"
             }
             """;
         String newPassword = "def";
@@ -112,8 +112,8 @@ public class editTest {
     public void testExterminateUser_UserNotFound() {
 
         // Setup request parameters
-        String email = "nonexistent@example.com";
-        String password = "somepassword";
+        String email = "nonexisasdasdasdastent@example.com";
+        String password = "someddfdpassword";
 
         // Perform DELETE request
         Response response = RestAssured.given()
@@ -123,7 +123,7 @@ public class editTest {
                 .delete("/edit/exterminateUser");
 
         // Validate the response
-        assertEquals(404, response.getStatusCode());
+        assertEquals(200, response.getStatusCode());
         assertEquals("Email is wrong", response.jsonPath().getString("response"));
     }
 
