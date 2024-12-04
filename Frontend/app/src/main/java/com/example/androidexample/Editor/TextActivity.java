@@ -85,8 +85,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         AIInputText = findViewById(R.id.AIChatBar);
         voiceButt = findViewById(R.id.voiceButt);
 
-
-        saveButt = findViewById(R.id.saveButt);
         summarizeButt = findViewById(R.id.summarizeButt);
         acceptButt = findViewById(R.id.acceptButt);
         acceptButt.setVisibility(View.INVISIBLE);

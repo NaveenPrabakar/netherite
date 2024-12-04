@@ -27,8 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_PUSH = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_STRING_PULL = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
@@ -42,18 +40,19 @@ public class filesActivity extends AppCompatActivity {
 
     private String fileSystem =  "{\"root\": []}";
     private String path = "{\"path\": [\"root\"]}";
+    private String currentArray = "{\"root\": []}";
+    private String aiURL;
+
     private String email;
     private String username;
     private String password;
-    private String content;
+
     private Button goback;
     private Button OCRButt;
     private Button AutoIndex;
     private LinearLayout rootLayout;
-    private String currentArray = "{\"root\": []}";
-    private LinearLayout fileLayout;
-    private String aiURL;
 
+    private LinearLayout fileLayout;
 
     /**
      * Initializes the activity and sets up the user interface.
@@ -66,6 +65,14 @@ public class filesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
+        initializeVariables();
+        setupUIComponents();
+    }
+
+    /**
+     * Initializes instance variables from user preferences or other sources.
+     */
+    private void initializeVariables() {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
@@ -75,76 +82,68 @@ public class filesActivity extends AppCompatActivity {
         fileSystem = UserPreferences.getFileSystem(this);
 
         currentArray = fileSystem;
-
-        goback = findViewById(R.id.goback);
-        goback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                try {
-                    JSONObject base = new JSONObject(path);
-                    JSONArray pathArray = base.getJSONArray("path");
-                    if (pathArray.length() > 1){
-                        pathArray.remove(pathArray.length()-1);
-                        currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
-                        String currFolder = pathArray.get(pathArray.length()-1).toString();
-                        path = base.toString();
-                        fileLayout.removeAllViewsInLayout();
-                        runOnUiThread(()->{
-                            try {
-                                createFolderWithFiles(fileLayout, currFolder, new JSONObject(currentArray).getJSONArray(currFolder) );
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                        Log.d("Current Array", currentArray);
-                    }else{
-                        Intent intent = new Intent(filesActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                ;
-            }
-        });
-
-        rootLayout = findViewById(R.id.rootLayout);
-        runOnUiThread(()->{
-            createUI(rootLayout);
-        });
-
-        OCRButt = findViewById(R.id.OCRButt);
-        OCRButt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(filesActivity.this, OCRActivity.class);
-                i.putExtra("FILESYSTEM", fileSystem);
-                i.putExtra("PATH", path);
-                i.putExtra("EMAIL", email);
-                i.putExtra("PASSWORD", password);
-                i.putExtra("USERNAME", username);
-                startActivity(i);
-            }
-        });
-
-        AutoIndex = findViewById(R.id.AutoIndex);
-        AutoIndex.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                autoIndexMOCK(fileSystem);
-            }});
-
     }
 
     /**
-     * Creates the user interface dynamically, including buttons for creating new folders and files.
-     * Also initializes the current folder view and displays its contents.
-     *
-     * @param parentLayout the root layout to which the UI elements are added
+     * Sets up the UI components and their event listeners.
      */
-    private void createUI(LinearLayout parentLayout) {
+    private void setupUIComponents() {
+        goback = findViewById(R.id.goback);
+        rootLayout = findViewById(R.id.rootLayout);
+        OCRButt = findViewById(R.id.OCRButt);
+        AutoIndex = findViewById(R.id.AutoIndex);
+
+        goback.setOnClickListener(view -> handleGoBack());
+        OCRButt.setOnClickListener(view -> navigateToOCR());
+        AutoIndex.setOnClickListener(view -> autoIndexMOCK(fileSystem));
+
+        createUI(rootLayout);
+    }
+
+    private void handleGoBack() {
+        try {
+            JSONObject base = new JSONObject(path);
+            JSONArray pathArray = base.getJSONArray("path");
+
+            if (pathArray.length() > 1) {
+                pathArray.remove(pathArray.length() - 1);
+                path = base.toString();
+                refreshLayout();
+                Log.d("Current Array", currentArray);
+            } else {
+                Intent intent = new Intent(filesActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void navigateToOCR() {
+        Intent intent = new Intent(filesActivity.this, OCRActivity.class);
+        intent.putExtra("FILESYSTEM", fileSystem);
+        intent.putExtra("PATH", path);
+        intent.putExtra("EMAIL", email);
+        intent.putExtra("PASSWORD", password);
+        intent.putExtra("USERNAME", username);
+        startActivity(intent);
+    }
+
+    private void newButtonFunctionality(EditText newFolderName, String type){
+        Log.d("New Folder", "New Folder clicked: " + newFolderName.getText().toString());
+        try {
+            String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
+            if (!correctedFolderName.isEmpty()){
+                newItem(currentArray, fileSystem, correctedFolderName, type);
+            }else{
+                Toast.makeText(getApplicationContext(), "Folder Name is invalid", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createUIButtons(LinearLayout parentLayout){
         LinearLayout newFolderLayout = new LinearLayout(this);
         newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -163,47 +162,21 @@ public class filesActivity extends AppCompatActivity {
         newFolderName.setHint("New Name");
         newFolderName.setPadding(20, 10, 20, 10);
 
-        newFolder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("New Folder", "New Folder clicked: " + newFolderName.getText().toString());
-                try {
-                    String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
-                    if (!correctedFolderName.isEmpty()){
-                        currentArray = newItem(currentArray, fileSystem, correctedFolderName, "folder");
-                        rootLayout.removeAllViewsInLayout();
-                        runOnUiThread(()->{
-                            createUI(rootLayout);
-                        });
-                        folderUpdate(fileSystem);
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Folder Name is invalid", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        newFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
-                    if (!correctedFolderName.isEmpty()){
-                        currentArray = newItem(currentArray, fileSystem, correctedFolderName, "file");
-                        sendFileString(correctedFolderName, fileSystem);
-
-                    }else{
-                        Toast.makeText(getApplicationContext(), "File Name is invalid", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        newFolder.setOnClickListener(view -> newButtonFunctionality(newFolderName, "folder"));
+        newFile.setOnClickListener(view -> newButtonFunctionality(newFolderName, "file"));
 
         parentLayout.addView(newFolderName);
         parentLayout.addView(newFolderLayout);
+    }
+
+    /**
+     * Creates the user interface dynamically, including buttons for creating new folders and files.
+     * Also initializes the current folder view and displays its contents.
+     *
+     * @param parentLayout the root layout to which the UI elements are added
+     */
+    private void createUI(LinearLayout parentLayout) {
+        createUIButtons(parentLayout);
         try{
             fileLayout = new LinearLayout(this);
             fileLayout.setOrientation(LinearLayout.VERTICAL);
@@ -223,176 +196,141 @@ public class filesActivity extends AppCompatActivity {
         }
 
     }
-    /**
-     * Dynamically creates a folder view along with its files and subfolders.
-     * Adds functionality to open, delete, and share files or folders.
-     *
-     * @param parentLayout the parent layout to which the folder view is added
-     * @param folderName   the name of the current folder
-     * @param filesArray   the array of files or folders within the current folder
-     * @throws JSONException if an error occurs while parsing the JSON
-     */
+
     private void createFolderWithFiles(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException {
-        // Create a LinearLayout to hold the files and set its visibility to GONE initially
-        // Iterate over the files array
         for (int i = 0; i < filesArray.length(); i++) {
             Object item = filesArray.get(i);
             if (item instanceof String) {
-                // Create a horizontal LinearLayout to hold the TextView and Delete Button
-                LinearLayout fileLayout = new LinearLayout(this);
-                fileLayout.setOrientation(LinearLayout.HORIZONTAL);
-                fileLayout.setPadding(10, 10, 10, 10); // Set padding around the layout
-
-                // Create a TextView for each file
-                TextView fileTextView = new TextView(this);
-                fileTextView.setText(String.valueOf(item));
-                fileTextView.setPadding(30, 10, 10, 10); // Indented padding
-
-                // Create a Delete Button
-                Button deleteButton = new Button(this);
-                deleteButton.setText("Delete");
-                deleteButton.setPadding(20, 10, 20, 10);
-
-                // Create a shareTo Button
-                Button shareTo = new Button(this);
-                shareTo.setText("Share to");
-                shareTo.setPadding(20, 10, 20, 10);
-
-                EditText toUser = new EditText(this);
-                toUser.setHint("Username");
-                toUser.setPadding(20, 10, 20, 10);
-
-                // Set an onClickListener for the TextView to handle file click events
-                fileTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d("File Clicked", "File clicked: " + String.valueOf(item));
-                        getFile(String.valueOf(item));
-
-                    }
-                });
-
-                // Set an onClickListener for the Delete Button to handle file deletion
-                deleteButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d("File Deleted", "File deleted: " + String.valueOf(item));
-                        try {
-
-                            JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), String.valueOf(item));
-                            deleteFile(String.valueOf(item), jsObj.toString());
-
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-
-                shareTo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        shareToUser(email.toString(), toUser.getText().toString(), String.valueOf(item));
-                    }
-                });
-
-                // Add the TextView and Button to the LinearLayout
-                fileLayout.addView(fileTextView);
-                fileLayout.addView(deleteButton);
-                fileLayout.addView(shareTo);
-                fileLayout.addView(toUser);
-
-                // Add the LinearLayout to the file container
-                parentLayout.addView(fileLayout);
+                createFileLayout(parentLayout, (String) item);
             } else if (item instanceof JSONObject) {
-                // Recursively handle nested folders
-                JSONObject nestedObject = (JSONObject) item;
-                for (Iterator<String> it = nestedObject.keys(); it.hasNext(); ) {
-                    LinearLayout linearLayout = new LinearLayout(this);
-
-                    String nestedKey = it.next();
-                    TextView folderTextView = new TextView(this);
-                    folderTextView.setText(nestedKey);
-                    folderTextView.setTextSize(18);
-                    folderTextView.setPadding(10, 10, 10, 10);
-                    linearLayout.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-                    folderTextView.setClickable(true);
-
-                    // Create a Delete Button
-                    Button deleteButton = new Button(this);
-                    deleteButton.setText("Delete");
-                    deleteButton.setPadding(20, 10, 20, 10);
-
-                    linearLayout.addView(folderTextView);
-                    linearLayout.addView(deleteButton);
-                    parentLayout.addView(linearLayout);
-
-                    deleteButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), String.valueOf(item));
-                                rootLayout.removeAllViewsInLayout();
-                                fileSystem = jsObj.toString();
-                                UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
-                                Log.d("item", String.valueOf(item));
-
-                                JSONObject currentJS = new JSONObject(currentArray);
-                                JSONArray currentArr = currentJS.getJSONArray(currentJS.keys().next());
-                                for (int i = 0; i < currentArr.length(); i++){
-                                    if (currentArr.get(i).toString().equals(String.valueOf(item))){
-                                        currentArr.remove(i);
-                                    }
-                                }
-                                currentArray = currentJS.toString();
-                                runOnUiThread(()->{
-                                    createUI(rootLayout);
-                                });
-                                folderUpdate(fileSystem);
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-
-                        };
-                    });
-
-                    // Set an OnClickListener to toggle the visibility of the files
-                    folderTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.d("Folder Clicked", "Folder clicked: " + folderName);
-                            Log.d("File System", fileSystem);
-                            Log.d("nestedObject", nestedObject.toString());
-                            Log.d("nestedKey", nestedKey);
-                            try{
-                                currentArray = nestedObject.toString();
-                                parentLayout.removeAllViewsInLayout();
-
-                                JSONObject pathJS = new JSONObject(path);
-                                JSONArray pathArray = pathJS.getJSONArray("path");
-                                pathArray.put(nestedKey);
-                                path = pathJS.toString();
-                                Log.d("PATH", path);
-                                runOnUiThread(()->{
-                                    try {
-                                        createFolderWithFiles(fileLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
-                                    } catch (JSONException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                });
-
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    });
-
-
-                }
+                createFolderLayout(parentLayout, (JSONObject) item);
             }
         }
-
-
     }
+    //Files
+    private void createFileLayout(LinearLayout parentLayout, String fileName) {
+        // Create a horizontal LinearLayout for the file
+        LinearLayout fileLayout = new LinearLayout(this);
+        fileLayout.setOrientation(LinearLayout.HORIZONTAL);
+        fileLayout.setPadding(10, 10, 10, 10);
+
+        // Create a TextView for the file
+        TextView fileTextView = new TextView(this);
+        fileTextView.setText(fileName);
+        fileTextView.setPadding(30, 10, 10, 10);
+
+        // Create buttons and input field
+        Button deleteButton = createFileDeleteButton(fileName);
+        Button shareToButton = createShareToButton(fileName);
+        EditText toUser = createShareToInput();
+
+        // Add onClickListener for file TextView
+        fileTextView.setOnClickListener(view -> {
+            Log.d("File Clicked", "File clicked: " + fileName);
+            getFile(fileName);
+        });
+
+        // Add components to the file layout
+        fileLayout.addView(fileTextView);
+        fileLayout.addView(deleteButton);
+        fileLayout.addView(shareToButton);
+        fileLayout.addView(toUser);
+
+        // Add the file layout to the parent layout
+        parentLayout.addView(fileLayout);
+    }
+
+    private Button createFileDeleteButton(String fileName) {
+        Button deleteButton = new Button(this);
+        deleteButton.setText("Delete");
+        deleteButton.setPadding(20, 10, 20, 10);
+        deleteButton.setOnClickListener(view -> {
+            Log.d("File Deleted", "File deleted: " + fileName);
+            try {
+                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), fileName);
+                deleteFile(fileName, jsObj.toString());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return deleteButton;
+    }
+
+    private Button createShareToButton(String fileName) {
+        Button shareToButton = new Button(this);
+        shareToButton.setText("Share to");
+        shareToButton.setPadding(20, 10, 20, 10);
+        shareToButton.setOnClickListener(view -> {
+            EditText toUser = new EditText(this);
+            shareToUser(email.toString(), toUser.getText().toString(), fileName);
+        });
+        return shareToButton;
+    }
+
+    private EditText createShareToInput() {
+        EditText toUser = new EditText(this);
+        toUser.setHint("Username");
+        toUser.setPadding(20, 10, 20, 10);
+        return toUser;
+    }
+    //Files End
+
+    //Folders
+    private void createFolderLayout(LinearLayout parentLayout, JSONObject nestedObject) {
+        String folderName = nestedObject.keys().next();
+        LinearLayout folderLayout = new LinearLayout(this);
+        folderLayout.setOrientation(LinearLayout.HORIZONTAL);
+        folderLayout.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        folderLayout.setPadding(10, 10, 10, 10);
+
+        // Create a TextView for the folder
+        TextView folderTextView = new TextView(this);
+        folderTextView.setText(folderName);
+        folderTextView.setTextSize(18);
+        folderTextView.setPadding(10, 10, 10, 10);
+
+        // Create a Delete Button for the folder
+        Button deleteButton = createFolderDeleteButton(nestedObject);
+
+        // Add components to the folder layout
+        folderLayout.addView(folderTextView);
+        folderLayout.addView(deleteButton);
+        parentLayout.addView(folderLayout);
+
+        // Set OnClickListener to toggle files in the folder
+        folderTextView.setOnClickListener(view -> moveToInnerFolder(parentLayout, nestedObject, folderName));
+    }
+
+    private Button createFolderDeleteButton(JSONObject nestedObject) {
+        Button deleteButton = new Button(this);
+        deleteButton.setText("Delete");
+        deleteButton.setPadding(20, 10, 20, 10);
+        deleteButton.setOnClickListener(view -> {
+            try {
+                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), nestedObject.toString());
+                fileSystem = jsObj.toString();
+                UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                newfolderUpdate(fileSystem);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return deleteButton;
+    }
+
+    private void moveToInnerFolder(LinearLayout parentLayout, JSONObject nestedObject, String folderName) {
+        Log.d("Folder Clicked", "Folder clicked: " + folderName);
+        try {
+            JSONObject pathJS = new JSONObject(path);
+            JSONArray pathArray = pathJS.getJSONArray("path");
+            pathArray.put(folderName);
+            path = pathJS.toString();
+            refreshLayout();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //Folders end
 
     /**
      * Retrieves the file's content as a string from the server and starts the `TextActivity`
@@ -414,11 +352,10 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        content = response;
 
                         Intent intent = new Intent(filesActivity.this, TextActivity.class);
                         intent.putExtra("FILEKEY", fileName);
-                        intent.putExtra("CONTENT", content);
+                        intent.putExtra("CONTENT", response);
                         intent.putExtra("AIWSURL", aiURL);
                         startActivity(intent);
 
@@ -485,7 +422,7 @@ public class filesActivity extends AppCompatActivity {
      *
      * @param fileSystem the updated file system JSON string
      */
-    public void folderUpdate(String fileSystem){
+    public void newfolderUpdate(String fileSystem){
         Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
         builder.appendQueryParameter("json", fileSystem);
         builder.appendQueryParameter("email", email);
@@ -499,6 +436,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                        refreshLayout();
                     }
                 },
                 new Response.ErrorListener() {
@@ -507,7 +445,7 @@ public class filesActivity extends AppCompatActivity {
                         // Handle any errors that occur during the request
                         Log.e("Email", email);
                         Log.e("Volley Error", error.toString());
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Folder Not Updated", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -535,26 +473,10 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        rootLayout.removeAllViewsInLayout();
-                        try {
-                            JSONObject jsObj = new JSONObject(newFileSystem);
-                            Log.d("JSON OBJECT", jsObj.toString());
-                            fileSystem = newFileSystem;
-                            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
-                            JSONObject currentJS = new JSONObject(currentArray);
-                            JSONArray currentArr = currentJS.getJSONArray(currentJS.keys().next());
-                            for (int i = 0; i < currentArr.length(); i++){
-                                if (currentArr.get(i).equals(fileName)){
-                                    currentArr.remove(i);
-                                }
-                            }
-                            currentArray = currentJS.toString();
-                            runOnUiThread(()->{
-                                createUI(rootLayout);
-                            });
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                        Log.d("JSON OBJECT", newFileSystem);
+                        fileSystem = newFileSystem;
+                        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, fileSystem, path);
+                        refreshLayout();
                     }
                 },
                 new Response.ErrorListener() {
@@ -708,13 +630,18 @@ public class filesActivity extends AppCompatActivity {
                 }
             }
         }
+
         if (type.equals("folder")){
             currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
+            this.fileSystem = fileSystemJS.toString();
+            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
+            newfolderUpdate(this.fileSystem);
         }else{
             currArrayJS.put(folderName);
+            this.fileSystem = fileSystemJS.toString();
+            UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
+            newFileUpdate(folderName, this.fileSystem);
         }
-        this.fileSystem = fileSystemJS.toString();
-        UserPreferences.saveUserDetails(filesActivity.this, username, email, password, this.fileSystem, this.path);
         Log.d("JSON ARRAY", currentArray.toString());
         return currentArrayJS.toString();
     }
@@ -748,11 +675,11 @@ public class filesActivity extends AppCompatActivity {
                 }
             }
         }
-        return new JSONObject('{' + internalKey + " : " + currArrayJS.toString() + '}');
+        return new JSONObject("{\"" + internalKey + "\" : " + currArrayJS.toString() + '}');
     };
 
 
-    public void sendFileString(String fileName, String fileSystem){
+    public void newFileUpdate(String fileName, String fileSystem){
         Uri.Builder builder = Uri.parse(URL_STRING_PUSH).buildUpon();
         builder.appendQueryParameter("fileName", fileName);
         builder.appendQueryParameter("content", "");
@@ -769,11 +696,7 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        rootLayout.removeAllViewsInLayout();
-                        runOnUiThread(()->{
-                            createUI(rootLayout);
-                        });
-                        folderUpdate(fileSystem);
+                        refreshLayout();
                     }
                 },
                 new Response.ErrorListener() {
@@ -790,7 +713,6 @@ public class filesActivity extends AppCompatActivity {
         // Adding request to request queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
-
 
     public void autoIndexAPI(String fileSys){
         Uri.Builder builder = Uri.parse(URL_AUTOINDEX).buildUpon();
@@ -814,7 +736,7 @@ public class filesActivity extends AppCompatActivity {
                             runOnUiThread(()->{
                                 createUI(rootLayout);
                             });
-                            folderUpdate(fileSystem);
+                            newfolderUpdate(fileSystem);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -846,11 +768,24 @@ public class filesActivity extends AppCompatActivity {
             runOnUiThread(()->{
                 createUI(rootLayout);
             });
-            //folderUpdate(fileSystem);
+            //newfolderUpdate(fileSystem);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void refreshLayout() {
+        try {
+            JSONObject PathObj = new JSONObject(path);
+            JSONArray pathArray = PathObj.getJSONArray("path");
+            currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
+            rootLayout.removeAllViewsInLayout();
+            runOnUiThread(() -> createUI(rootLayout));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
