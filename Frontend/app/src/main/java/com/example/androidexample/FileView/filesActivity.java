@@ -92,7 +92,7 @@ public class filesActivity extends AppCompatActivity {
                         fileLayout.removeAllViewsInLayout();
                         runOnUiThread(()->{
                             try {
-                                createFolderWithFiles(fileLayout, currFolder, new JSONObject(currentArray).getJSONArray(currFolder) );
+                                createFile(currFolder, new JSONObject(currentArray).getJSONArray(currFolder) );
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }
@@ -212,7 +212,7 @@ public class filesActivity extends AppCompatActivity {
             String key = currObj.keys().next();
             runOnUiThread(()->{
                 try {
-                    createFolderWithFiles(fileLayout, key, currObj.getJSONArray(key));
+                    createFile(key, currObj.getJSONArray(key));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -374,7 +374,7 @@ public class filesActivity extends AppCompatActivity {
                                 Log.d("PATH", path);
                                 runOnUiThread(()->{
                                     try {
-                                        createFolderWithFiles(fileLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
+                                        createFile(nestedKey,  nestedObject.getJSONArray(nestedKey));
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -514,7 +514,7 @@ public class filesActivity extends AppCompatActivity {
                                 Log.d("PATH", path);
                                 runOnUiThread(()->{
                                     try {
-                                        createFolderWithFiles(fileLayout, nestedKey,  nestedObject.getJSONArray(nestedKey));
+                                        createFile(nestedKey,  nestedObject.getJSONArray(nestedKey));
                                     } catch (JSONException e) {
                                         throw new RuntimeException(e);
                                     }
