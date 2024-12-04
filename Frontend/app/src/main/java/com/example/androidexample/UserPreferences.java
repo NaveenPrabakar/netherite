@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class UserPreferences {
     private static final String PREF_NAME = "AppPreferences";
@@ -56,21 +57,29 @@ public class UserPreferences {
         editor.putString(KEY_FILESYSTEM, fileSystem);
         editor.putString(KEY_FILEPATH, filePath);
         editor.apply();
+        Log.d("UserPreferences", "User details saved:");
+    }
+
+    public void setFiles(Context context, String fileSystem, String filePath) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_FILEPATH, fileSystem);
+        editor.putString(KEY_FILEPATH, filePath);
     }
 
     public static String getUsername(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_USERNAME, "");
+        return sharedPreferences.getString(KEY_USERNAME, "takuli");
     }
 
     public static String getEmail(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_EMAIL, "");
+        return sharedPreferences.getString(KEY_EMAIL, "takuli@iastate.edu");
     }
 
     public static String getPassword(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KEY_PASSWORD, "");
+        return sharedPreferences.getString(KEY_PASSWORD, "admin123!");
     }
 
     public static String getFileSystem(Context context) {

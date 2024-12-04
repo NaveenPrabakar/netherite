@@ -1,6 +1,5 @@
 package com.example.androidexample.Editor;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,15 +18,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
@@ -40,7 +38,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class TextActivity extends AppCompatActivity implements WebSocketListener {
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_AI_GET = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/getUsageAPICount/";
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
     private final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/"; // PUT IN A PATH VARIABLE
@@ -97,6 +94,18 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         rejectButt = findViewById(R.id.rejectButt);
         rejectButt.setVisibility(View.INVISIBLE);
 
+        try {
+            fileSystem = new JSONObject(UserPreferences.getFileSystem(this));
+            filePath = new JSONObject(UserPreferences.getFilePath(this));
+            email = UserPreferences.getEmail(this);
+            password = UserPreferences.getPassword(this);
+            username = UserPreferences.getUsername(this);
+            Log.d("File System", fileSystem.toString());
+            Log.d("File Path", filePath.toString());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
         // This is the live chat button
         liveChatButt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +119,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         markwon = Markwon.create(this);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+
 
         textWatcher = new TextWatcher() {
             @Override
@@ -135,55 +143,34 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         editor.addTextChangedListener(textWatcher);
         mainText.setAlpha(0f);
 
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
         if(extras != null) {
-            try {
-                fileSystem = new JSONObject(extras.getString("FILESYSTEM"));
-                filePath = new JSONObject(extras.getString("PATH"));
-                email = extras.getString("EMAIL");
-                password = extras.getString("PASSWORD");
-                username = extras.getString("USERNAME");
-                Log.d("EMAIL", extras.getString("EMAIL"));
-                Log.d("PASSWORD", extras.getString("PASSWORD"));
-                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-                Log.d("PATH", extras.getString("PATH"));
-
-                if (extras.getString("CONTENT") != null){
-                    Log.d("content", extras.getString("CONTENT"));
-                    editor.setText(extras.getString("CONTENT"));
-                    content = extras.getString("CONTENT");
-                }
-                if (extras.getString("FILEKEY") != null){
-                    Log.d("filekey", extras.getString("FILEKEY"));
-                    fileName.setText(extras.getString("FILEKEY"));
-                }
-                if (extras.getString("RECORDED") != null){
-                    Log.d("recorded", extras.getString("RECORDED"));
-                    editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
-                }
-                if (extras.getString("IMAGETEXT") != null)
-                {
-                    AIText.setText(extras.getString("IMAGETEXT"));
-                    //mainText.setText(extras.getString("IMAGETEXT"));
-                    acceptButt.setVisibility(View.VISIBLE);
-                    rejectButt.setVisibility(View.VISIBLE);
-                    summarizeButt.setVisibility(View.INVISIBLE);
-                }
-                if (extras.getString("AIWSURL") != null)
-                {
-                    aiURL = extras.getString("AIWSURL");
-                }
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            if (extras.getString("CONTENT") != null){
+                Log.d("content", extras.getString("CONTENT"));
+                editor.setText(extras.getString("CONTENT"));
+                content = extras.getString("CONTENT");
             }
-        }else{
-            filePath = new JSONObject();
-            fileSystem = new JSONObject();
-            try {
-                filePath.put("path", new JSONArray());
-                fileSystem.put("root", new JSONArray());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            if (extras.getString("FILEKEY") != null){
+                Log.d("filekey", extras.getString("FILEKEY"));
+                fileName.setText(extras.getString("FILEKEY"));
+            }
+            if (extras.getString("RECORDED") != null){
+                Log.d("recorded", extras.getString("RECORDED"));
+                editor.setText(content+ "   \n   \n" + extras.getString("RECORDED"));
+            }
+            if (extras.getString("IMAGETEXT") != null)
+            {
+                AIText.setText(extras.getString("IMAGETEXT"));
+                //mainText.setText(extras.getString("IMAGETEXT"));
+                acceptButt.setVisibility(View.VISIBLE);
+                rejectButt.setVisibility(View.VISIBLE);
+                summarizeButt.setVisibility(View.INVISIBLE);
+            }
+            if (extras.getString("AIWSURL") != null)
+            {
+                aiURL = extras.getString("AIWSURL");
             }
         }
 
@@ -203,31 +190,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         });
 
 
-        saveButt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (fileName.getText().toString().isEmpty()) {
-                    System.out.println("file name is empty");
-                } else {
-
-                    try {
-                        sendFileString(fileName.getText().toString(), String.valueOf(fileLocator(fileSystem, filePath, fileName.getText().toString())));
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-
-            }
-        });
-
-
         summarizeButt.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                TESTsummarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
+                summarizeString(Request.Method.GET, content, email, "summarize", URL_AI_GET);
                 acceptButt.setVisibility(View.VISIBLE);
                 rejectButt.setVisibility(View.VISIBLE);
                 AIText.setVisibility(View.VISIBLE);
@@ -263,7 +231,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onClick(View v)
             {
-                TESTsummarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
+                summarizeString(Request.Method.DELETE, content, email, "reject", URL_AI_DELETE);
                 acceptButt.setVisibility(View.INVISIBLE);
                 rejectButt.setVisibility(View.INVISIBLE);
                 summarizeButt.setVisibility(View.VISIBLE);
@@ -319,38 +287,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
      * @param fileName   the name of the file being sent
      * @param fileSystem the file system as a JSON string
      */
-    public void sendFileString(String fileName, String fileSystem){
-            Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-            builder.appendQueryParameter("fileName", fileName);
-            builder.appendQueryParameter("content", content);
-            builder.appendQueryParameter("json", fileSystem);
-            builder.appendQueryParameter("email", email);
-            builder.appendQueryParameter("password", password);
-            String url = builder.build().toString();
-
-            StringRequest stringRequest = new StringRequest(
-                    Request.Method.POST,
-                    url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("Volley Response", response);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // Handle any errors that occur during the request
-                            Log.e("Email", email);
-
-                            Log.e("Volley Error", error.toString());
-                        }
-                    }
-            );
-
-            // Adding request to request queue
-            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-    }
 
     /**
      * Sends a request to summarize content using AI. Based on the method (GET, POST, PUT),
@@ -363,7 +299,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
      * @param URL                the base URL for the request
      */
 
-    private void TESTsummarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
+    private void summarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
     {
         //Log.d("AICOUNT", aiCount);
         JsonObjectRequest summarizePost = new JsonObjectRequest (
@@ -378,9 +314,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                             try {
                                 aiCount = response.getString("reply");
                                 if (aiCount.equals("-1")) {
-                                    summarizeString(Request.Method.POST, contentToSummarize, email, prompt, URL_AI_POST);
+                                    summarizeStringHelp(Request.Method.POST, contentToSummarize, email, prompt, URL_AI_POST);
                                 } else {
-                                    summarizeString(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
+                                    summarizeStringHelp(Request.Method.PUT, contentToSummarize, email, prompt, URL_AI_PUT);
                                 }
                             } catch (JSONException e) {
                                 //AIText.setText("Error: " + e.toString());
@@ -434,7 +370,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
      * @param URL                the base URL for the request
      */
 
-    private void summarizeString(int method, String contentToSummarize, String email, String prompt, String URL)
+    private void summarizeStringHelp(int method, String contentToSummarize, String email, String prompt, String URL)
     {
         JSONObject requestBody = new JSONObject();
         try {
@@ -496,48 +432,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         // Add the string request to the Volley Queue
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
-    }
-
-    /**
-     * Locates or adds a file in a hierarchical file system based on the given file path.
-     *
-     * @param fileSystem the root JSON object representing the file system
-     * @param filePath   the JSON object containing the "path" array, representing the file's location
-     * @param fileName   the name of the file to locate or add in the file system
-     * @return the updated JSON object representing the file system
-     * @throws JSONException if there is an error parsing the JSON objects
-     */
-    public JSONObject fileLocator(JSONObject fileSystem, JSONObject filePath, String fileName) throws JSONException {
-        JSONArray pathArray = filePath.getJSONArray("path");
-        JSONArray root = fileSystem.getJSONArray("root");
-
-        // Traverse the file system using the provided path
-        for (int i = 0; i < pathArray.length(); i++) {
-            String key = pathArray.getString(i);
-            for (int j = 0; j < root.length(); j++) {
-                Object currentItem = root.get(j);
-                if (currentItem instanceof JSONObject ) {
-                    JSONObject currentItemJson = (JSONObject) currentItem;
-                    if (currentItemJson.has(key)){
-                        root = currentItemJson.getJSONArray(key);
-                        break;
-                    }
-                }
-            }
-        }
-        JSONArray rootArray = (JSONArray) root;
-        int index =-1;
-        for(int i = 0; i < rootArray.length(); i++){
-            if (rootArray.get(i) instanceof String && rootArray.get(i).equals(fileName)){
-                index = i;
-            }
-        }
-        if (index == -1){
-            root.put(fileName);
-        }
-        Log.d("File System", fileSystem.toString());
-        return fileSystem;
-
     }
 
     /**

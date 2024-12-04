@@ -24,6 +24,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import com.android.volley.Request;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.MultipartAudioRequest;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -41,11 +42,6 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
     private String email;
     private String content;
-    private String password;
-    private String username;
-    private String fileSystem;
-    private String filePath;
-
     private String recorded = "";
 
     private byte[] voiceData;
@@ -68,15 +64,7 @@ public class VoiceRecordActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        fileSystem = extras.getString("FILESYSTEM");
-        filePath = extras.getString("PATH");
-        email = extras.getString("EMAIL");
-        password = extras.getString("PASSWORD");
-        username = extras.getString("USERNAME");
-        Log.d("EMAIL", extras.getString("EMAIL"));
-        Log.d("PASSWORD", extras.getString("PASSWORD"));
-        Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-        Log.d("PATH", extras.getString("PATH"));
+        email = UserPreferences.getEmail(this);
         content = extras.getString("CONTENT");
 
         startTV.setOnClickListener(v -> startRecording());
@@ -91,6 +79,10 @@ public class VoiceRecordActivity extends AppCompatActivity {
         reject.setOnClickListener(v -> {
             recorded = "";
             txthead.setText("");
+            Intent intent2 = new Intent(VoiceRecordActivity.this, TextActivity.class);
+            intent2.putExtra("CONTENT", content);
+            intent2.putExtra("RECORDED", recorded);
+            startActivity(intent2);
         });
 
 
@@ -263,11 +255,6 @@ public class VoiceRecordActivity extends AppCompatActivity {
                 response -> {
                     Log.d("Upload", "Response: " + response);
                     Intent intent2 = new Intent(VoiceRecordActivity.this, TextActivity.class);
-                    intent2.putExtra("EMAIL", email);
-                    intent2.putExtra("PASSWORD", password);
-                    intent2.putExtra("USERNAME", username);
-                    intent2.putExtra("FILESYSTEM", fileSystem);
-                    intent2.putExtra("PATH", filePath);
                     intent2.putExtra("CONTENT", content);
                     intent2.putExtra("RECORDED", recorded);
                     startActivity(intent2);
