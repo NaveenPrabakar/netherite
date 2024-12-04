@@ -29,8 +29,15 @@ import onetoone.JsonRepository;
 
 import java.util.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/edit")
+@Tag(name = "Edit Profile API", description = "Done By Naveen Prabakar")
 public class edit{
 
     private final Path location = Paths.get("root");
@@ -53,6 +60,19 @@ public class edit{
      * @param name (the username they want to change to
      * @return a successful response or negative
      */
+    @Operation(
+            summary = "Change the username of the user",
+            description = "Allows the user to change their username, provided the password is correct.",
+            parameters = {
+                    @Parameter(name = "name", description = "The new username", required = true),
+                    @Parameter(name = "l", description = "The user details including email and password", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Username successfully updated"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Incorrect password")
+    })
     @PutMapping("/changeusername/{name}")
     public Map<String, String> ChangeUsername(@RequestBody logs l, @PathVariable String name){
         HashMap<String, String> response = new HashMap<>();
@@ -86,6 +106,19 @@ public class edit{
      * @param password -- password to be changed
      * @return Successful or failed response
      */
+    @Operation(
+            summary = "Change the password of the user",
+            description = "Allows the user to change their password, provided the current password is correct.",
+            parameters = {
+                    @Parameter(name = "password", description = "The new password", required = true),
+                    @Parameter(name = "l", description = "The user details including email and current password", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password successfully updated"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Incorrect password")
+    })
     @PutMapping("/changepassword/{password}")
     public Map<String, String> ChangePassword(@RequestBody logs l, @PathVariable String password){
         HashMap<String, String> response = new HashMap<>();
@@ -119,6 +152,19 @@ public class edit{
      * @param email --email to be changed
      * @return successful or failed response
      */
+    @Operation(
+            summary = "Change the email of the user",
+            description = "Allows the user to change their email, provided the current password is correct.",
+            parameters = {
+                    @Parameter(name = "email", description = "The new email", required = true),
+                    @Parameter(name = "l", description = "The user details including current email and password", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Email successfully updated"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Incorrect password")
+    })
     @PutMapping("/changeemail/{email}")
     public Map<String, String> ChangeEmail(@RequestBody logs l, @PathVariable String email){
         HashMap<String, String> response = new HashMap<>();
@@ -142,6 +188,19 @@ public class edit{
     }
 
     // DELETE EVERYTHING MUST BE DONE
+    @Operation(
+            summary = "Delete a user's account and all associated files",
+            description = "This endpoint deletes the user's account along with all files associated with it. All user data will be permanently removed.",
+            parameters = {
+                    @Parameter(name = "email", description = "The email of the user", required = true),
+                    @Parameter(name = "password", description = "The password of the user", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User account and associated files successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Incorrect password")
+    })
     @DeleteMapping("/exterminateUser")
     public Map<String, String> Exterminate(@RequestParam("email") String email, @RequestParam("password") String password){
         HashMap<String, String> response = new HashMap<>();

@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
@@ -85,8 +86,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         AIInputText = findViewById(R.id.AIChatBar);
         voiceButt = findViewById(R.id.voiceButt);
 
-
-        saveButt = findViewById(R.id.saveButt);
         summarizeButt = findViewById(R.id.summarizeButt);
         acceptButt = findViewById(R.id.acceptButt);
         acceptButt.setVisibility(View.INVISIBLE);
@@ -180,11 +179,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             public void onClick(View v) {
 
                 /* when signup button is pressed, use intent to switch to Signup Activity */
-                Intent intent = new Intent(TextActivity.this, MainActivity.class);
-                intent.putExtra("FILESYSTEM", fileSystem.toString());
-                intent.putExtra("EMAIL", email);
-                intent.putExtra("USERNAME", username);
-                intent.putExtra("PASSWORD", password);
+                Intent intent = new Intent(TextActivity.this, filesActivity.class);
                 startActivity(intent);  // go to SignupActivity
             }
         });

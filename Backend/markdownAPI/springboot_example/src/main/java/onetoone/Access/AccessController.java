@@ -22,9 +22,16 @@ import org.springframework.http.ResponseEntity;
 import org.json.*;
 import onetoone.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/share")
 
+@Tag(name = "File Sharing API", description = "Done By Naveen Prabakar")
 public class AccessController{
 
     // To access the list of files
@@ -47,6 +54,15 @@ public class AccessController{
     @Autowired
     private JsonRepository json;
 
+    @Operation(
+            summary = "Share a file with another user",
+            description = "Allows a user to share a file with another user by providing the file name and recipient's email."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "File successfully shared"),
+            @ApiResponse(responseCode = "400", description = "User or file not found, or user doesn't own the file"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/new")
     public ResponseEntity<String> share(@RequestParam("fromUser") String fromUser, @RequestParam ("toUser") String toUser, @RequestParam("docName") String docName ){
 
@@ -86,6 +102,15 @@ public class AccessController{
      * @param fileName
      * @return
      */
+    @Operation(
+            summary = "Get the list of users the file was shared with",
+            description = "Returns a list of users with whom a specific file has been shared."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of users returned successfully"),
+            @ApiResponse(responseCode = "400", description = "User or file not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/sent")
     public ResponseEntity<List<String>> sent(@RequestParam("email") String email, @RequestParam("fileName") String fileName){
 
@@ -107,12 +132,22 @@ public class AccessController{
 
     }
 
+    @Operation(
+            summary = "Get file names the user has access to",
+            description = "Returns a list of files the user has access to."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "File names returned successfully"),
+            @ApiResponse(responseCode = "400", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/filenames/{email}")
     public List<String> getFileNamesByAccessId(@PathVariable String email) {
 
         signEntity user = logs.findByEmail(email);
         return fileAccessService.getFileNamesByAccessId(user.getId());
     }
+
 
 
     private String updateJson(String json, String fileName){
@@ -147,4 +182,4 @@ public class AccessController{
 
 
 
-    }
+}

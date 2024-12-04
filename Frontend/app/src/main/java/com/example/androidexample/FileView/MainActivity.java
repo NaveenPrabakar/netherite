@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                     public void onResponse(String response) {
                         Log.d("File System from Server", response);
                         fileSystem = response;
-                        UserPreferences.saveUserDetails(MainActivity.this, username, email, password, response, "{\"root\": [] }");
+                        UserPreferences.saveUserDetails(MainActivity.this, username, email, password, response, "{\"path\": [\"root\"]}");
                         Intent i = new Intent(MainActivity.this, filesActivity.class);
                         startActivity(i);
                     }

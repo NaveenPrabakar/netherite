@@ -7,13 +7,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import onetoone.Access.*;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
+@Schema(description = "Represents a table that has owners and the files they own.")
 public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,14 @@
 package onetoone.loginAPI;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 import java.util.List;
 import onetoone.signupAPI.signEntity;
@@ -21,9 +30,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/userLogin")
+@Tag(name = "Login API", description = "Done By Yi Yun Khor")
 public class login{
 
     @Autowired
@@ -39,7 +50,18 @@ public class login{
     //chance is for login chance
     int chance= 3;
 
-    //checking if the username and password corret to login
+    /**
+     * Logs in a user by verifying the email and password.
+     *
+     * @param l  The login details containing email and password
+     * @return A map containing the response message and username
+     */
+    @Operation(summary = "Login User", description = "Checks if the username and password are correct")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "ok"),
+            @ApiResponse(responseCode = "404", description = "User Profile does not exist"),
+            @ApiResponse(responseCode = "401", description = "Password is incorrect")
+    })
     @PostMapping("/searchemail")
     public Map<String, String> getUserByUserEmail(@RequestBody logs l ){
         HashMap<String, String> response = new HashMap<>();
@@ -60,18 +82,30 @@ public class login{
             return response;
         }
 
-        response.put("response", "password is incorrect");
+        response.put("response", "Password is incorrect");
         return response;
     }
 
     // Forget password, need the username only (one argument) to find the email
     //send the generate code to front end as json
     //send the generate code to the user email
+    /**
+     * Initiates the password reset process by sending a verification code to the user's email.
+     *
+     * @param l The login details containing the user's email
+     * @return A map with the status of the email sending process and the verification code
+     */
+    @Operation(summary = "Forgot Password", description = "Sends a verification code to the user's email for password reset")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Verification code sent successfully"),
+            @ApiResponse(responseCode = "404", description = "User with this username does not exist"),
+            @ApiResponse(responseCode = "500", description = "Failed to send verification code")
+    })
     @PostMapping("/forgotPassword")
     public Map<String, String> requestPasswordReset(@RequestBody logs l) {
         Map<String, String> response = new HashMap<>();
 
-            signEntity temp = login.findByEmail(l.getemail()); //Annabelle, I fixed your code
+            signEntity temp = login.findByEmail(l.getemail());
 
             if (temp == null) {
                 response.put("response404", "User with this username does not exist");
@@ -101,6 +135,17 @@ public class login{
 
     // Update the newPassword with username, the new password
     //send front end with the responses and success
+    /**
+     * Resets the user's password using their email.
+     *
+     * @param l The login details containing the email and new password
+     * @return A map with the status of the password reset operation
+     */
+    @Operation(summary = "Reset Password", description = "Resets the password for the user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password has been reset successfully."),
+            @ApiResponse(responseCode = "404", description = "User with this username does not exist")
+    })
     @PutMapping("/resetPassword")
     public Map<String, String> resetPassword(@RequestBody logs l) {
 
@@ -134,6 +179,13 @@ public class login{
 //    }
 
     // Helper method to send the verification code via email
+    /**
+     * Helper method to send a verification code to the user's email.
+     *
+     * @param toEmail        The recipient's email address
+     * @param generatedCode  The generated verification code
+     * @return A string indicating the status of the email sending process
+     */
     private String sendVerificationCodeEmail(String toEmail, String generatedCode) {
 
         try {

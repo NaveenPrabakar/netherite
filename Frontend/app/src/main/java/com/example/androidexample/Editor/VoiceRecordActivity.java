@@ -81,7 +81,7 @@ public class VoiceRecordActivity extends AppCompatActivity {
             txthead.setText("");
             Intent intent2 = new Intent(VoiceRecordActivity.this, TextActivity.class);
             intent2.putExtra("CONTENT", content);
-            intent2.putExtra("RECORDED", recorded);
+            intent2.putExtra("RECORDED", "Nothing is recorded");
             startActivity(intent2);
         });
 

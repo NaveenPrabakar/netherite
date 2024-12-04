@@ -1,5 +1,10 @@
 package onetoone;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,10 +39,13 @@ import java.nio.charset.StandardCharsets;
 import org.json.*;
 import onetoone.*;
 import onetoone.Access.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 
 @RestController
 @RequestMapping("/files")
+@Tag(name = "File System API", description = "Done By Naveen Prabakar")
 public class markdown {
 
     //Main directory for the files
@@ -69,6 +77,11 @@ public class markdown {
      * @return A successful response
      */
 
+    @Operation(summary = "Create Files for the user by email", description = "It creates a file and puts the contents in the file. It then saves the file to remote server and the name to the MySQL server")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PostMapping("/upload")
     public HashMap<String, String> store(@RequestParam("fileName") String fileName, @RequestParam("content") String content, @RequestParam("json") String json, @RequestParam("email") String email, @RequestParam("password") String password) {
         HashMap<String, String> response = new HashMap<>();
@@ -123,6 +136,11 @@ public class markdown {
      * @param fileName -- name of file requested
      * @return -- the contents of the file
      */
+    @Operation(summary = "Pulls the file content on request", description = "It gets the contents of a file from the springboot server, and checks with MySQL if file exists")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/pull")
     public String pull(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("fileName") String fileName) {
 
@@ -151,6 +169,11 @@ public class markdown {
         }
     }
 
+    @Operation(summary = "Grabs the id of the file based on owner", description = "Grabs the fileID based on email & fileName from the MySQL server")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/fileid")
     public String pulled(@RequestParam("email") String email, @RequestParam("fileName") String fileName) {
 
@@ -170,6 +193,12 @@ public class markdown {
      * @param password -- password of the user
      * @return the Json path
      */
+
+    @Operation(summary = "Gets the file system (JSON representation)", description = "It grabs the filesystem representation in JSON from the MySQL server")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/system")
     public String system(@RequestParam("email") String email, @RequestParam("password") String password) {
         signEntity user = logs.findByEmail(email);
@@ -186,6 +215,11 @@ public class markdown {
         return path;
     }
 
+    @Operation(summary = "Updates the content of a document", description = "Updates the content of the file stored in the springboot server")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PutMapping("/update")
     public String updates(@RequestParam("email") String email, @RequestParam("json") String json) {
 
@@ -198,6 +232,11 @@ public class markdown {
     }
 
 
+    @Operation(summary = "Deletes everything assoicated with the user", description = "Deletes everything based on userID. Deletes user presence from all tables")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @DeleteMapping("/deleteFile")
     public Map<String, String> delete(@RequestParam("email") String email, @RequestParam("fileName") String fileName, @RequestParam("json") String json) {
         signEntity user = logs.findByEmail(email);
