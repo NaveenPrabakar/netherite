@@ -257,7 +257,7 @@ public class filesActivity extends AppCompatActivity {
         shareToButton.setPadding(20, 10, 20, 10);
         shareToButton.setOnClickListener(view -> {
             EditText toUser = new EditText(this);
-            shareToUser(email.toString(), toUser.getText().toString(), fileName);
+            shareToUser(username.toString(), toUser.getText().toString(), fileName);
         });
         return shareToButton;
     }
