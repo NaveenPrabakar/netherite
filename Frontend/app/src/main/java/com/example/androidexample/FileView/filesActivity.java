@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -204,35 +206,45 @@ public class filesActivity extends AppCompatActivity {
     }
     //Files
     private void createFileLayout(LinearLayout parentLayout, String fileName) {
-        // Create a horizontal LinearLayout for the file
-        LinearLayout fileLayout = new LinearLayout(this);
-        fileLayout.setOrientation(LinearLayout.HORIZONTAL);
-        fileLayout.setPadding(10, 10, 10, 10);
+        // Inflate the XML layout and add it to the parent layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout rootLayout = findViewById(R.id.rootLayout); // Ensure parentLayout exists in your main XML
 
-        // Create a TextView for the file
-        TextView fileTextView = new TextView(this);
+        // Dynamically create a new note item
+        View noteItem = inflater.inflate(R.layout.note_item, rootLayout, false);
+
+        // Get references to the child views
+        TextView fileTextView = noteItem.findViewById(R.id.fileTextView);
+        ImageButton deleteButton = noteItem.findViewById(R.id.deleteButton);
+        ImageButton shareButton = noteItem.findViewById(R.id.shareButton);
+        EditText toUser = noteItem.findViewById(R.id.toUser);
+
+        // Set the note name or data for the TextView
         fileTextView.setText(fileName);
-        fileTextView.setPadding(30, 10, 10, 10);
 
-        // Create buttons and input field
-        Button deleteButton = createFileDeleteButton(fileName);
-        Button shareToButton = createShareToButton(fileName);
-        EditText toUser = createShareToInput();
-
-        // Add onClickListener for file TextView
+        // Set click listeners for each component
         fileTextView.setOnClickListener(view -> {
             Log.d("File Clicked", "File clicked: " + fileName);
-            getFile(fileName);
+            getFile(fileName); // Call your existing method
         });
 
-        // Add components to the file layout
-        fileLayout.addView(fileTextView);
-        fileLayout.addView(deleteButton);
-        fileLayout.addView(shareToButton);
-        fileLayout.addView(toUser);
+        deleteButton.setOnClickListener(view -> {
+            Log.d("File Deleted", "File deleted: " + fileName);
+            try {
+                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), fileName);
+                deleteFile(fileName, jsObj.toString());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-        // Add the file layout to the parent layout
-        parentLayout.addView(fileLayout);
+        shareButton.setOnClickListener(view -> {
+            String username = toUser.getText().toString();
+            shareToUser(email, username, fileName); // Call your existing method
+        });
+
+        // Add the note item to the parent layout
+        rootLayout.addView(noteItem);
     }
 
     private Button createFileDeleteButton(String fileName) {

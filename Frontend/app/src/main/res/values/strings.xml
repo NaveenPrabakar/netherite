@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidExample</string>
+    <string name="share_note">Share Note</string>
+    <string name="delete_note">Delete Note</string>
 </resources>

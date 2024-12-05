@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="?attr/selectableItemBackground"
-    android:gravity="center_vertical">
+    android:padding="12dp"
+    android:background="@drawable/note_item_background"
+    android:gravity="center_vertical"
+    android:elevation="2dp">
 
-    <!-- File TextView -->
+    <!-- File Name Text -->
     <TextView
         android:id="@+id/fileTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="10dp"
+        android:padding="8dp"
         android:text="Note Name"
         android:textSize="16sp"
-        android:textColor="@android:color/black" />
-
-    <!-- Delete Button -->
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Delete"
-        android:textSize="14sp" />
-
-    <!-- Share Button -->
-    <Button
-        android:id="@+id/shareButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Share to"
-        android:textSize="14sp" />
+        android:textColor="@android:color/black"
+        android:background="?attr/selectableItemBackground"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <!-- Username Input -->
     <EditText
@@ -42,7 +29,28 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:hint="Username"
-        android:padding="10dp"
-        android:textSize="14sp" />
+        android:padding="8dp"
+        android:textSize="14sp"
+        android:background="@drawable/edittext_background"
+        android:layout_marginEnd="8dp" />
 
+    <!-- Share Button -->
+    <ImageButton
+        android:id="@+id/shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/ic_share"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/share_note" />
+
+    <!-- Delete Button -->
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/ic_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete_note" />
 </LinearLayout>
