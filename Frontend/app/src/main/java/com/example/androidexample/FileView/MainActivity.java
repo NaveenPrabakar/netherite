@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     private Button settingsButt;
     // the whole ass system full of paths
     private String fileSystem = "{\"root\": [] }";
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
+    private final String URL_FILESYSTEM_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
     private String username = "takulibruh";
     private String email = "takuli@iastate.edu";
     private String password = "admin123!";
@@ -81,12 +81,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void onClick(View view){
                 getFileSystem(email, password);
-                Intent i = new Intent(MainActivity.this, filesActivity.class);
-                i.putExtra("FILESYSTEM", fileSystem);
-                i.putExtra("EMAIL", email);
-                i.putExtra("PASSWORD", password);
-                i.putExtra("USERNAME", username);
-                startActivity(i);
+
             }
         });
 
@@ -158,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
     }
 
     public void getFileSystem(String email, String password){
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
+        Uri.Builder builder = Uri.parse(URL_FILESYSTEM_REQ).buildUpon();
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
         String url = builder.build().toString();
@@ -171,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                     public void onResponse(String response) {
                         Log.d("File System from Server", response);
                         fileSystem = response;
+                        UserPreferences.saveUserDetails(MainActivity.this, username, email, password, response, "{\"path\": [\"root\"]}");
+                        Intent i = new Intent(MainActivity.this, filesActivity.class);
+                        startActivity(i);
                     }
                 },
                 new Response.ErrorListener() {
