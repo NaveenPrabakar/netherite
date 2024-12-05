@@ -1,10 +1,12 @@
 package com.example.androidexample.Editor;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +25,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
@@ -32,6 +33,8 @@ import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.editor.MarkwonEditor;
+import io.noties.markwon.editor.MarkwonEditorTextWatcher;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -55,6 +58,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private EditText AIInputText;
     private TextView AIText;
     private Markwon markwon;
+
     private String content = " ";
     private JSONObject fileSystem;
     private JSONObject filePath;
@@ -67,6 +71,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private String source;
     private String history = "";
     private String aiURL;
+
     BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
     @Override
@@ -105,6 +110,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             throw new RuntimeException(e);
         }
 
+
+
+
         // This is the live chat button
         liveChatButt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,9 +124,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         });
 
 
-        markwon = Markwon.create(this);
-
-
+        markwon = Markwon.builder(this).build();
+        MarkwonEditor edMarkwon = MarkwonEditor.create(markwon);
 
         textWatcher = new TextWatcher() {
             @Override
@@ -127,7 +134,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-
                 content = charSequence.toString();
                 updateParsedOutput(content);
                 Log.d("Text changed", content);
@@ -138,9 +144,34 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             @Override
             public void afterTextChanged(Editable editable) {
             }
+
         };
+
+
         editor.addTextChangedListener(textWatcher);
-        mainText.setAlpha(0f);
+        editor.addTextChangedListener(MarkwonEditorTextWatcher.withProcess(edMarkwon));
+        editor.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                mainText.setAlpha(0);
+                editor.setAlpha(1);
+                Log.d("FocusListener", "Editor is in focus");
+            } else {
+                mainText.setAlpha(1);
+                editor.setAlpha(0);
+                Log.d("FocusListener", "Editor lost focus");
+            }
+        });
+
+        mainText.setFocusable(false);
+        mainText.setClickable(true);
+        mainText.setTextIsSelectable(false);
+        mainText.setOnClickListener(v -> {
+            // When mainText is clicked, focus is moved to editor
+            editor.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editor, InputMethodManager.SHOW_IMPLICIT);
+            Log.d("FocusListener", "Focus redirected to editor");
+        });
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -250,7 +281,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 startActivity(intent);
             }
         });
-
     }
 
     /**
@@ -271,6 +301,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             }
         }
         markwon.setMarkdown(mainText, contentParsed);
+
         return contentParsed;
     }
 

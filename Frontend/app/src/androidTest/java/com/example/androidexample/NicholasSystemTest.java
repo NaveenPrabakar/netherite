@@ -33,7 +33,7 @@ import com.example.androidexample.FileView.filesActivity;
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ExampleInstrumentedTest {
+public class NicholasSystemTest {
     @Rule
     public ActivityScenarioRule<filesActivity> activityScenarioRule = new ActivityScenarioRule<>(filesActivity.class);
 
