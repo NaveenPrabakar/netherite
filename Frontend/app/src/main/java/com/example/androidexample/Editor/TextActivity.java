@@ -214,7 +214,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void appendRecordedContent(String recordedContent) {
         if (!recordedContent.isEmpty()) {
-            editor.append(content + "   \n   \n" + recordedContent);
+            editor.append("   \n   \n" + recordedContent);
         }
     }
 

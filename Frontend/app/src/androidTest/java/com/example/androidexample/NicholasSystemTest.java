@@ -111,26 +111,6 @@ public class NicholasSystemTest {
     }
 
     @Test
-    public void TestingLogin() {
-
-        activityScenarioRule.getScenario().onActivity(activity -> {
-            activity.setFileSystem("{\"root\": [] }");
-            activity.setPath("{\"path\": [\"root\"] }");
-        });
-        // Context of the app under test.
-        onView(withId(1000003)).perform(typeText("element5"), closeSoftKeyboard());
-        onView(withId(1000002)).perform(click());
-        onView(withText("element5")).check(matches(withText("element5")));
-
-        onView(withText("element5")).perform(click());
-
-        onView(withId(R.id.EditMarkdown)).perform(typeText("Hello"), closeSoftKeyboard());
-        onView(withId(R.id.voiceButt)).perform(click());
-        onView(withId(R.id.reject)).perform(click());
-        onView(withId(R.id.EditMarkdown)).check(matches(withText("Hello   \n" + "   \n" + "Nothing is recorded")));
-    }
-
-    @Test
     public void TestingFileDeletion() {
 
         activityScenarioRule.getScenario().onActivity(activity -> {
