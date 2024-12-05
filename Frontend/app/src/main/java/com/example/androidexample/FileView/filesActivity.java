@@ -216,8 +216,9 @@ public class filesActivity extends AppCompatActivity {
 
         // Create buttons and input field
         Button deleteButton = createFileDeleteButton(fileName);
-        Button shareToButton = createShareToButton(fileName);
         EditText toUser = createShareToInput();
+        Button shareToButton = createShareToButton(fileName, toUser);
+
 
         // Add onClickListener for file TextView
         fileTextView.setOnClickListener(view -> {
@@ -251,13 +252,12 @@ public class filesActivity extends AppCompatActivity {
         return deleteButton;
     }
 
-    private Button createShareToButton(String fileName) {
+    private Button createShareToButton(String fileName, EditText toUser) {
         Button shareToButton = new Button(this);
         shareToButton.setText("Share to");
         shareToButton.setPadding(20, 10, 20, 10);
         shareToButton.setOnClickListener(view -> {
-            EditText toUser = new EditText(this);
-            shareToUser(username.toString(), toUser.getText().toString(), fileName);
+            shareToUser(username, toUser.getText().toString(), fileName);
         });
         return shareToButton;
     }
@@ -498,6 +498,7 @@ public class filesActivity extends AppCompatActivity {
         builder.appendQueryParameter("toUser", toUser);
         builder.appendQueryParameter("docName", docName);
         String url = builder.build().toString();
+        Log.d("URL", url);
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
