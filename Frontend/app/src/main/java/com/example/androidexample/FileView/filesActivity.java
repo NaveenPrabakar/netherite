@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
+import com.example.androidexample.Editor.VoiceRecordActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
@@ -188,10 +191,74 @@ public class filesActivity extends AppCompatActivity {
                 }
             });
 
+            addNavigationBar();
+
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * Helper function to dynamically add a navigation bar at the bottom of the screen.
+     */
+    private void addNavigationBar() {
+        // Create a new LinearLayout for the navigation bar
+        LinearLayout rootLayout = findViewById(R.id.navbar);
+        LinearLayout navBarLayout = new LinearLayout(this);
+        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
+        navBarLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        navBarLayout.setPadding(8, 8, 8, 8);
+        navBarLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+        navBarLayout.setElevation(4); // Add shadow for elevation
+        navBarLayout.setGravity(Gravity.CENTER);
+
+        // Create navigation buttons
+        ImageButton micButton = createNavButton(R.drawable.mic, "Mic");
+
+        micButton.setOnClickListener(view -> {
+            Intent intent = new Intent(filesActivity.this, VoiceRecordActivity.class);
+            startActivity(intent);
+        });
+        ImageButton homeButton = createNavButton(R.drawable.home, "Home");
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(filesActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
+        ImageButton editButton = createNavButton(R.drawable.navbar_create_note, "Edit");
+        editButton.setOnClickListener(view -> {
+            Intent intent = new Intent(filesActivity.this, TextActivity.class);
+            startActivity(intent);
+        });
+
+        // Add buttons to the navigation bar layout
+        navBarLayout.addView(micButton);
+        navBarLayout.addView(homeButton);
+        navBarLayout.addView(editButton);
+
+        // Add the navigation bar to the parent layout
+        rootLayout.addView(navBarLayout);
+    }
+
+    /**
+     * Helper function to create individual navigation buttons.
+     */
+    private ImageButton createNavButton(int iconResId, String contentDescription) {
+        ImageButton navButton = new ImageButton(this);
+        navButton.setLayoutParams(new LinearLayout.LayoutParams(
+                0, // Equal spacing
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1 // Weight for equal distribution
+        ));
+        navButton.setImageResource(iconResId);
+        //navButton.setBackgroundResource(android.R.attr.selectableItemBackground); // Touch feedback
+        navButton.setContentDescription(contentDescription);
+        navButton.setPadding(8, 8, 8, 8); // Add padding for spacing
+        navButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // Adjust scaling
+        return navButton;
     }
 
     private void createFolderWithFiles(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException {
@@ -284,28 +351,42 @@ public class filesActivity extends AppCompatActivity {
 
     //Folders
     private void createFolderLayout(LinearLayout parentLayout, JSONObject nestedObject) {
+        // Inflate the folder_item.xml layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View folderView = inflater.inflate(R.layout.folder_item, parentLayout, false);
+
+        // Find components inside folder_item.xml
+        TextView folderTextView = folderView.findViewById(R.id.folderTextView);
+        ImageButton deleteButton = folderView.findViewById(R.id.deleteButton);
+
+        // Set folder name
         String folderName = nestedObject.keys().next();
-        LinearLayout folderLayout = new LinearLayout(this);
-        folderLayout.setOrientation(LinearLayout.HORIZONTAL);
-        folderLayout.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-        folderLayout.setPadding(10, 10, 10, 10);
-
-        // Create a TextView for the folder
-        TextView folderTextView = new TextView(this);
         folderTextView.setText(folderName);
-        folderTextView.setTextSize(18);
-        folderTextView.setPadding(10, 10, 10, 10);
 
-        // Create a Delete Button for the folder
-        Button deleteButton = createFolderDeleteButton(nestedObject);
+        // Set OnClickListener for folder TextView to handle navigation
+        folderTextView.setOnClickListener(view ->
+                moveToInnerFolder(parentLayout, nestedObject, folderName)
+        );
 
-        // Add components to the folder layout
-        folderLayout.addView(folderTextView);
-        folderLayout.addView(deleteButton);
-        parentLayout.addView(folderLayout);
+        // Set OnClickListener for delete button to handle deletion
+        deleteButton.setOnClickListener(view -> {
+            // Handle folder deletion logic here
+            deleteFolder(nestedObject);
+        });
 
-        // Set OnClickListener to toggle files in the folder
-        folderTextView.setOnClickListener(view -> moveToInnerFolder(parentLayout, nestedObject, folderName));
+        // Add the inflated folder view to the parent layout
+        parentLayout.addView(folderView);
+
+    }
+
+    private void deleteFolder(JSONObject nestedObject) {
+        try {
+            JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), nestedObject.toString());
+            setFileSystem(jsObj.toString());
+            newfolderUpdate(fileSystem);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Button createFolderDeleteButton(JSONObject nestedObject) {

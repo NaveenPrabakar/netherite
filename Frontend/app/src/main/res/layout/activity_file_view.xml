@@ -41,11 +41,27 @@
             android:layout_height="wrap_content"
             android:text="AutoIndex" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/rootLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/rootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:layout_gravity="bottom"
+            >
+        </LinearLayout>
+    </FrameLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

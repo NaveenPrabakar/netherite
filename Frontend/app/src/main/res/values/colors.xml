@@ -5,4 +5,7 @@
     <color name="light_teal">#D6F4F5</color>
     <color name="teal_primary">#0288D1</color>
     <color name="teal_secondary">#039BE5</color>
+    <color name="teal_50">#E0F7FA</color> <!-- Soft teal for the background -->
+    <color name="teal_200">#80DEEA</color> <!-- Ripple effect color -->
+    <color name="teal_700">#00796B</color> <!-- Text and icon color -->
 </resources>
