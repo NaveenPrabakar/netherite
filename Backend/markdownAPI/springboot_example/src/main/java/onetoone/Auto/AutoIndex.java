@@ -18,7 +18,9 @@ public class AutoIndex {
 
 
     @PostMapping("/auto")
-    public String callGeminiApi(@RequestParam("prompt") String prompt) {
+    public String callGeminiApi(@RequestParam("email") String email, @RequestParam("prompt") String prompt) {
+
+        prompt = "Organize this (KEEP THE STRUCTURE, the {}, represent a folder, the [] represent files in the folder. You are not allowed to change any of the names. Move the files to folders that logically make sense. Return me only the output and the output should be in this format. Return as String json):" + prompt.replace("\"", "");
         try {
 
             String jsonPayload = """
