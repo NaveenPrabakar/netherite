@@ -4,12 +4,19 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.volley.Request;
 import com.example.androidexample.Editor.TextActivity;
@@ -79,6 +86,8 @@ public class OCRActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.imageSelView);
         selectBtn = findViewById(R.id.selectBtn);
+
+        addNavigationBar(this, R.layout.activity_image_upload);
 
         // select image from gallery
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -168,5 +177,74 @@ public class OCRActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void addNavigationBar(Activity activity, int layoutResId) {
+        // Inflate the provided layout
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        View mainContent = inflater.inflate(layoutResId, null);
+
+        // Create a FrameLayout as the root container
+        FrameLayout rootLayout = new FrameLayout(activity);
+        rootLayout.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        ));
+
+        // Add the main content to the root layout
+        rootLayout.addView(mainContent);
+
+        // Create the navigation bar
+        LinearLayout navBarLayout = new LinearLayout(activity);
+        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
+        FrameLayout.LayoutParams navBarParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+        );
+        navBarParams.gravity = Gravity.BOTTOM; // Align to bottom
+        navBarLayout.setLayoutParams(navBarParams);
+        navBarLayout.setPadding(8, 8, 8, 8);
+        navBarLayout.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
+        navBarLayout.setElevation(4); // Shadow/elevation for the nav bar
+        navBarLayout.setGravity(Gravity.CENTER);
+
+        // Add navigation buttons
+        ImageButton micButton = createNavButton(activity, R.drawable.mic, "Mic");
+        ImageButton homeButton = createNavButton(activity, R.drawable.home, "Home");
+        ImageButton editButton = createNavButton(activity, R.drawable.navbar_create_note, "Edit");
+
+        navBarLayout.addView(micButton);
+        navBarLayout.addView(homeButton);
+        navBarLayout.addView(editButton);
+
+        // Add the nav bar to the root layout
+        rootLayout.addView(navBarLayout);
+
+        // Set the root layout as the content view
+        activity.setContentView(rootLayout);
+    }
+
+
+    /**
+     * Helper function to create individual navigation buttons.
+     *
+     * @param activity           The current activity context.
+     * @param iconResId          The drawable resource ID for the icon.
+     * @param contentDescription A description for accessibility.
+     * @return The created ImageButton.
+     */
+    private static ImageButton createNavButton(Activity activity, int iconResId, String contentDescription) {
+        ImageButton navButton = new ImageButton(activity);
+        navButton.setLayoutParams(new LinearLayout.LayoutParams(
+                0, // Equal spacing
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1 // Weight for equal distribution
+        ));
+        navButton.setImageResource(iconResId);
+        //navButton.setBackgroundResource(android.R.attr.selectableItemBackgroundBorderless); // Touch feedback
+        navButton.setContentDescription(contentDescription);
+        navButton.setPadding(8, 8, 8, 8); // Add padding for spacing
+        navButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // Adjust scaling
+        return navButton;
     }
 }
