@@ -3,14 +3,20 @@ package onetoone.Recent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import onetoone.*;
 import onetoone.loginAPI.*;
 import onetoone.signupAPI.*;
+import java.util.ArrayList;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 @Service
+@RestController
 public class RecentController {
 
     @Autowired
@@ -50,5 +56,19 @@ public class RecentController {
 
         RecentActivity recent = new RecentActivity(fileEntity, user, LocalDateTime.now());
         recentRepository.save(recent);
+    }
+
+    @GetMapping("recent")
+    public ResponseEntity<List<String>> names(@RequestParam("email") String email){
+        signEntity user = loginRepository.findByEmail(email);
+
+        List<RecentActivity> userRecents = recentRepository.findRecentByUserId(user.getId());
+        List<String> name = new ArrayList<>();
+
+        for(RecentActivity r : userRecents){
+            name.add(r.getFileEntity().getName());
+        }
+
+        return ResponseEntity.ok(name);
     }
 }
