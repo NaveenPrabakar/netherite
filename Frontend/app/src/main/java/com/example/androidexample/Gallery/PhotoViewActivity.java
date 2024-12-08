@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -63,6 +64,9 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
         // Needs to wait for image to fully load though.
         loadImage();
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_photoview);
 
         goBackButt.setOnClickListener(new View.OnClickListener() {
             @Override

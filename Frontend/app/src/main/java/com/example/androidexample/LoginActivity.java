@@ -53,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.login_password_edt);
         err_msg = findViewById(R.id.err_msg);
 
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_login);
+
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
         forgetPassword = findViewById(R.id.forget_password);

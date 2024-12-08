@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -37,6 +38,8 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         msgResponse = findViewById(R.id.err_msg);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_settings);
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {

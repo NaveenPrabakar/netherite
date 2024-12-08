@@ -23,6 +23,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 import com.android.volley.Request;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.MultipartAudioRequest;
@@ -60,6 +61,9 @@ public class VoiceRecordActivity extends AppCompatActivity {
 
         accept = findViewById(R.id.accept);
         reject = findViewById(R.id.reject);
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_voice_record);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

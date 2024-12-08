@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -49,6 +50,8 @@ public class ChangeEmailActivity extends AppCompatActivity {
         n_email = findViewById(R.id.new_email_edt);
 
         msgResponse = findViewById(R.id.err_msg);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_changeemail);
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {

@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -44,6 +45,9 @@ public class ExterminateUserActivity extends AppCompatActivity {
         password = findViewById(R.id.password_edt);
         email = findViewById(R.id.email_edt);
         msgResponse = findViewById(R.id.err_msg);
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_exterminateuser);
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {

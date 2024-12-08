@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager2;
@@ -85,6 +86,9 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
                 aiUrl = extras.getString("AIWSURL");
             }
         }
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_chat);
 
         WebSocketManager2.getInstance().connectWebSocket(aiUrl);
         WebSocketManager2.getInstance().setWebSocketListener(ChatActivity.this);

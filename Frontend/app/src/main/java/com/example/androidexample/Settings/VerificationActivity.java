@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 
 public class VerificationActivity extends AppCompatActivity {
@@ -40,6 +41,9 @@ public class VerificationActivity extends AppCompatActivity {
 
         verification = findViewById(R.id.verification_code);
         msgResponse = findViewById(R.id.err_msg);
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_verification);
 
         Intent intent = getIntent();
         verificationCode = intent.getStringExtra("verificationCode");

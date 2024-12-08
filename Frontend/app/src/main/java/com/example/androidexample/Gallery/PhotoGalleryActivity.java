@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,6 +69,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 Log.d("password",password);
             }
         }
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_photogallery);
+
 
         backButt = findViewById(R.id.backButt);
         backButt.setOnClickListener(new View.OnClickListener() {

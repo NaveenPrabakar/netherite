@@ -53,6 +53,9 @@ public class SignupActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signup_signup_btn);  // link to signup button in the Signup activity XML
         err_msg = findViewById(R.id.err_msg);
 
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_signup);
+
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

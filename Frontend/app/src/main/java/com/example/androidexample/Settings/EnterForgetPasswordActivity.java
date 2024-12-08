@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -49,6 +50,9 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
         email = findViewById(R.id.login_email_edt);
         n_password = findViewById(R.id.new_password_edt);
         msgResponse = findViewById(R.id.err_msg);
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_enter_forget_password);
 
         Intent intent = getIntent();
         if (intent != null) {

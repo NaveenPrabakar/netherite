@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.Editor.VoiceRecordActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
@@ -69,6 +70,9 @@ public class filesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_file_view);
 
         initializeVariables();
         setupUIComponents();
@@ -191,7 +195,7 @@ public class filesActivity extends AppCompatActivity {
                 }
             });
 
-            addNavigationBar();
+            //addNavigationBar();
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
