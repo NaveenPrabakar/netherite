@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.Gallery.PhotoGalleryActivity;
 import com.example.androidexample.LoginActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Settings.SettingsActivity;
 import com.example.androidexample.SignupActivity;
@@ -82,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         password = UserPreferences.getPassword(this);
         emailDisplay.setText(email);
         passwordDisplay.setText(password);
-
-        addNavigationBar(this, R.layout.activity_main);
 
         FileView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
                 startActivity(i);
             }
         });
+
+        //NavigationBar navigationBar = new NavigationBar(this);
+        //navigationBar.addNavigationBar(R.layout.activity_main);
     }
 
     public void getFileSystem(String email, String password){
