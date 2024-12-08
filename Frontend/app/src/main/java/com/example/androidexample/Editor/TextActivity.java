@@ -39,6 +39,7 @@ import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
+import com.example.androidexample.NavigationBar;
 
 import io.noties.markwon.Markwon;
 
@@ -114,7 +115,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             throw new RuntimeException(e);
         }
 
-        addNavigationBar(this, R.layout.activity_file);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_file);
+
 
         // This is the live chat button
         liveChatButt.setOnClickListener(new View.OnClickListener() {
