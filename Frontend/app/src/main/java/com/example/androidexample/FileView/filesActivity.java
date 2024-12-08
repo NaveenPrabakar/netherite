@@ -36,7 +36,7 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
     private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
     private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
-    private final String URL_AUTOINDEX = "";
+    private final String URL_AUTOINDEX = "http://coms-3090-068.class.las.iastate.edu:8080/auto";
 
     private String fileSystem =  "{\"root\": []}";
     private String path = "{\"path\": [\"root\"]}";
@@ -711,21 +711,20 @@ public class filesActivity extends AppCompatActivity {
 
     private void autoIndexAPI(String fileSys){
         Uri.Builder builder = Uri.parse(URL_AUTOINDEX).buildUpon();
-        builder.appendQueryParameter("json", fileSys);
+        builder.appendQueryParameter("prompt", fileSys);
         builder.appendQueryParameter("email", email);
         String url = builder.build().toString();
 
         StringRequest stringRequest = new StringRequest(
-                Request.Method.PUT,
+                Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         setFileSystem(response);
-                        refreshLayout();
                         newfolderUpdate(fileSystem);
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "New System Updated", Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
