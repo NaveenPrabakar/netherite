@@ -20,7 +20,7 @@ public class AutoIndex {
     @PostMapping("/auto")
     public String callGeminiApi(@RequestParam("email") String email, @RequestParam("prompt") String prompt) {
 
-        prompt = "Organize this (KEEP THE STRUCTURE, the {}, represent a folder, the [] represent files in the folder. You are not allowed to change any of the names. Move the files to folders that logically make sense. Return me only the output and the output should be in this format. Return as String json):" + prompt.replace("\"", "");
+        prompt = "Organize this (KEEP THE STRUCTURE, the {}, represent a folder, the [] represent files in the folder. You are not allowed to change any of the names or touch anything in the share array. Move the files to folders that logically make sense. Return me only the output and the output should be in this format. Return as String json):" + prompt.replace("\"", "");
         try {
 
             String jsonPayload = """
@@ -51,7 +51,13 @@ public class AutoIndex {
                 JsonNode rootNode = objectMapper.readTree(response.body());
                 JsonNode textNode = rootNode.at("/candidates/0/content/parts/0/text");
 
-                return textNode.asText();
+                String answer = textNode.asText().substring(8, textNode.asText().length()-4);
+
+
+
+                System.out.println(answer);
+
+                return answer;
 
 
             } else {
