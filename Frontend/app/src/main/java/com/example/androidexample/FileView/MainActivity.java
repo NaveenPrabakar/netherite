@@ -1,6 +1,7 @@
 package com.example.androidexample.FileView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -224,27 +225,32 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
      * @param activity    The current activity where the navigation bar is to be added.
      * @param layoutResId The layout resource ID of the main content layout. The root layout of the activity (should be a FrameLayout or similar).
      */
-    public static void addNavigationBar(Activity activity, int layoutResId) {
+    public void addNavigationBar(Activity activity, int layoutResId) {
         // Inflate the provided layout
         LayoutInflater inflater = LayoutInflater.from(activity);
         View mainContent = inflater.inflate(layoutResId, null);
 
         // Create a FrameLayout as the root container
-        FrameLayout rootLayout = new FrameLayout(activity);
-        rootLayout.setLayoutParams(new FrameLayout.LayoutParams(
+        CoordinatorLayout rootLayout = new CoordinatorLayout(activity);
+        rootLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
         ));
 
         // Add the main content to the root layout
-        rootLayout.addView(mainContent);
+        CoordinatorLayout.LayoutParams contentParams = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.MATCH_PARENT
+        );
+        contentParams.bottomMargin = (int) activity.getResources().getDimension(R.dimen.nav_bar_height); // Reserve space for nav bar
+        rootLayout.addView(mainContent, contentParams);
 
         // Create the navigation bar
         LinearLayout navBarLayout = new LinearLayout(activity);
         navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
-        FrameLayout.LayoutParams navBarParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
+        CoordinatorLayout.LayoutParams navBarParams = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                (int) activity.getResources().getDimension(R.dimen.nav_bar_height)
         );
         navBarParams.gravity = Gravity.BOTTOM; // Align to bottom
         navBarLayout.setLayoutParams(navBarParams);
@@ -259,8 +265,18 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
         ImageButton editButton = createNavButton(activity, R.drawable.navbar_create_note, "Edit");
 
         navBarLayout.addView(micButton);
+
         navBarLayout.addView(homeButton);
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
+
         navBarLayout.addView(editButton);
+        editButton.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, TextActivity.class);
+            startActivity(intent);
+        });
 
         // Add the nav bar to the root layout
         rootLayout.addView(navBarLayout);

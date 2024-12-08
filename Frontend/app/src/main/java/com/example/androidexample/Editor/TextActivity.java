@@ -1,18 +1,26 @@
 package com.example.androidexample.Editor;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.FileView.OCRActivity;
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
@@ -104,6 +113,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
+        addNavigationBar(this, R.layout.activity_file);
 
         // This is the live chat button
         liveChatButt.setOnClickListener(new View.OnClickListener() {
@@ -592,4 +603,85 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         Log.e("WebSocket", "Error", ex);
     }
 
+    public void addNavigationBar(Activity activity, int layoutResId) {
+        // Inflate the provided layout
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        View mainContent = inflater.inflate(layoutResId, null);
+
+        // Create a FrameLayout as the root container
+        CoordinatorLayout rootLayout = new CoordinatorLayout(activity);
+        rootLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        ));
+
+        // Add the main content to the root layout
+        CoordinatorLayout.LayoutParams contentParams = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.MATCH_PARENT
+        );
+        contentParams.bottomMargin = (int) activity.getResources().getDimension(R.dimen.nav_bar_height); // Reserve space for nav bar
+        rootLayout.addView(mainContent, contentParams);
+
+        // Create the navigation bar
+        LinearLayout navBarLayout = new LinearLayout(activity);
+        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
+        CoordinatorLayout.LayoutParams navBarParams = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                (int) activity.getResources().getDimension(R.dimen.nav_bar_height)
+        );
+        navBarParams.gravity = Gravity.BOTTOM; // Align to bottom
+        navBarLayout.setLayoutParams(navBarParams);
+        navBarLayout.setPadding(8, 8, 8, 8);
+        navBarLayout.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
+        navBarLayout.setElevation(4); // Shadow/elevation for the nav bar
+        navBarLayout.setGravity(Gravity.CENTER);
+
+        // Add navigation buttons
+        ImageButton micButton = createNavButton(activity, R.drawable.mic, "Mic");
+        ImageButton homeButton = createNavButton(activity, R.drawable.home, "Home");
+        ImageButton editButton = createNavButton(activity, R.drawable.navbar_create_note, "Edit");
+
+        navBarLayout.addView(micButton);
+        navBarLayout.addView(homeButton);
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(TextActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
+        navBarLayout.addView(editButton);
+        editButton.setOnClickListener(view -> {
+            Intent intent = new Intent(TextActivity.this, TextActivity.class);
+            startActivity(intent);
+        });
+
+        // Add the nav bar to the root layout
+        rootLayout.addView(navBarLayout);
+
+        // Set the root layout as the content view
+        activity.setContentView(rootLayout);
+    }
+
+
+    /**
+     * Helper function to create individual navigation buttons.
+     *
+     * @param activity           The current activity context.
+     * @param iconResId          The drawable resource ID for the icon.
+     * @param contentDescription A description for accessibility.
+     * @return The created ImageButton.
+     */
+    private static ImageButton createNavButton(Activity activity, int iconResId, String contentDescription) {
+        ImageButton navButton = new ImageButton(activity);
+        navButton.setLayoutParams(new LinearLayout.LayoutParams(
+                0, // Equal spacing
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1 // Weight for equal distribution
+        ));
+        navButton.setImageResource(iconResId);
+        //navButton.setBackgroundResource(android.R.attr.selectableItemBackgroundBorderless); // Touch feedback
+        navButton.setContentDescription(contentDescription);
+        navButton.setPadding(8, 8, 8, 8); // Add padding for spacing
+        navButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // Adjust scaling
+        return navButton;
+    }
 }

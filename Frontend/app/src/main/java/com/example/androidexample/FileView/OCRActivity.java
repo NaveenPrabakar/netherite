@@ -179,7 +179,7 @@ public class OCRActivity extends AppCompatActivity {
         return null;
     }
 
-    public static void addNavigationBar(Activity activity, int layoutResId) {
+    public void addNavigationBar(Activity activity, int layoutResId) {
         // Inflate the provided layout
         LayoutInflater inflater = LayoutInflater.from(activity);
         View mainContent = inflater.inflate(layoutResId, null);
@@ -215,7 +215,15 @@ public class OCRActivity extends AppCompatActivity {
 
         navBarLayout.addView(micButton);
         navBarLayout.addView(homeButton);
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(OCRActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
         navBarLayout.addView(editButton);
+        editButton.setOnClickListener(view -> {
+            Intent intent = new Intent(OCRActivity.this, TextActivity.class);
+            startActivity(intent);
+        });
 
         // Add the nav bar to the root layout
         rootLayout.addView(navBarLayout);
