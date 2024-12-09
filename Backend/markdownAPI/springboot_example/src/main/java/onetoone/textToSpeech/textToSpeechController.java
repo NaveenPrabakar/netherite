@@ -1,76 +1,37 @@
 package onetoone.textToSpeech;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 //import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import onetoone.textToSpeech.*;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus; // Import for HttpStatus
 import org.springframework.http.ResponseEntity; // Import for ResponseEntity
 import org.springframework.web.bind.annotation.RestController; // Ensure you have this if using Spring annotations
 //import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.http.HttpHeaders;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.Arrays;
 
 import onetoone.signupAPI.signRepository;//need to find the id of user
-import onetoone.signupAPI.signEntity;
-import onetoone.textToSpeech.textToSpeechRepository;
-import onetoone.textToSpeech.textToSpeechEntity;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.io.IOException;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-
-import java.util.HashMap;
-import java.util.Map;
 
 //for the open aiapi
-import java.nio.charset.StandardCharsets;
 import org.springframework.web.client.RestTemplate; // For RestTemplate
-import org.json.JSONObject; // For JSONObject
-import org.json.JSONArray; // For JSONArray
 import org.springframework.http.HttpEntity; // Use Spring's HttpEntity
-import org.springframework.http.HttpMethod;
 
 //for the text to speech
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 
 
 @RestController
@@ -197,8 +158,12 @@ public class textToSpeechController {
     })
 
     @PostMapping("/synthesizer")
-    public ResponseEntity<byte[]> convertTextToAudio(@RequestParam("text") String textContent) {
+    public ResponseEntity<byte[]> convertTextToAudio(@RequestBody Text t) {
         try {
+
+            String textContent = t.getText();
+
+            System.out.println(textContent);
             // Step 1: Escape the text to ensure valid JSON
             textContent = textContent.replace("\"", "\\\""); // Escape double quotes
 
@@ -228,15 +193,15 @@ public class textToSpeechController {
             e.printStackTrace();
             return ResponseEntity.status(500).body(("Unexpected error: " + e.getMessage()).getBytes());
         }
+
     }
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + openAiApiKey);
+        headers.set("Authorization", "Bearer " + openAiApiKey);  // Add your actual key
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
-
 }
 
 

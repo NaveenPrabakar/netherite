@@ -46,7 +46,7 @@ public class textToSpeechEntity{
     }
 
     public void setTextToSpeechUserId(Long textToSpeechUserId) {
-        textToSpeechUserId = textToSpeechUserId;
+        this.textToSpeechUserId = textToSpeechUserId;
     }
 
 
