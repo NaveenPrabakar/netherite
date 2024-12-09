@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void makeJsonObjReq(String email, String password) {
+        Log.d("WORKS", "WTF");
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("email", email);
@@ -132,6 +133,10 @@ public class LoginActivity extends AppCompatActivity {
                             if (resp.getString("response").equals("ok")){
                                 getFileSystem(email, password, resp.getString("userName"));
                             }
+                            else{
+                                err_msg.setText(resp.getString("response"));
+                            }
+
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -178,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("File System from Server", response);
-                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"root\": [] }");
+                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"path\": [\"root\"]}");
                         Intent i = new Intent(LoginActivity.this, filesActivity.class);
                         startActivity(i);
                     }

@@ -28,7 +28,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -42,6 +47,9 @@ public class TesseractTest {
 
     @Autowired
     private ImageRepository im;
+
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAXgDC5yw5RKrNo4tyXeCIfGGstAgzId4c";
+    private static final String prompt = "Convert this image to text and replicate the format best as possible";
 
     private ArrayList<String> types = new ArrayList<>(Arrays.asList("jpeg", "jpg", "png", "gif"));
 
@@ -70,7 +78,7 @@ public class TesseractTest {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
+        tesseract.setDatapath("/usr/share/tesseract/tessdata");
 
         tesseract.setLanguage(language.substring(0,3));
         tesseract.setPageSegMode(3);
@@ -81,13 +89,18 @@ public class TesseractTest {
         try {
             String originalFilename = image.getOriginalFilename();
 
+//            if (originalFilename == null) {
+//                return ResponseEntity.badRequest().body("Invalid file name.");
+//            }
 
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            if(!extension.equals("jpeg") && !extension.equals("jeg")){
-                // do some other method
+            if(!extension.equals("jpeg") && !extension.equals("jpg")){
+                return ResponseEntity.ok(callGeminiApiWithImage(image));
             }
+
+
             Path tempFile = Files.createTempFile("ocr-", extension);
             image.transferTo(tempFile.toFile());
 
@@ -195,7 +208,53 @@ public class TesseractTest {
         return ResponseEntity.ok(imageNames);
     }
 
+    private String callGeminiApiWithImage(MultipartFile image) {
+        try {
+            // Convert the image to base64
+            byte[] imageBytes = image.getBytes();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
+            // Prepare the JSON payload
+            String jsonPayload = String.format("""
+                {
+                    "contents": [{
+                        "parts": [
+                            {"text": "%s"},
+                            {
+                                "inline_data": {
+                                    "mime_type": "image/jpeg",
+                                    "data": "%s"
+                                }
+                            }
+                        ]
+                    }]
+                }
+                """, prompt, base64Image);
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(response.body());
+                JsonNode textNode = rootNode.at("/candidates/0/content/parts/0/text");
+
+                return textNode.asText();
+
+            } else {
+                return "Error: Failed to fetch content. Status Code: " + response.statusCode();
+            }
+
+        } catch (Exception e) {
+            return "Error occurred: " + e.getMessage();
+        }
+    }
 }
 
 
