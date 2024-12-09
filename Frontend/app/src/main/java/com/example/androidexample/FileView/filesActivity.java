@@ -3,6 +3,8 @@ package com.example.androidexample.FileView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,15 +27,27 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.Editor.VoiceRecordActivity;
+import com.example.androidexample.Gallery.GalleryPopulator;
+import com.example.androidexample.Gallery.PhotoGalleryActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
 
 public class filesActivity extends AppCompatActivity {
     private final String URL_STRING_PUSH = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
@@ -53,11 +69,13 @@ public class filesActivity extends AppCompatActivity {
     private String username;
     private String password;
 
+    private List<String> recentFiles;
+    private RecyclerView recentFilesView;
+
     private Button goback;
     private Button OCRButt;
     private Button AutoIndex;
     private LinearLayout rootLayout;
-
     private LinearLayout fileLayout;
 
     /**
@@ -97,6 +115,8 @@ public class filesActivity extends AppCompatActivity {
         rootLayout = findViewById(R.id.rootLayout);
         //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
+        recentFilesView = findViewById(R.id.recentFilesView);
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         goback.setOnClickListener(view -> handleGoBack());
         //OCRButt.setOnClickListener(view -> navigateToOCR());
@@ -127,6 +147,58 @@ public class filesActivity extends AppCompatActivity {
     private void navigateToOCR() {
         Intent intent = new Intent(filesActivity.this, OCRActivity.class);
         startActivity(intent);
+    }
+
+    private void getRecentFiles()
+    {
+        /*
+         * Creates a new HTTP client so that I can get the list of photo names from 'getPhotoList'.
+         */
+        OkHttpClient client = new OkHttpClient();
+
+        String filesUrl = UserPreferences.getUrlRecentFiles();
+        filesUrl += "/" + email;
+
+        Log.d("URLRecent", filesUrl);
+
+        /*
+         * It's a request to access the client url.
+         */
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(filesUrl).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(filesActivity.this, "Failed File Fetch", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    String listOfNames = response.body().string();
+                    Log.d("List of Names", listOfNames);
+                    Gson gson = new Gson();
+
+                    // Reflection Library
+                    Type classType = new TypeToken<List<String>>(){}.getType();
+                    recentFiles = gson.fromJson(listOfNames, classType);
+
+                    Log.d("Recent Files", recentFiles.toString());
+
+                    /*
+                     * Populate the (RecyclerView) galleryView with the list of photos, using 'GalleryPopulator'.
+                     */
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        RecentFilePopulator recentlyViewed = new RecentFilePopulator(recentFiles, filesActivity.this, email, password, username);
+                        recentFilesView.setAdapter(recentlyViewed);
+                    });
+                }
+            }
+        });
     }
 
     private void newButtonFunctionality(EditText newFolderName, String type){
@@ -184,6 +256,7 @@ public class filesActivity extends AppCompatActivity {
             fileLayout = new LinearLayout(this);
             fileLayout.setOrientation(LinearLayout.VERTICAL);
             fileLayout.setId(View.generateViewId());
+            getRecentFiles();
             parentLayout.addView(fileLayout);
             JSONObject currObj = new JSONObject(currentArray);
             String key = currObj.keys().next();
@@ -296,7 +369,7 @@ public class filesActivity extends AppCompatActivity {
         // Set click listeners for each component
         fileTextView.setOnClickListener(view -> {
             Log.d("File Clicked", "File clicked: " + fileName);
-            getFile(fileName); // Call your existing method
+            getFile(fileName);
         });
 
         deleteButton.setOnClickListener(view -> {

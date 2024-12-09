@@ -19,13 +19,13 @@ public class UserPreferences {
     private final String URL_SYSTEM_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
 
     // Used in Files Activity
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
-    private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
+    private static final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
+    private static final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
     private final String URL_DELETE_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/deleteFile";
     private final String URL_FOLDER_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/update";
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
-    private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
-    private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
+    private static final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
+    private static final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
 
     // Used in OCR Activity
     private static String UPLOAD_URL = "http://coms-3090-068.class.las.iastate.edu:8080/extractText";
@@ -45,6 +45,10 @@ public class UserPreferences {
     private static final String URL_FORGET_PASSWORD = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/forgotPassword";
     // Verification
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/resetPassword";
+
+
+    // Used in RecentFiles
+    private static final String URL_RECENT_FILES = "http://coms-3090-068.class.las.iastate.edu:8080/recent"; // where the params are the email. i.e ../takuli@iastate.edu
 
 
 
@@ -90,5 +94,24 @@ public class UserPreferences {
     public static String getFilePath(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_FILEPATH, "{\"path\": [\"root\"] }");
+    }
+
+    public static String getUrlRecentFiles() {
+        return URL_RECENT_FILES;
+    }
+
+    public static String getFileID() {
+        return URL_ID_REQ;
+    }
+
+    public static String getUrlWs() {
+        return URL_WS;
+    }
+    public static String getUrlAIws() {
+        return URL_AIWS;
+    }
+
+    public static String getUrlFilesPull() {
+        return URL_STRING_REQ;
     }
 }
