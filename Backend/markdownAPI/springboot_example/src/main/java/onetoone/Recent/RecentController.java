@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,8 +59,8 @@ public class RecentController {
         recentRepository.save(recent);
     }
 
-    @GetMapping("recent")
-    public ResponseEntity<List<String>> names(@RequestParam("email") String email){
+    @GetMapping("recent/{email}")
+    public ResponseEntity<List<String>> names(@PathVariable String email){
         signEntity user = loginRepository.findByEmail(email);
 
         List<RecentActivity> userRecents = recentRepository.findRecentByUserId(user.getId());
