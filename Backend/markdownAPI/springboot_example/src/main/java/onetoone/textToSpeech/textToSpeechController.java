@@ -93,92 +93,92 @@ public class textToSpeechController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     //for the files format
-    private static final String[] ALLOWED_FILE_EXTENSIONS = {
-            "md", "txt", "json", "csv"
-    };
-
-    //global variable
-    String uploadDir2 = "upload_textToSpeech/";
+//    private static final String[] ALLOWED_FILE_EXTENSIONS = {
+//            "md", "txt", "json", "csv"
+//    };
+//
+//    //global variable
+//    String uploadDir2 = "upload_textToSpeech/";
 
     //post-CreateUser
     //front end passing parameter (email and file)
     //parameter need to have the user email in order to access to sign entity to find the userid
     //return
 
-    /**
-     * Creates a new entry for the user in the translate text table with the uploaded file.
-     *
-     * @param email the user's email to identify or create a user entry.
-     * @param file  the audio file (MP3 or WAV) to be uploaded and processed.
-     * @return ResponseEntity with a success message if the file is uploaded successfully,
-     * or an error message if the file type is invalid or if any exception occurs.
-     */
-    @Operation(summary = "Create textToSpeech User",
-            description = "Creates a new entry for the user in th table with the e trabslate uploaded audio file.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully stored your audio file"),
-            @ApiResponse(responseCode = "404", description = "The user is not found",
-                    content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "500", description = "Cannot save your audio file",
-                    content = @Content(schema = @Schema(implementation = String.class)))
-    })
-    @PostMapping("/createTextToSpeechUser/{email}")
-    public ResponseEntity<String> createSpeechUser(@PathVariable String email, @RequestParam("audio") MultipartFile file) {
-        try {
-            //need to go to signrepository to signentity to find username in order to find userid
-            signEntity temp = sign.findByEmail(email);
-
-            //check for if the user exist in the sign entity
-            //if the user not exist in the table that means user never use it before
-            if (temp == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user is not found");
-            }
-
-            //get the file name
-            String fileName = file.getOriginalFilename();
-
-            //store the id value in the userID
-            Long userID = temp.getId();
-
-            //need to create the table entity
-            textToSpeechEntity sm = new textToSpeechEntity(userID, fileName);
-
-            //need to save it
-            api.save(sm);
-
-            //need the extension from actual file name and type of tht file
-            String extension = fileName.substring(fileName.lastIndexOf("."));
-            String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
-
-            //create the path with both of the info (file type and file name)
-            Path tempFile = Files.createTempFile(fileType, extension);
-
-            // define the main upload directory
-            //String uploadDir2 = "upload_Speech/";
-            File uploadDir2File = new File(uploadDir2);
-            if (!uploadDir2File.exists()) {
-                uploadDir2File.mkdirs();
-            }
-
-            // create subdirectory for the user ID inside the upload_speech folder
-            String userSubDirPath = uploadDir2 + userID + "/";
-            File userSubDir = new File(userSubDirPath);
-            if (!userSubDir.exists()) {
-                userSubDir.mkdirs();
-            }
-
-            // create the full path for saving the file inside the user ID directory
-            File savedSpeechFile = new File(userSubDirPath + fileName);
-            Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            //delete the path
-            Files.delete(tempFile);
-
-            return ResponseEntity.ok("Successfully stored your audio file");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cannot save your audio file");
-        }
-    }
+//    /**
+//     * Creates a new entry for the user in the translate text table with the uploaded file.
+//     *
+//     * @param email the user's email to identify or create a user entry.
+//     * @param file  the audio file (MP3 or WAV) to be uploaded and processed.
+//     * @return ResponseEntity with a success message if the file is uploaded successfully,
+//     * or an error message if the file type is invalid or if any exception occurs.
+//     */
+//    @Operation(summary = "Create textToSpeech User",
+//            description = "Creates a new entry for the user in th table with the e trabslate uploaded audio file.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Successfully stored your audio file"),
+//            @ApiResponse(responseCode = "404", description = "The user is not found",
+//                    content = @Content(schema = @Schema(implementation = String.class))),
+//            @ApiResponse(responseCode = "500", description = "Cannot save your audio file",
+//                    content = @Content(schema = @Schema(implementation = String.class)))
+//    })
+//    @PostMapping("/createTextToSpeechUser/{email}")
+//    public ResponseEntity<String> createSpeechUser(@PathVariable String email, @RequestParam("audio") MultipartFile file) {
+//        try {
+//            //need to go to signrepository to signentity to find username in order to find userid
+//            signEntity temp = sign.findByEmail(email);
+//
+//            //check for if the user exist in the sign entity
+//            //if the user not exist in the table that means user never use it before
+//            if (temp == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user is not found");
+//            }
+//
+//            //get the file name
+//            String fileName = file.getOriginalFilename();
+//
+//            //store the id value in the userID
+//            Long userID = temp.getId();
+//
+//            //need to create the table entity
+//            textToSpeechEntity sm = new textToSpeechEntity(userID, fileName);
+//
+//            //need to save it
+//            api.save(sm);
+//
+//            //need the extension from actual file name and type of tht file
+//            String extension = fileName.substring(fileName.lastIndexOf("."));
+//            String fileType = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() + '-';
+//
+//            //create the path with both of the info (file type and file name)
+//            Path tempFile = Files.createTempFile(fileType, extension);
+//
+//            // define the main upload directory
+//            //String uploadDir2 = "upload_Speech/";
+//            File uploadDir2File = new File(uploadDir2);
+//            if (!uploadDir2File.exists()) {
+//                uploadDir2File.mkdirs();
+//            }
+//
+//            // create subdirectory for the user ID inside the upload_speech folder
+//            String userSubDirPath = uploadDir2 + userID + "/";
+//            File userSubDir = new File(userSubDirPath);
+//            if (!userSubDir.exists()) {
+//                userSubDir.mkdirs();
+//            }
+//
+//            // create the full path for saving the file inside the user ID directory
+//            File savedSpeechFile = new File(userSubDirPath + fileName);
+//            Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+//
+//            //delete the path
+//            Files.delete(tempFile);
+//
+//            return ResponseEntity.ok("Successfully stored your audio file");
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Cannot save your audio file");
+//        }
+//    }
     /**
      * Converts text to speech and returns the audio file.
      *
