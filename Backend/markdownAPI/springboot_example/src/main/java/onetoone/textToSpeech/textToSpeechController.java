@@ -163,6 +163,9 @@ public class textToSpeechController {
 
             String textContent = t.getText();
 
+            textContent = textContent.replace("\n", " ");
+
+
             System.out.println(textContent);
             // Step 1: Escape the text to ensure valid JSON
             textContent = textContent.replace("\"", "\\\""); // Escape double quotes
