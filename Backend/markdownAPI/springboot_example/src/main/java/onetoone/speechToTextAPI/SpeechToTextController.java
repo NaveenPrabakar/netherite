@@ -254,19 +254,22 @@ public class SpeechToTextController{
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transcription successful",
                     content = @Content(schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid file type or empty file",
+            @ApiResponse(responseCode = "400", description = "Invalid file type. Only MP3, MP4, MPEG, MPGA, M4A, WAV, and WEBM files are accepted.",
                     content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "500", description = "Failed to transcribe audio",
                     content = @Content(schema = @Schema(implementation = String.class)))
     })
     @PostMapping("/transcribe2")
     public ResponseEntity<String> transcribeAudio2(@RequestParam("audio") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("No file was uploaded");
-        }
 
         try {
             String fileName = file.getOriginalFilename();
+
+            // Validate the file type and if the file name is null
+            if (fileName == null || !isValidAudioFile(fileName)) {
+                return ResponseEntity.badRequest().body("Invalid file type. Only MP3, MP4, MPEG, MPGA, M4A, WAV, and WEBM files are accepted.");
+            }
+
             long size = file.getSize();
             String contentType = file.getContentType();
 
