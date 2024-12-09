@@ -5,4 +5,5 @@
     <string name="create_note">Create Note</string>
     <string name="microphone">Voice to Note</string>
     <string name="home">Go Home</string>
+    <string name="ocr">Camera</string>
 </resources>

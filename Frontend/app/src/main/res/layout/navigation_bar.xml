@@ -17,12 +17,12 @@
         android:gravity="center">
 
         <ImageButton
-            android:id="@+id/microphoneButton"
+            android:id="@+id/ocrButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/mic"
-            android:contentDescription="@string/microphone" />
+            android:src="@drawable/ic_camera"
+            android:contentDescription="@string/ocr" />
     </LinearLayout>
 
     <!-- Home Icon -->

@@ -95,11 +95,11 @@ public class filesActivity extends AppCompatActivity {
     private void setupUIComponents() {
         goback = findViewById(R.id.goback);
         rootLayout = findViewById(R.id.rootLayout);
-        OCRButt = findViewById(R.id.OCRButt);
+        //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
 
         goback.setOnClickListener(view -> handleGoBack());
-        OCRButt.setOnClickListener(view -> navigateToOCR());
+        //OCRButt.setOnClickListener(view -> navigateToOCR());
         AutoIndex.setOnClickListener(view -> autoIndexAPI(fileSystem));
 
         refreshLayout();

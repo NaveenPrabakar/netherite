@@ -7,16 +7,11 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/main_msg"
+    <Button
+        android:id="@+id/goback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Hello World"
-        android:textColor="#000000"
-        android:textSize="25dp"></TextView>
+        android:text="Back" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,22 +19,17 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/goback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back" />
-
-        <Button
-            android:id="@+id/OCRButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OCR"></Button>
-
-        <Button
             android:id="@+id/AutoIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AutoIndex" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerRecentlyUsedView"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"

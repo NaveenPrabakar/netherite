@@ -14,6 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.FileView.OCRActivity;
 
 public class NavigationBar {
 
@@ -70,11 +71,16 @@ public class NavigationBar {
 
     private void addNavigationButtons(LinearLayout navBarLayout) {
         // Create and add buttons
-        ImageButton micButton = createNavButton(R.drawable.mic, "Mic");
+        ImageButton ocrButton = createNavButton(R.drawable.ic_camera,  "OCR");
         ImageButton homeButton = createNavButton(R.drawable.home, "Home");
         ImageButton editButton = createNavButton(R.drawable.navbar_create_note, "Edit");
 
-        // Set button click listeners
+        //Set Button click listeners
+        ocrButton.setOnClickListener(view -> {
+            Intent intent = new Intent(activity, OCRActivity.class);
+            activity.startActivity(intent);
+        });
+
         homeButton.setOnClickListener(view -> {
             Intent intent = new Intent(activity, MainActivity.class);
             activity.startActivity(intent);
@@ -86,7 +92,7 @@ public class NavigationBar {
         });
 
         // Add buttons to the nav bar layout
-        navBarLayout.addView(micButton);
+        navBarLayout.addView(ocrButton);
         navBarLayout.addView(homeButton);
         navBarLayout.addView(editButton);
     }
