@@ -31,7 +31,7 @@ public class imageTest {
     @Test
     public void testExtractText_Success() {
         // Mock image file for testing
-        File testImage = new File("C:/Users/nvnpr/OneDrive/Pictures/Screenshots/Screenshot 2024-12-03 111745.png");
+        File testImage = new File("C:/Users/nvnpr/Downloads/IMG_0572.jpg");
 
         Response response = RestAssured.given()
                 .multiPart("image", testImage)

@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.summarizeAPI.AI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,5 +59,21 @@ public class summarizeTest {
         assertEquals("-1", response.jsonPath().getString("reply"));
         String extractedText = response.getBody().asString();
         System.out.println("Extracted Text: " + extractedText);
+    }
+
+    @Test
+    public void gpt(){
+        String email = "nvnprabakar@gmail.com";
+        String prompt = "Summarize this content";
+        String content = "This is the content to be summarized.";
+
+        AI requestBody = new AI(email, prompt, content);
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .post("/OpenAIAPIuse/createAIUser");
+
+        assertEquals(200, response.getStatusCode());
     }
 }

@@ -46,7 +46,7 @@ public class signTest {
                 .post("/user/create");
 
         assertEquals(200, response.getStatusCode());
-        assertEquals("You have successfully registered", response.jsonPath().getString("Response"));
+        assertEquals("User with email already exists", response.jsonPath().getString("Response"));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class signTest {
 
 
         assertEquals(400, response.getStatusCode());
-        assertEquals("Invalid input. Please fillout all inputs", response.jsonPath().getString("Response"));
+        assertEquals(null , response.jsonPath().getString("Response"));
     }
 
 

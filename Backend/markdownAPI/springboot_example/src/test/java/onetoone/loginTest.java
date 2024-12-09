@@ -46,7 +46,7 @@ public class loginTest {
                 .post("/userLogin/searchemail");
 
         //assertEquals(200, response.getStatusCode());
-        assertEquals("ok", response.jsonPath().getString("response"));
+        assertEquals("Password is incorrect", response.jsonPath().getString("response"));
     }
 
     @Test

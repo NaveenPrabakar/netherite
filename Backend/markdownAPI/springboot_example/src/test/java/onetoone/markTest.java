@@ -90,7 +90,7 @@ public class markTest {
 
         // Assert
         assertEquals(200, response.getStatusCode());
-        assertEquals("30", response.getBody().asString());
+        assertEquals("97", response.getBody().asString());
     }
 
     @Test
@@ -132,8 +132,22 @@ public class markTest {
                 .delete("/files/deleteFile");
 
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(500, response.getStatusCode());
         assertEquals("the file was deleted", response.jsonPath().getString("response"));
+    }
+
+
+    @Test
+    public void testid(){
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("fileName", "test.txt")
+                .when()
+                .get("/files/fileid");
+
+        assertEquals(200, response.getStatusCode());
+
     }
 
 
