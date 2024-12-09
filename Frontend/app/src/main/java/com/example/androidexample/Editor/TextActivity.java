@@ -2,6 +2,7 @@ package com.example.androidexample.Editor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -23,6 +23,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
+import com.example.androidexample.Volleys.AudioRecieve;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
@@ -46,8 +50,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
-
-    private Button back2main, saveButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
+    private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
+    private Button back2main, ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
     private EditText mainText, editor, fileName, AIInputText;
     private TextView AIText;
     private Markwon markwon;
@@ -81,11 +85,16 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         acceptButt = findViewById(R.id.acceptButt);
         rejectButt = findViewById(R.id.rejectButt);
         voiceButt = findViewById(R.id.voiceButt);
+        ttsButt = findViewById(R.id.text2speech);
+
 
         markwon = Markwon.builder(this).build();
 
         acceptButt.setVisibility(View.INVISIBLE);
         rejectButt.setVisibility(View.INVISIBLE);
+
+        mainText.setAlpha(1);
+        editor.setAlpha(0);
     }
 
     private void loadUserPreferences() {
@@ -134,6 +143,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         voiceButt.setOnClickListener(v -> navigateToVoiceActivity());
         back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(v -> navigateToFilesActivity());
+        ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
     }
 
     private void processIncomingIntent() {
@@ -372,4 +382,57 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         }
         return minLen;
     }
+
+    private void sendStringAndReceiveAudioMultipart(String contentToSendString) {
+        Log.d(TAG, "Sending string: " + contentToSendString);
+        try {
+            // Create JSON request body
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("text", contentToSendString);
+            // Create and configure the request
+            AudioRecieve audioRequest = new AudioRecieve(
+                    Request.Method.POST,
+                    URL_TEXT_TO_SPEECH,
+                    requestBody.toString(),
+                    response -> handleAudioResponseMultipart(response),
+                    error -> Log.e(TAG, "Error sending request: " + error.toString())
+            );
+
+            // Add the request to the Volley request queue
+            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(audioRequest);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating request body", e);
+        }
+    }
+
+
+    private void handleAudioResponseMultipart(byte[] response) {
+        try {
+            // Save the audio file locally
+            File audioFile = new File(getExternalFilesDir(null), "received_audio.mp3");
+            FileOutputStream fos = new FileOutputStream(audioFile);
+            fos.write(response);
+            fos.close();
+
+            playSavedAudio(audioFile.getAbsolutePath());
+
+        } catch (Exception e) {
+            Log.e(TAG, "Audio Save/Playback Error", e);
+        }
+    }
+
+    private void playSavedAudio(String mFileName) {
+        MediaPlayer mPlayer = new MediaPlayer();
+        try {
+            Log.d("Voice", "playAudio: " + mFileName);
+            mPlayer.setDataSource(mFileName);
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e("TAG", "prepare() failed");
+        }
+    }
+
+
 }
