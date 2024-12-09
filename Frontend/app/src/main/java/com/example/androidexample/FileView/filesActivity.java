@@ -150,12 +150,12 @@ public class filesActivity extends AppCompatActivity {
         Button newFolder = new Button(this);
         newFolder.setText("New Folder");
         newFolder.setPadding(20, 10, 20, 10);
-        newFolder.setId(1000001);
+
 
         Button newFile = new Button(this);
         newFile.setText("New File");
         newFile.setPadding(20, 10, 20, 10);
-        newFile.setId(1000002);
+
 
         newFolderLayout.addView(newFolder);
         newFolderLayout.addView(newFile);
@@ -163,7 +163,7 @@ public class filesActivity extends AppCompatActivity {
         EditText newFolderName = new EditText(this);
         newFolderName.setHint("New Name");
         newFolderName.setPadding(20, 10, 20, 10);
-        newFolderName.setId(1000003);
+
 
         newFolder.setOnClickListener(view -> newButtonFunctionality(newFolderName, "folder"));
         newFile.setOnClickListener(view -> newButtonFunctionality(newFolderName, "file"));
