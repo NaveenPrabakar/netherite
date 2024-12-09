@@ -115,8 +115,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             throw new RuntimeException(e);
         }
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_file);
+//        NavigationBar navigationBar = new NavigationBar(this);
+//        navigationBar.addNavigationBar(R.layout.activity_file);
 
 
         // This is the live chat button

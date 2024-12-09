@@ -116,7 +116,7 @@ public class filesActivity extends AppCompatActivity {
         //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
-        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
 
         goback.setOnClickListener(view -> handleGoBack());
         //OCRButt.setOnClickListener(view -> navigateToOCR());

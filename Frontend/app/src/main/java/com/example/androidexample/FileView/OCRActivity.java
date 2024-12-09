@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 
 import com.android.volley.Request;
 import com.example.androidexample.Editor.TextActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.MultipartRequest;
@@ -87,7 +88,8 @@ public class OCRActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.imageSelView);
         selectBtn = findViewById(R.id.selectBtn);
 
-        addNavigationBar(this, R.layout.activity_image_upload);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar(R.layout.activity_image_upload);
 
         // select image from gallery
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),

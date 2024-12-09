@@ -89,7 +89,6 @@ public class VoiceRecordActivity extends AppCompatActivity {
             startActivity(intent2);
         });
 
-
     }
     /**
      * Starts audio recording if the required permissions are granted.

@@ -53,8 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.login_password_edt);
         err_msg = findViewById(R.id.err_msg);
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_login);
 
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
@@ -127,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         JSONObject resp = response;
                         try {
-                            Log.d("Volley Response", resp.getString("response"));
+                            Log.d("Volley Response LOL", resp.getString("response"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
