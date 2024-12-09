@@ -1,0 +1,317 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TesseractTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.ImageToText</a>
+</div>
+
+<h1>Coverage Summary for Class: TesseractTest (onetoone.ImageToText)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TesseractTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.7%
+  </span>
+  <span class="absValue">
+    (2/43)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.ImageToText;
+&nbsp;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import net.sourceforge.tess4j.Tesseract;
+&nbsp;import net.sourceforge.tess4j.TesseractException;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import onetoone.loginAPI.loginRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import onetoone.signupAPI.signEntity;
+&nbsp;import java.util.*;
+&nbsp;import java.nio.file.StandardCopyOption;
+&nbsp;import org.springframework.core.io.Resource;
+&nbsp;import org.springframework.core.io.FileSystemResource;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@Tag(name = &quot;OCR API&quot;, description = &quot;Done By Naveen Prabakar&quot;)
+<b class="fc">&nbsp;public class TesseractTest {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private loginRepository logs;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageRepository im;
+&nbsp;
+<b class="fc">&nbsp;    private ArrayList&lt;String&gt; types = new ArrayList&lt;&gt;(Arrays.asList(&quot;jpeg&quot;, &quot;jpg&quot;, &quot;png&quot;, &quot;gif&quot;));</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The following method works well for printed images
+&nbsp;     *
+&nbsp;     * @param image
+&nbsp;     * @return response
+&nbsp;     */
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Extract text from an image using Tesseract OCR&quot;,
+&nbsp;            description = &quot;Uploads an image and extracts text using Tesseract OCR. Returns the extracted text or error messages.&quot;,
+&nbsp;            parameters = {
+&nbsp;                    @Parameter(name = &quot;email&quot;, description = &quot;The email of the user&quot;, required = true),
+&nbsp;                    @Parameter(name = &quot;language&quot;, description = &quot;The language for OCR (e.g., &#39;eng&#39; for English)&quot;, required = true),
+&nbsp;                    @Parameter(name = &quot;image&quot;, description = &quot;The image file for text extraction&quot;, required = true)
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully extracted text from the image&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Error processing the image&quot;)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/extractText/{email}/{language}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; extractText(@RequestParam(&quot;image&quot;) MultipartFile image, @PathVariable String email, @PathVariable String language) {
+&nbsp;
+&nbsp;        // Initialize Tesseract instance
+<b class="nc">&nbsp;        Tesseract tesseract = new Tesseract();</b>
+<b class="nc">&nbsp;        tesseract.setDatapath(&quot;/usr/share/tesseract/tessdata&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        tesseract.setLanguage(language.substring(0,3));</b>
+<b class="nc">&nbsp;        tesseract.setPageSegMode(3);</b>
+&nbsp;
+<b class="nc">&nbsp;        signEntity s = logs.findByEmail(email);</b>
+&nbsp;
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String originalFilename = image.getOriginalFilename();</b>
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            String extension = originalFilename.substring(originalFilename.lastIndexOf(&quot;.&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;            if(!extension.equals(&quot;jpeg&quot;) &amp;&amp; !extension.equals(&quot;jeg&quot;)){</b>
+&nbsp;                // do some other method
+&nbsp;            }
+<b class="nc">&nbsp;            Path tempFile = Files.createTempFile(&quot;ocr-&quot;, extension);</b>
+<b class="nc">&nbsp;            image.transferTo(tempFile.toFile());</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            String result = tesseract.doOCR(tempFile.toFile());</b>
+&nbsp;
+<b class="nc">&nbsp;            ImageEntity i = new ImageEntity (s, originalFilename);</b>
+<b class="nc">&nbsp;            im.save(i);</b>
+&nbsp;
+<b class="nc">&nbsp;            String uploadDir = &quot;uploaded_images/&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;            File uploadDirFile = new File(uploadDir);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (!uploadDirFile.exists()) {</b>
+<b class="nc">&nbsp;                uploadDirFile.mkdirs(); // Create the directory if it doesn&#39;t exist</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            File savedImageFile = new File(uploadDir + originalFilename);</b>
+<b class="nc">&nbsp;            Files.copy(tempFile, savedImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            Files.delete(tempFile);</b>
+&nbsp;
+<b class="nc">&nbsp;            System.out.println(&quot;Result: &quot; + result);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(result);</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (IOException | TesseractException e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(500).body(&quot;Error processing image: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Retrieve an image by filename&quot;,
+&nbsp;            description = &quot;Retrieves an image file by its filename and returns it as a response.&quot;,
+&nbsp;            parameters = {
+&nbsp;                    @Parameter(name = &quot;filename&quot;, description = &quot;The name of the image file&quot;, required = true)
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Image successfully retrieved&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Error retrieving image&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/getImage/{filename}&quot;)
+&nbsp;    public ResponseEntity&lt;Resource&gt; getImage(@PathVariable String filename) {
+&nbsp;        try {
+<b class="nc">&nbsp;            String uploadDir = &quot;uploaded_images/&quot;;  // Folder where images are saved</b>
+<b class="nc">&nbsp;            File file = new File(uploadDir + filename);  // Use the filename passed in the URL</b>
+&nbsp;
+&nbsp;
+&nbsp;            // Get the extension and set the appropriate media type
+&nbsp;            MediaType mediaType;
+<b class="nc">&nbsp;            String extension = filename.substring(filename.lastIndexOf(&#39;.&#39;) + 1).toLowerCase();</b>
+&nbsp;
+&nbsp;
+&nbsp;            // Determine content type based on the extension
+<b class="nc">&nbsp;            switch (extension) {</b>
+&nbsp;                case &quot;jpg&quot;:
+&nbsp;                case &quot;jpeg&quot;:
+<b class="nc">&nbsp;                    mediaType = MediaType.IMAGE_JPEG;</b>
+&nbsp;                    break;
+&nbsp;                case &quot;png&quot;:
+<b class="nc">&nbsp;                    mediaType = MediaType.IMAGE_PNG;</b>
+&nbsp;                    break;
+&nbsp;                case &quot;gif&quot;:
+<b class="nc">&nbsp;                    mediaType = MediaType.IMAGE_GIF;</b>
+&nbsp;                    break;
+&nbsp;                default:
+<b class="nc">&nbsp;                    mediaType = MediaType.APPLICATION_OCTET_STREAM;</b>
+&nbsp;                    break;
+&nbsp;            }
+&nbsp;
+&nbsp;            // Serve the image file as a resource
+<b class="nc">&nbsp;            Resource resource = new FileSystemResource(file);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok().contentType(mediaType).body(resource);</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(500).body(null);  // Return 500 if there is an internal server error</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Retrieve image filenames associated with a user&quot;,
+&nbsp;            description = &quot;Returns a list of image filenames that are associated with the specified user by email.&quot;,
+&nbsp;            parameters = {
+&nbsp;                    @Parameter(name = &quot;email&quot;, description = &quot;The email of the user&quot;, required = true)
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;List of image filenames retrieved&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/getImageNamesByUser/{email}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;String&gt;&gt; getImageNamesByUser(@PathVariable String email) {
+&nbsp;
+<b class="nc">&nbsp;        signEntity user = logs.findByEmail(email);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (user == null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;String&gt; imageNames = im.findImageNamesByUser(user);</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(imageNames);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 10:30</div>
+</div>
+</body>
+</html>

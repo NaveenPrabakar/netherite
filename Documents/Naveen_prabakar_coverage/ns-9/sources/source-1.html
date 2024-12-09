@@ -1,0 +1,566 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SpeechToTextController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.speechToTextAPI</a>
+</div>
+
+<h1>Coverage Summary for Class: SpeechToTextController (onetoone.speechToTextAPI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpeechToTextController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/40)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (4/100)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.speechToTextAPI;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.JsonNode;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import org.springframework.http.HttpStatus; // Import for HttpStatus
+&nbsp;import org.springframework.http.ResponseEntity; // Import for ResponseEntity
+&nbsp;import org.springframework.web.bind.annotation.RestController; // Ensure you have this if using Spring annotations
+&nbsp;import org.apache.http.HttpEntity;
+&nbsp;import org.apache.http.client.methods.CloseableHttpResponse;
+&nbsp;import org.apache.http.client.methods.HttpPost;
+&nbsp;import org.apache.http.entity.ContentType;
+&nbsp;import org.apache.http.entity.mime.MultipartEntityBuilder;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;
+&nbsp;import org.apache.http.impl.client.CloseableHttpClient;
+&nbsp;import org.apache.http.impl.client.HttpClients;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;
+&nbsp;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;
+&nbsp;import onetoone.signupAPI.signRepository;//need to find the id of user
+&nbsp;import onetoone.signupAPI.signEntity;
+&nbsp;import onetoone.speechToTextAPI.SpeechToTextRepository;
+&nbsp;import onetoone.speechToTextAPI.SpeechUserEntity;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.StandardCopyOption;
+&nbsp;import java.io.IOException;
+&nbsp;import net.sourceforge.tess4j.Tesseract;
+&nbsp;import net.sourceforge.tess4j.TesseractException;
+&nbsp;import org.springframework.core.io.FileSystemResource;
+&nbsp;import org.springframework.core.io.Resource;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;//GET MApping is get the text from the speech
+&nbsp;//Post Create User
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/SpeechToTextAIuse&quot;)
+&nbsp;@Tag(name = &quot;SpeechToText API&quot;, description = &quot;Done By Yi Yun Khor&quot;)
+<b class="fc">&nbsp;public class SpeechToTextController{</b>
+&nbsp;
+&nbsp;    //System.out.println(&quot;Hi u r using the api for speech to text!&quot;);
+&nbsp;
+&nbsp;    //private static final MediaType APPLICATION_M4A = MediaType.parseMediaType(&quot;audio/m4a&quot;);
+&nbsp;
+&nbsp;
+&nbsp;    @Value(&quot;${openai.api.key}&quot;)
+&nbsp;    private String openAiApiKey;
+&nbsp;
+&nbsp;    @Value(&quot;${openai.api.url}&quot;)
+&nbsp;    private String openAiApiUrl;
+&nbsp;
+&nbsp;    //need to connect to the sign entity
+&nbsp;    @Autowired
+&nbsp;    private signRepository sign;
+&nbsp;
+&nbsp;    //this is connected to the repository to use the method inside for getting valuye in the speech totext entity
+&nbsp;    //and really store it
+&nbsp;    @Autowired
+&nbsp;    private SpeechToTextRepository api;
+&nbsp;
+<b class="fc">&nbsp;    private final ObjectMapper objectMapper = new ObjectMapper();</b>
+&nbsp;
+&nbsp;    //for the files format
+<b class="fc">&nbsp;    private static final String[] ALLOWED_AUDIO_EXTENSIONS = {</b>
+&nbsp;            &quot;mp3&quot;, &quot;mp4&quot;, &quot;mpeg&quot;, &quot;mpga&quot;, &quot;m4a&quot;, &quot;wav&quot;, &quot;webm&quot;
+&nbsp;    };
+&nbsp;
+&nbsp;    //global variable
+<b class="fc">&nbsp;    String uploadDir2 = &quot;upload_speech/&quot;;</b>
+&nbsp;
+&nbsp;    //post-CreateUser
+&nbsp;    //front end passing parameter (email and file)
+&nbsp;    //parameter need to have the user email in order to access to sign entity to find the userid
+&nbsp;    //return
+&nbsp;    /**
+&nbsp;     * Creates a new entry for the user in the speech-to-text table with the uploaded audio file.
+&nbsp;     *
+&nbsp;     * @param email the user&#39;s email to identify or create a user entry.
+&nbsp;     * @param file the audio file (MP3 or WAV) to be uploaded and processed.
+&nbsp;     * @return ResponseEntity with a success message if the file is uploaded successfully,
+&nbsp;     * or an error message if the file type is invalid or if any exception occurs.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create Speech User&quot;,
+&nbsp;            description = &quot;Creates a new entry for the user in the speech-to-text table with the uploaded audio file.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully stored your speech file&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid file type. Only MP3, MP4, MPEG, MPGA, M4A, WAV, and WEBM files are accepted.&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The user is not found&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Internal Server Error&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class)))
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/createSpeechUser/{email}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; createSpeechUser(@PathVariable String email, @RequestParam(&quot;audio&quot;) MultipartFile file) {
+&nbsp;        try {
+&nbsp;            //calling the speech to text method
+&nbsp;            //Map &lt;
+&nbsp;
+&nbsp;            //need to go to signrepository to signentity to find username in order to find userid
+<b class="nc">&nbsp;            signEntity temp = sign.findByEmail(email);</b>
+&nbsp;
+&nbsp;            //check for if the user exist in the sign entity
+&nbsp;            //if the user not exist in the table that means user never use it before
+<b class="nc">&nbsp;            if (temp == null) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;The user is not found&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            //get the file name
+<b class="nc">&nbsp;            String fileName = file.getOriginalFilename();</b>
+&nbsp;
+&nbsp;            // Validate the file type and if the file name is null
+<b class="nc">&nbsp;            if (fileName == null || !isValidAudioFile(fileName)) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.badRequest().body(&quot;Invalid file type. Only MP3, MP4, MPEG, MPGA, M4A, WAV, and WEBM files are accepted.&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            //store the id value in the userID
+<b class="nc">&nbsp;            Long userID = temp.getId();</b>
+&nbsp;
+&nbsp;            //need to create the table entity
+<b class="nc">&nbsp;            SpeechUserEntity sm = new SpeechUserEntity(userID, fileName);</b>
+&nbsp;
+&nbsp;            //need to save it
+<b class="nc">&nbsp;            api.save(sm);</b>
+&nbsp;
+&nbsp;            //need the extension from actual file name and type of tht file
+<b class="nc">&nbsp;            String extension = fileName.substring(fileName.lastIndexOf(&quot;.&quot;));</b>
+<b class="nc">&nbsp;            String fileType = fileName.substring(fileName.lastIndexOf(&#39;.&#39;) + 1).toLowerCase() + &#39;-&#39;;</b>
+&nbsp;
+&nbsp;            //create the path with both of the info (file type and file name)
+<b class="nc">&nbsp;            Path tempFile = Files.createTempFile(fileType, extension);</b>
+&nbsp;
+&nbsp;            // define the main upload directory
+&nbsp;            //String uploadDir2 = &quot;upload_Speech/&quot;;
+<b class="nc">&nbsp;            File uploadDir2File = new File(uploadDir2);</b>
+<b class="nc">&nbsp;            if (!uploadDir2File.exists()) {</b>
+<b class="nc">&nbsp;                uploadDir2File.mkdirs();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // create subdirectory for the user ID inside the upload_speech folder
+<b class="nc">&nbsp;            String userSubDirPath = uploadDir2 + userID + &quot;/&quot;;</b>
+<b class="nc">&nbsp;            File userSubDir = new File(userSubDirPath);</b>
+<b class="nc">&nbsp;            if (!userSubDir.exists()) {</b>
+<b class="nc">&nbsp;                userSubDir.mkdirs();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // create the full path for saving the file inside the user ID directory
+<b class="nc">&nbsp;            File savedSpeechFile = new File(userSubDirPath + fileName);</b>
+<b class="nc">&nbsp;            Files.copy(tempFile, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);</b>
+&nbsp;
+&nbsp;            //delete the path
+<b class="nc">&nbsp;            Files.delete(tempFile);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Successfully stored your speech file&quot;);</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Cannot save your file&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // This parameter accepts a file input from the user, specifically an MP3 file in this case
+&nbsp;//    @PostMapping(&quot;/transcribesssss&quot;)
+&nbsp;//    public ResponseEntity&lt;String&gt; transcribeAudio(@RequestParam(&quot;audio&quot;) MultipartFile file) throws IOException {
+&nbsp;//
+&nbsp;//        // Validate the file type
+&nbsp;//        String fileName = file.getOriginalFilename();
+&nbsp;//
+&nbsp;//        if (fileName == null || !isValidAudioFile(fileName)) {
+&nbsp;//            return ResponseEntity.badRequest().body(&quot;Invalid file type. Only MP3, MP4, MPEG, MPGA, M4A, WAV, and WEBM files are accepted.&quot;);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        // Save the MP3 file locally
+&nbsp;//        //File.createTempFile(&quot;audio&quot;, &quot;.mp3&quot;): Creates a temporary file with a random name that starts with &quot;audio&quot; and has an .mp3 extension.
+&nbsp;//        //file.transferTo(tempFile): Transfers the contents of the uploaded MP3 file to this
+&nbsp;////        File tempFile = File.createTempFile(&quot;audio&quot;, &quot;.m4a&quot;);
+&nbsp;////        file.transferTo(tempFile);
+&nbsp;//
+&nbsp;//        // Extract the file extension and create a temporary file
+&nbsp;//        String fileExtension = fileName.substring(fileName.lastIndexOf(&#39;.&#39;) + 1).toLowerCase();
+&nbsp;//        File tempFile = File.createTempFile(&quot;audio&quot;, &quot;.&quot; + fileExtension);
+&nbsp;//        file.transferTo(tempFile);
+&nbsp;//
+&nbsp;//        //HTTP Client Creation: CloseableHttpClient is created to make HTTP requests.
+&nbsp;//        //HTTP POST Setup: A POST request (HttpPost) is initialized with the Whisper API URL (openAiApiUrl).
+&nbsp;//        //Authorization Header: Adds an authorization header with the OpenAI API key to authenticate the request.
+&nbsp;//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+&nbsp;//            HttpPost uploadFile = new HttpPost(openAiApiUrl);
+&nbsp;//            uploadFile.setHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + openAiApiKey);
+&nbsp;//
+&nbsp;//            HttpEntity entity = MultipartEntityBuilder.create()
+&nbsp;//                    .addBinaryBody(&quot;file&quot;, tempFile, ContentType.DEFAULT_BINARY, tempFile.getName())
+&nbsp;//                    .addTextBody(&quot;model&quot;, &quot;whisper-1&quot;)
+&nbsp;//                    .build();
+&nbsp;//            uploadFile.setEntity(entity);
+&nbsp;//
+&nbsp;//            //Create multipart request with the MP3 file
+&nbsp;//            //MultipartEntityBuilder: Constructs the multipart form data for the API request.
+&nbsp;//            //addBinaryBody(&quot;file&quot;, tempFile, ...): Attaches the MP3 file as a binary file in the &quot;file&quot; field. This is the format expected by Whisper API.
+&nbsp;//            //addTextBody(&quot;model&quot;, &quot;whisper-1&quot;): Specifies the transcription model to be used (&quot;whisper-1&quot; in this case).
+&nbsp;//            // Send request and handle response
+&nbsp;//            try (CloseableHttpResponse response = httpClient.execute(uploadFile)) {
+&nbsp;//                int statusCode = response.getStatusLine().getStatusCode();
+&nbsp;//                if (statusCode == 200) {
+&nbsp;//                    JsonNode jsonResponse = objectMapper.readTree(response.getEntity().getContent());
+&nbsp;//                    String transcription = jsonResponse.path(&quot;text&quot;).asText();
+&nbsp;//                    return ResponseEntity.ok(transcription);
+&nbsp;//                } else {
+&nbsp;//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Failed to connect to Whisper API. Please check the API key and try again.&quot;);
+&nbsp;//                }
+&nbsp;//            }
+&nbsp;//        } catch (IOException e) {
+&nbsp;//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Cannot connect to the Whisper API. Possible issue with the API key or network connectivity.&quot;);
+&nbsp;//        } finally {
+&nbsp;//            tempFile.delete();
+&nbsp;//        }
+&nbsp;//    }
+&nbsp;    /**
+&nbsp;     * Transcribes the uploaded audio file using OpenAI&#39;s Whisper API.
+&nbsp;     *
+&nbsp;     * @param file the audio file (MP3 or WAV) to be transcribed.
+&nbsp;     * @return ResponseEntity with the transcribed text if successful,
+&nbsp;     * or an error message if the file type is invalid or if the transcription fails.
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Transcribe Audio File&quot;,
+&nbsp;            description = &quot;Transcribes an uploaded audio file using OpenAI&#39;s Whisper API.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Transcription successful&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid file type or empty file&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Failed to transcribe audio&quot;,
+&nbsp;                    content = @Content(schema = @Schema(implementation = String.class)))
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/transcribe2&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; transcribeAudio2(@RequestParam(&quot;audio&quot;) MultipartFile file) {
+<b class="nc">&nbsp;        if (file.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;No file was uploaded&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            String fileName = file.getOriginalFilename();</b>
+<b class="nc">&nbsp;            long size = file.getSize();</b>
+<b class="nc">&nbsp;            String contentType = file.getContentType();</b>
+&nbsp;
+<b class="nc">&nbsp;            String fileExtension = fileName.substring(fileName.lastIndexOf(&#39;.&#39;) + 1).toLowerCase();</b>
+<b class="nc">&nbsp;            File tempFile = File.createTempFile(&quot;audio&quot;, &quot;.&quot; + fileExtension);</b>
+<b class="nc">&nbsp;            file.transferTo(tempFile);</b>
+&nbsp;
+&nbsp;            // Create temporary file with file extension
+<b class="nc">&nbsp;            String extension = fileName.substring(fileName.lastIndexOf(&quot;.&quot;));</b>
+<b class="nc">&nbsp;            String fileType = fileName.substring(fileName.lastIndexOf(&#39;.&#39;) + 1).toLowerCase() + &#39;-&#39;;</b>
+&nbsp;
+&nbsp;            // Create the path with both file type and name
+<b class="nc">&nbsp;            Path tempFile2 = Files.createTempFile(fileType, extension);</b>
+&nbsp;
+&nbsp;            // Define the main upload directory
+<b class="nc">&nbsp;            File uploadDir2File = new File(uploadDir2);</b>
+<b class="nc">&nbsp;            if (!uploadDir2File.exists()) {</b>
+<b class="nc">&nbsp;                uploadDir2File.mkdirs();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Create subdirectory for the user ID inside the upload_speech folder
+<b class="nc">&nbsp;            String userSubDirPath = uploadDir2 +  &quot;/&quot;;</b>
+<b class="nc">&nbsp;            File userSubDir = new File(userSubDirPath);</b>
+<b class="nc">&nbsp;            if (!userSubDir.exists()) {</b>
+<b class="nc">&nbsp;                userSubDir.mkdirs();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Create the full path for saving the file inside the user ID directory
+<b class="nc">&nbsp;            File savedSpeechFile = new File(userSubDirPath + fileName);</b>
+<b class="nc">&nbsp;            Files.copy(tempFile2, savedSpeechFile.toPath(), StandardCopyOption.REPLACE_EXISTING);</b>
+&nbsp;
+&nbsp;            // Delete the temporary file after processing
+<b class="nc">&nbsp;            Files.delete(tempFile2);</b>
+&nbsp;
+&nbsp;            // Log file info
+<b class="nc">&nbsp;            System.out.println(&quot;Received file: &quot; + fileName + &quot;, size: &quot; + size + &quot;, contentType: &quot; + contentType);</b>
+&nbsp;
+&nbsp;            // OpenAI Whisper API integration for transcription
+<b class="nc">&nbsp;            String transcription = transcribeWithOpenAI(tempFile);</b>
+&nbsp;
+&nbsp;            // Return transcription or failure response
+<b class="nc">&nbsp;            if (transcription != null) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.ok(transcription);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Failed to transcribe audio.&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(&quot;Failed to process file&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private String transcribeWithOpenAI(File audioFile) {
+<b class="nc">&nbsp;        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {</b>
+<b class="nc">&nbsp;            HttpPost uploadFile = new HttpPost(openAiApiUrl);</b>
+<b class="nc">&nbsp;            uploadFile.setHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + openAiApiKey);</b>
+&nbsp;
+<b class="nc">&nbsp;            HttpEntity entity = MultipartEntityBuilder.create()</b>
+<b class="nc">&nbsp;                    .addBinaryBody(&quot;file&quot;, audioFile, ContentType.DEFAULT_BINARY, audioFile.getName())</b>
+<b class="nc">&nbsp;                    .addTextBody(&quot;model&quot;, &quot;whisper-1&quot;)</b>
+<b class="nc">&nbsp;                    .build();</b>
+<b class="nc">&nbsp;            uploadFile.setEntity(entity);</b>
+&nbsp;
+<b class="nc">&nbsp;            try (CloseableHttpResponse response = httpClient.execute(uploadFile)) {</b>
+<b class="nc">&nbsp;                int statusCode = response.getStatusLine().getStatusCode();</b>
+<b class="nc">&nbsp;                if (statusCode == 200) {</b>
+<b class="nc">&nbsp;                    JsonNode jsonResponse = objectMapper.readTree(response.getEntity().getContent());</b>
+<b class="nc">&nbsp;                    return jsonResponse.path(&quot;text&quot;).asText();</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    System.err.println(&quot;Failed to connect to Whisper API: &quot; + statusCode);</b>
+<b class="nc">&nbsp;                    return null;</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.err.println(&quot;Error during API request: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;//    @GetMapping(&quot;/getFileNames&quot;)
+&nbsp;//    public Map&lt;String, String&gt; getFileName(@RequestParam String email) {
+&nbsp;//        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();
+&nbsp;//
+&nbsp;//        //need to go to signrepository to signentity to find username in order to find userid
+&nbsp;//        signEntity temp = sign.findByEmail(email);
+&nbsp;//
+&nbsp;//        //check for if the user exist in the sign entity
+&nbsp;//        //if the user not exist in the table that means user never use it before
+&nbsp;//        if (temp==null){
+&nbsp;//            response.put(&quot;error&quot;, &quot;the user is not found&quot;);
+&nbsp;//            return response;
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        //store the id value in the userID
+&nbsp;//        Long userID = temp.getId();
+&nbsp;//
+&nbsp;//        // Find the user entity based on userId
+&nbsp;//        SpeechUserEntity speechUserEntity = api.findById(userID).orElse(null);
+&nbsp;//
+&nbsp;//        // Check if the entity exists
+&nbsp;//        if (speechUserEntity != null) {
+&nbsp;//            response.put(&quot;fileName&quot;, speechUserEntity.getSpeechFile());
+&nbsp;//        } else {
+&nbsp;//            response.put(&quot;error&quot;, &quot;file is not found&quot;);
+&nbsp;//        }
+&nbsp;//        return response;
+&nbsp;//    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Endpoint to retrieve a user&#39;s speech file.
+&nbsp;     *
+&nbsp;     * @param email      -- User&#39;s email address
+&nbsp;     * @param speechFile -- Name of the speech file to be retrieved
+&nbsp;     * @return ResponseEntity&lt;Resource&gt; -- The speech file as a response if found, otherwise an error response
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Retrieve a user&#39;s speech file&quot;, description = &quot;Fetches a specific speech file based on user email and file name.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;File retrieved successfully&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User or file not found&quot;),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Internal server error&quot;)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/getSpeechFile&quot;)
+&nbsp;    public ResponseEntity&lt;Resource&gt; getSpeechFile(@RequestParam(&quot;email&quot;) String email, @RequestParam(&quot;speechFile&quot;) String speechFile) {
+&nbsp;        try {
+<b class="nc">&nbsp;            signEntity temp = sign.findByEmail(email);</b>
+<b class="nc">&nbsp;            if (temp == null) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null for user not found</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Long userID = temp.getId();</b>
+&nbsp;            //SpeechUserEntity speechUserEntity = api.findBySpeechUserId(userID);
+&nbsp;
+&nbsp;            //String uploadDir2 = &quot;upload_speech/&quot;;
+<b class="nc">&nbsp;            String filePath = uploadDir2 + userID + &quot;/&quot; + speechFile;</b>
+<b class="nc">&nbsp;            File file = new File(filePath);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (!file.exists()) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null as there&#39;s no resource to send</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            SpeechUserEntity speechUserEntity = api.findBySpeechFile(speechFile);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (speechUserEntity != null) {</b>
+&nbsp;
+&nbsp;                //MediaType mediaType = MediaType.APPLICATION_MP3;
+<b class="nc">&nbsp;                Resource resource = new FileSystemResource(file);</b>
+&nbsp;
+<b class="nc">&nbsp;                System.out.println(&quot;This sucks&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                        .contentType(MediaType.APPLICATION_OCTET_STREAM)  // Use appropriate media type</b>
+<b class="nc">&nbsp;                        .header(HttpHeaders.CONTENT_DISPOSITION, &quot;attachment; filename=\&quot;&quot; + file.getName() + &quot;\&quot;&quot;)</b>
+<b class="nc">&nbsp;                        .body(resource);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return null for file not found</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Return null in case of an error</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //helper method to check the validality
+&nbsp;    /**
+&nbsp;     * Helper method to check the validity of an audio file based on its extension.
+&nbsp;     * It checks if the file extension is in the allowed list of audio extensions.
+&nbsp;     *
+&nbsp;     * @param fileName The name of the file to be checked
+&nbsp;     * @return true if the file extension is valid, false otherwise
+&nbsp;     */
+&nbsp;    private boolean isValidAudioFile(String fileName) {
+&nbsp;        // Check if the file has a valid extension
+<b class="nc">&nbsp;        String fileExtension = fileName.substring(fileName.lastIndexOf(&#39;.&#39;) + 1).toLowerCase();</b>
+<b class="nc">&nbsp;        boolean found=Arrays.asList(ALLOWED_AUDIO_EXTENSIONS).contains(fileExtension);</b>
+<b class="nc">&nbsp;        if (found==true){</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 10:30</div>
+</div>
+</body>
+</html>
