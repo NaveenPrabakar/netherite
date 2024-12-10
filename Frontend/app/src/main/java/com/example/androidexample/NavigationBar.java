@@ -16,6 +16,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.example.androidexample.Editor.TextActivity;
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.FileView.OCRActivity;
+import com.example.androidexample.Gallery.PhotoGalleryActivity;
+import com.example.androidexample.Settings.SettingsActivity;
 
 public class NavigationBar {
 
@@ -54,6 +56,8 @@ public class NavigationBar {
         ImageButton ocrButton = navBarLayout.findViewById(R.id.ocrButton);
         ImageButton homeButton = navBarLayout.findViewById(R.id.homeButton);
         ImageButton editButton = navBarLayout.findViewById(R.id.editButton);
+        ImageButton galleryNavButt = navBarLayout.findViewById(R.id.galleryNavButt);
+        ImageButton settingsButt = navBarLayout.findViewById(R.id.settingsButt);
 
         // Set click listeners for navigation
         ocrButton.setOnClickListener(view -> {
@@ -70,6 +74,16 @@ public class NavigationBar {
         editButton.setOnClickListener(view -> {
             Intent intent = new Intent(activity, TextActivity.class);
             activity.startActivity(intent);
+        });
+
+        galleryNavButt.setOnClickListener(view -> {
+            Intent i = new Intent(activity, PhotoGalleryActivity.class);
+            activity.startActivity(i);
+        });
+
+        settingsButt.setOnClickListener(view ->{
+            Intent i = new Intent(activity, SettingsActivity.class);
+            activity.startActivity(i);
         });
     }
 

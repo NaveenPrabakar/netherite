@@ -9,53 +9,54 @@
     android:gravity="center">
 
     <!-- Microphone Icon -->
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/ocrButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <ImageButton
-            android:id="@+id/ocrButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_camera"
-            android:contentDescription="@string/ocr" />
-    </LinearLayout>
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_camera"
+        android:contentDescription="@string/ocr" />
 
     <!-- Home Icon -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <ImageButton
-            android:id="@+id/homeButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/home"
-            android:contentDescription="@string/home" />
-    </LinearLayout>
 
     <!-- Edit Icon -->
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/galleryNavButt"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/ocr"
+        android:src="@drawable/ic_gallery" />
 
-        <ImageButton
-            android:id="@+id/editButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/navbar_create_note"
-            android:contentDescription="@string/create_note" />
-    </LinearLayout>
+    <!-- Settings Icon -->
+
+    <ImageButton
+        android:id="@+id/homeButton"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/home"
+        android:src="@drawable/home" />
+
+    <ImageButton
+        android:id="@+id/editButton"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/create_note"
+        android:src="@drawable/navbar_create_note" />
+
+    <ImageButton
+        android:id="@+id/settingsButt"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/ocr"
+        android:src="@drawable/ic_settings" />
+
 </LinearLayout>

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Call;
@@ -48,27 +49,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photogallery);
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
 
-        if (extras != null)
-        {
-            if (extras.getString("EMAIL") != null)
-            {
-                email = extras.getString("EMAIL");
-                Log.d("EMAIL",email);
-            }
-            if (extras.getString("USERNAME") != null)
-            {
-                username = extras.getString("USERNAME");
-                Log.d("username",username);
-            }
-            if (extras.getString("PASSWORD") != null)
-            {
-                password = extras.getString("PASSWORD");
-                Log.d("password",password);
-            }
-        }
+        email = UserPreferences.getEmail(this);
+        username = UserPreferences.getUsername(this);
+        password = UserPreferences.getPassword(this);
+
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();

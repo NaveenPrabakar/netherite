@@ -132,7 +132,8 @@ public class LoginActivity extends AppCompatActivity {
                         err_msg.setText(response.toString());
                         try {
                             if (resp.getString("response").equals("ok")){
-                                getFileSystem(email, password, resp.getString("userName"));
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                             else{
                                 err_msg.setText(resp.getString("response"));
@@ -170,36 +171,4 @@ public class LoginActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
     }
-
-    public void getFileSystem(String email, String password, String username){
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-        builder.appendQueryParameter("email", email);
-        builder.appendQueryParameter("password", password);
-        String url = builder.build().toString();
-
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("File System from Server", response);
-                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"path\": [\"root\"]}");
-                        Intent i = new Intent(LoginActivity.this, filesActivity.class);
-                        startActivity(i);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-        );
-
-        // Adding request to request queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-    }
-
 }

@@ -255,7 +255,7 @@ public class filesActivity extends AppCompatActivity {
 
                 // Create TextView for each folder
                 TextView newText = new TextView(this);
-                newText.setText(folderName + "/");
+                newText.setText(folderName + " / ");
                 newText.setTextSize(24); // Larger text size
                 newText.setTextColor(getResources().getColor(android.R.color.black)); // Text color
                 newText.setPadding(8, 0, 4, 0); // Spacing between items
@@ -891,6 +891,5 @@ public class filesActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
