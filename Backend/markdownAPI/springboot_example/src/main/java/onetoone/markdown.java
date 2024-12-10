@@ -41,6 +41,8 @@ import onetoone.*;
 import onetoone.Access.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import onetoone.Recent.*;
+
 
 
 @RestController
@@ -65,6 +67,9 @@ public class markdown {
 
     @Autowired
     private signRepository signup;
+
+    @Autowired
+    private RecentController r;
 
     /**
      * The method saves a file to the approriate directory
@@ -180,6 +185,8 @@ public class markdown {
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
         String temp = Long.toString(fileEntity.getfileId());
         signEntity user = logs.findByEmail(email);
+
+        r.addRecentRecord(fileEntity.getfileId(), user.getId());
 
         return temp;
 

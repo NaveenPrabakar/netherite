@@ -61,7 +61,7 @@ public class filesActivity extends AppCompatActivity {
     private final String URL_FRIEND_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/share/new";
     private final String URL_WS = "ws://coms-3090-068.class.las.iastate.edu:8080/document/";
     private final String URL_AIWS = "ws://coms-3090-068.class.las.iastate.edu:8080/chat/";
-    private final String URL_AUTOINDEX = "";
+    private final String URL_AUTOINDEX = "http://coms-3090-068.class.las.iastate.edu:8080/auto";
 
     private String fileSystem =  "{\"root\": []}";
     private String path = "{\"path\": [\"root\"]}";
@@ -79,6 +79,7 @@ public class filesActivity extends AppCompatActivity {
     private Button OCRButt;
     private MaterialButton AutoIndex;
     private LinearLayout rootLayout;
+
     private LinearLayout fileLayout;
 
     /**
@@ -290,74 +291,10 @@ public class filesActivity extends AppCompatActivity {
                 }
             });
 
-            //addNavigationBar();
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
 
-    }
-
-    /**
-     * Helper function to dynamically add a navigation bar at the bottom of the screen.
-     */
-    private void addNavigationBar() {
-        // Create a new LinearLayout for the navigation bar
-        LinearLayout rootLayout = findViewById(R.id.navbar);
-        LinearLayout navBarLayout = new LinearLayout(this);
-        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
-        navBarLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        navBarLayout.setPadding(8, 8, 8, 8);
-        navBarLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
-        navBarLayout.setElevation(4); // Add shadow for elevation
-        navBarLayout.setGravity(Gravity.CENTER);
-
-        // Create navigation buttons
-        ImageButton micButton = createNavButton(R.drawable.mic, "Mic");
-
-        micButton.setOnClickListener(view -> {
-            Intent intent = new Intent(filesActivity.this, VoiceRecordActivity.class);
-            startActivity(intent);
-        });
-        ImageButton homeButton = createNavButton(R.drawable.home, "Home");
-        homeButton.setOnClickListener(view -> {
-            Intent intent = new Intent(filesActivity.this, MainActivity.class);
-            startActivity(intent);
-        });
-        ImageButton editButton = createNavButton(R.drawable.navbar_create_note, "Edit");
-        editButton.setOnClickListener(view -> {
-            Intent intent = new Intent(filesActivity.this, TextActivity.class);
-            startActivity(intent);
-        });
-
-        // Add buttons to the navigation bar layout
-        navBarLayout.addView(micButton);
-        navBarLayout.addView(homeButton);
-        navBarLayout.addView(editButton);
-
-        // Add the navigation bar to the parent layout
-        rootLayout.addView(navBarLayout);
-    }
-
-    /**
-     * Helper function to create individual navigation buttons.
-     */
-    private ImageButton createNavButton(int iconResId, String contentDescription) {
-        ImageButton navButton = new ImageButton(this);
-        navButton.setLayoutParams(new LinearLayout.LayoutParams(
-                0, // Equal spacing
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1 // Weight for equal distribution
-        ));
-        navButton.setImageResource(iconResId);
-        //navButton.setBackgroundResource(android.R.attr.selectableItemBackground); // Touch feedback
-        navButton.setContentDescription(contentDescription);
-        navButton.setPadding(8, 8, 8, 8); // Add padding for spacing
-        navButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // Adjust scaling
-        return navButton;
     }
 
     private void createFolderWithFiles(LinearLayout parentLayout, String folderName, JSONArray filesArray) throws JSONException {
@@ -429,20 +366,19 @@ public class filesActivity extends AppCompatActivity {
         return deleteButton;
     }
 
-    private Button createShareToButton(String fileName) {
+    private Button createShareToButton(String fileName, EditText toUser) {
         Button shareToButton = new Button(this);
         shareToButton.setText("Share to");
         shareToButton.setPadding(20, 10, 20, 10);
         shareToButton.setOnClickListener(view -> {
-            EditText toUser = new EditText(this);
-            shareToUser(email.toString(), toUser.getText().toString(), fileName);
+            shareToUser(email, toUser.getText().toString(), fileName);
         });
         return shareToButton;
     }
 
     private EditText createShareToInput() {
         EditText toUser = new EditText(this);
-        toUser.setHint("Username");
+        toUser.setHint("Email");
         toUser.setPadding(20, 10, 20, 10);
         return toUser;
     }
@@ -690,6 +626,7 @@ public class filesActivity extends AppCompatActivity {
         builder.appendQueryParameter("toUser", toUser);
         builder.appendQueryParameter("docName", docName);
         String url = builder.build().toString();
+        Log.d("URL", url);
 
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
@@ -902,21 +839,20 @@ public class filesActivity extends AppCompatActivity {
 
     private void autoIndexAPI(String fileSys){
         Uri.Builder builder = Uri.parse(URL_AUTOINDEX).buildUpon();
-        builder.appendQueryParameter("json", fileSys);
+        builder.appendQueryParameter("prompt", fileSys);
         builder.appendQueryParameter("email", email);
         String url = builder.build().toString();
 
         StringRequest stringRequest = new StringRequest(
-                Request.Method.PUT,
+                Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         setFileSystem(response);
-                        refreshLayout();
                         newfolderUpdate(fileSystem);
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "New System Updated", Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {

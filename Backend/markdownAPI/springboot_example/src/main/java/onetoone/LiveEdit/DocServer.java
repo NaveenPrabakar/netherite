@@ -87,6 +87,8 @@ public class DocServer {
         String fileName = sessionFileMap.get(session);
         logger.info("[onClose] File: " + fileName + " disconnected.");
         sessionFileMap.remove(session);
+
+
     }
 
     /**
