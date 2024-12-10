@@ -1,5 +1,6 @@
 package com.example.androidexample.FileView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -43,6 +44,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -77,9 +79,10 @@ public class filesActivity extends AppCompatActivity {
 
     private ImageView goback;
     private Button OCRButt;
+
     private MaterialButton AutoIndex;
     private LinearLayout rootLayout;
-
+    private LinearLayout pathLayout;
     private LinearLayout fileLayout;
 
     /**
@@ -93,8 +96,8 @@ public class filesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_file_view);
+//        NavigationBar navigationBar = new NavigationBar(this);
+//        navigationBar.addNavigationBar(R.layout.activity_file_view);
 
         initializeVariables();
         setupUIComponents();
@@ -121,8 +124,7 @@ public class filesActivity extends AppCompatActivity {
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
         recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
-
-
+        pathLayout = findViewById(R.id.paths);
         goback.setOnClickListener(view -> handleGoBack());
         //OCRButt.setOnClickListener(view -> navigateToOCR());
         AutoIndex.setOnClickListener(view -> autoIndexAPI(fileSystem));
@@ -218,6 +220,49 @@ public class filesActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void createPathButtons(LinearLayout parentLayout, JSONArray path){
+        parentLayout.removeAllViewsInLayout();
+        LinearLayout newFolderLayout = new LinearLayout(this);
+        newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        try{
+            for(int i = 0; i< path.length(); i++){
+                TextView newText = new TextView(this);
+                String folderName = path.getString(i);
+                newText.setText(folderName+"/   ");
+                newText.setOnClickListener(view -> {
+                    this.setPath(changePathHandler(folderName, path));
+                    refreshLayout();
+                });
+                parentLayout.addView(newText);
+            }
+        }catch(JSONException e){
+            Log.e("JSON Exception", "lol");
+        }
+
+    }
+
+    private String changePathHandler(String lastIndex, JSONArray path) {
+        try {
+            JSONObject pathJS = new JSONObject("{\"path\": []}");
+            JSONArray newPath = pathJS.getJSONArray("path");
+            for(int i = 0; i< path.length(); i++){
+                if (!path.getString(i).equals(lastIndex)){
+                    newPath.put(path.getString(i));
+                }else{
+                    break;
+                }
+            }
+            newPath.put(lastIndex);
+            return pathJS.toString();
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void createUIButtons(LinearLayout parentLayout){
@@ -400,7 +445,7 @@ public class filesActivity extends AppCompatActivity {
 
         // Set OnClickListener for folder TextView to handle navigation
         folderTextView.setOnClickListener(view ->
-                moveToInnerFolder(parentLayout, nestedObject, folderName)
+                moveToInnerFolder(folderName)
         );
 
         // Set OnClickListener for delete button to handle deletion
@@ -440,7 +485,7 @@ public class filesActivity extends AppCompatActivity {
         return deleteButton;
     }
 
-    private void moveToInnerFolder(LinearLayout parentLayout, JSONObject nestedObject, String folderName) {
+    private void moveToInnerFolder(String folderName) {
         Log.d("Folder Clicked", "Folder clicked: " + folderName);
         try {
             JSONObject pathJS = new JSONObject(path);
@@ -542,11 +587,11 @@ public class filesActivity extends AppCompatActivity {
     /**
      * Updates the file system on the server after modifications, such as adding or deleting folders.
      *
-     * @param fileSystem the updated file system JSON string
+     * @param fs the updated file system JSON string
      */
-    private void newfolderUpdate(String fileSystem){
+    private void newfolderUpdate(String fs){
         Uri.Builder builder = Uri.parse(URL_FOLDER_REQ).buildUpon();
-        builder.appendQueryParameter("json", fileSystem);
+        builder.appendQueryParameter("json", fs);
         builder.appendQueryParameter("email", email);
         String url = builder.build().toString();
 
@@ -557,6 +602,7 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
+                        setFileSystem(fs);
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                         refreshLayout();
                     }
@@ -567,6 +613,7 @@ public class filesActivity extends AppCompatActivity {
                         // Handle any errors that occur during the request
                         Log.e("Email", email);
                         Log.e("Volley Error", error.toString());
+                        refreshLayout();
                         Toast.makeText(getApplicationContext(), "Folder Not Updated", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -603,6 +650,7 @@ public class filesActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        refreshLayout();
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
                     }
@@ -668,7 +716,7 @@ public class filesActivity extends AppCompatActivity {
                 newFileName.contains("]")||
                 newFileName.contains("/")||
                 newFileName.trim().isEmpty() ||
-                fileSystem.contains(newFileName)
+                currentArray.contains(newFileName)
         )
         {
             return "";
@@ -758,12 +806,10 @@ public class filesActivity extends AppCompatActivity {
 
         if (type.equals("folder")){
             currArrayJS.put(new JSONObject("{\""+ folderName+"\" : []}"));
-            setFileSystem(fileSystemJS.toString());
-            newfolderUpdate(this.fileSystem);
+            newfolderUpdate(fileSystemJS.toString());
         }else{
             currArrayJS.put(folderName);
-            setFileSystem(fileSystemJS.toString());
-            newFileUpdate(folderName, this.fileSystem);
+            newFileUpdate(folderName, fileSystemJS.toString());
         }
         Log.d("JSON ARRAY", currentArray.toString());
         return currentArrayJS.toString();
@@ -819,6 +865,7 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
+                        setFileSystem(fileSystem);
                         refreshLayout();
                     }
                 },
@@ -827,8 +874,8 @@ public class filesActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Email", email);
-
                         Log.e("Volley Error", error.toString());
+                        refreshLayout();
                     }
                 }
         );
@@ -884,6 +931,7 @@ public class filesActivity extends AppCompatActivity {
         try {
             JSONObject PathObj = new JSONObject(path);
             JSONArray pathArray = PathObj.getJSONArray("path");
+            createPathButtons(pathLayout, pathArray);
             currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
             rootLayout.removeAllViewsInLayout();
             runOnUiThread(() -> createUI(rootLayout));
