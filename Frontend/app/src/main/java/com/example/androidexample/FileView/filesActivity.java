@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import kotlinx.coroutines.android.AndroidExceptionPreHandler;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -80,7 +79,8 @@ public class filesActivity extends AppCompatActivity {
     private RecyclerView recentFilesView;
 
     private ImageView goback;
-    private Button OCRButt;
+    private Button OCRButt, newFileUI, newFolderUI;
+    private EditText newFolderNameUI;
 
     private MaterialButton AutoIndex;
     private LinearLayout rootLayout;
@@ -144,10 +144,16 @@ public class filesActivity extends AppCompatActivity {
         recentFilesView = findViewById(R.id.recentFilesView);
         recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         pathLayout = findViewById(R.id.paths);
+        newFolderNameUI = findViewById(R.id.newTextField);
+        newFileUI = findViewById(R.id.newFile);
+        newFolderUI = findViewById(R.id.newFolder);
+
+
         goback.setOnClickListener(view -> handleGoBack());
-        //OCRButt.setOnClickListener(view -> navigateToOCR());
         AutoIndex.setOnClickListener(view -> autoIndexAPI(fileSystem));
 
+        newFileUI.setOnClickListener(view -> newButtonFunctionality(newFolderNameUI, "file"));
+        newFolderUI.setOnClickListener(view -> newButtonFunctionality(newFolderNameUI, "folder"));
         refreshLayout();
     }
 
@@ -271,7 +277,6 @@ public class filesActivity extends AppCompatActivity {
         }
     }
 
-
     private String changePathHandler(String lastIndex, JSONArray path) {
         try {
             JSONObject pathJS = new JSONObject("{\"path\": []}");
@@ -291,54 +296,6 @@ public class filesActivity extends AppCompatActivity {
         }
 
     }
-
-    private void createUIButtons(LinearLayout parentLayout){
-        // Create a horizontal LinearLayout for buttons
-        LinearLayout newFolderLayout = new LinearLayout(this);
-        newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
-        newFolderLayout.setPadding(10, 10, 10, 10);
-
-        LinearLayout.LayoutParams buttonLayout = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        buttonLayout.setMargins(10, 0, 10, 0);
-
-        // Create the "New Folder" MaterialButton
-        MaterialButton newFolder = new MaterialButton(this);
-        newFolder.setText("New Folder");
-        newFolder.setBackgroundColor(Color.parseColor("#B7E7EA")); // Set teal background color
-        newFolder.setTextColor(Color.BLACK);
-        newFolder.setCornerRadius(8); // Rounded corners
-        newFolder.setPadding(20, 10, 20, 10); // Padding inside the button
-        newFolder.setLayoutParams(buttonLayout);
-
-        // Create the "New File" MaterialButton
-        MaterialButton newFile = new MaterialButton(this);
-        newFile.setText("New File");
-        newFile.setBackgroundColor(Color.parseColor("#B7E7EA")); // Set teal background color
-        newFile.setTextColor(Color.BLACK);
-        newFile.setCornerRadius(8); // Rounded corners
-        newFile.setPadding(20, 10, 20, 10); // Padding inside the button
-        newFile.setLayoutParams(buttonLayout);
-
-        // Add the buttons to the horizontal LinearLayout
-        newFolderLayout.addView(newFolder);
-        newFolderLayout.addView(newFile);
-
-        // Create an EditText for the new folder/file name input
-        EditText newFolderName = new EditText(this);
-        newFolderName.setHint("New Name");
-        newFolderName.setPadding(20, 10, 20, 10);
-
-
-        newFolder.setOnClickListener(view -> newButtonFunctionality(newFolderName, "folder"));
-        newFile.setOnClickListener(view -> newButtonFunctionality(newFolderName, "file"));
-
-        parentLayout.addView(newFolderName);
-        parentLayout.addView(newFolderLayout);
-    }
-
     /**
      * Creates the user interface dynamically, including buttons for creating new folders and files.
      * Also initializes the current folder view and displays its contents.
@@ -346,7 +303,6 @@ public class filesActivity extends AppCompatActivity {
      * @param parentLayout the root layout to which the UI elements are added
      */
     private void createUI(LinearLayout parentLayout) {
-        createUIButtons(parentLayout);
         try{
             fileLayout = new LinearLayout(this);
             fileLayout.setOrientation(LinearLayout.VERTICAL);

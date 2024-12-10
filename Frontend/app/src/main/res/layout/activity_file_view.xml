@@ -68,29 +68,93 @@
             android:layout_height="match_parent"
             android:scrollbarStyle="insideOverlay"
             android:layoutDirection="ltr"/>
-
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <!-- EditText for New Folder/File Name -->
+            <EditText
+                android:id="@+id/newTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@android:drawable/edit_text"
+                android:hint="New Name"
+                android:padding="10dp"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <!-- Horizontal Layout for Buttons -->
+            <LinearLayout
+                android:id="@+id/newFolderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <!-- New Folder Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/newFolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="#B7E7EA"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="10dp"
+                    android:text="New Folder"
+                    android:textColor="@android:color/black"
+                    app:cornerRadius="8dp" />
+
+                <!-- New File Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/newFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#B7E7EA"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="10dp"
+                    android:text="New File"
+                    android:textColor="@android:color/black"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:id="@+id/rootLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="12dp"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical"
+            android:padding="12dp"></LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/navbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:layout_gravity="bottom"
-            >
-        </LinearLayout>
+
     </FrameLayout>
+    <LinearLayout
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:layout_gravity="bottom"
+        >
+    </LinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
