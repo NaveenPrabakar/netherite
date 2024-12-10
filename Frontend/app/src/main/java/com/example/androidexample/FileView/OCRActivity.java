@@ -53,6 +53,7 @@ public class OCRActivity extends AppCompatActivity {
     private String fileSystem;
     private String filePath;
     private String password;
+    private String fileKey;
     private String source;
     // replace this with the actual address
     // 10.0.2.2 to be used for localhost if running springboot on the same host
@@ -82,7 +83,8 @@ public class OCRActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
 
         if(extras != null){
-            source = extras.getString("SOURCE");
+            source = extras.getString("SOURCE", "files");
+            fileKey = extras.getString("FILEKEY", "");
         }
 
         takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
@@ -163,6 +165,7 @@ public class OCRActivity extends AppCompatActivity {
     private void moveToTextActivity(String ImageText){
         Intent i = new Intent(OCRActivity.this, TextActivity.class);
         i.putExtra("IMAGETEXT", ImageText);
+        i.putExtra("FILEKEY", fileKey);
         startActivity(i);
     }
 

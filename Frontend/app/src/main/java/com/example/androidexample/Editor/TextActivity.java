@@ -164,8 +164,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void OCRNavigate(){
-        Intent intent = new Intent(this, filesActivity.class);
+        Intent intent = new Intent(this, OCRActivity.class);
         intent.putExtra("SOURCE", "text");
+        intent.putExtra("FILEKEY", fileName.getText().toString());
         startActivity(intent);
     }
 
@@ -179,7 +180,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         fileName.setText(extras.getString("FILEKEY", ""));
         appendRecordedContent(extras.getString("RECORDED", ""));
-        appendRecordedContent(extras.getString("IMAGETEXT", ""));
         processAIExtras(extras);
     }
 

@@ -86,7 +86,7 @@ public class filesActivity extends AppCompatActivity {
     private LinearLayout rootLayout;
     private LinearLayout pathLayout;
     private LinearLayout fileLayout;
-    private Boolean OCRSwitch;
+    private Boolean OCRSwitch = false;
 
     /**
      * Initializes the activity and sets up the user interface.
@@ -421,39 +421,6 @@ public class filesActivity extends AppCompatActivity {
         // Add the note item to the parent layout
         rootLayout.addView(noteItem);
     }
-
-    private Button createFileDeleteButton(String fileName) {
-        Button deleteButton = new Button(this);
-        deleteButton.setText("Delete");
-        deleteButton.setPadding(20, 10, 20, 10);
-        deleteButton.setOnClickListener(view -> {
-            Log.d("File Deleted", "File deleted: " + fileName);
-            try {
-                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), fileName);
-                deleteFile(fileName, jsObj.toString());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return deleteButton;
-    }
-
-    private Button createShareToButton(String fileName, EditText toUser) {
-        Button shareToButton = new Button(this);
-        shareToButton.setText("Share to");
-        shareToButton.setPadding(20, 10, 20, 10);
-        shareToButton.setOnClickListener(view -> {
-            shareToUser(email, toUser.getText().toString(), fileName);
-        });
-        return shareToButton;
-    }
-
-    private EditText createShareToInput() {
-        EditText toUser = new EditText(this);
-        toUser.setHint("Email");
-        toUser.setPadding(20, 10, 20, 10);
-        return toUser;
-    }
     //Files End
 
     //Folders
@@ -496,21 +463,6 @@ public class filesActivity extends AppCompatActivity {
         }
     }
 
-    private Button createFolderDeleteButton(JSONObject nestedObject) {
-        Button deleteButton = new Button(this);
-        deleteButton.setText("Delete");
-        deleteButton.setPadding(20, 10, 20, 10);
-        deleteButton.setOnClickListener(view -> {
-            try {
-                JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), nestedObject.toString());
-                setFileSystem(jsObj.toString());
-                newfolderUpdate(fileSystem);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return deleteButton;
-    }
 
     private void moveToInnerFolder(String folderName) {
         Log.d("Folder Clicked", "Folder clicked: " + folderName);
@@ -546,6 +498,7 @@ public class filesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
+                        Toast.makeText(getApplicationContext(), "File Loaded", Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(filesActivity.this, TextActivity.class);
                         intent.putExtra("FILEKEY", fileName);
@@ -560,6 +513,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "File failed to load", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -588,6 +542,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         int id = Integer.parseInt(response);
+                        Toast.makeText(getApplicationContext(), "Folder Successfully connected", Toast.LENGTH_SHORT).show();
 
                         String serverUrl = URL_WS + id;
                         aiURL = URL_AIWS + id + "/" + username;
@@ -596,6 +551,7 @@ public class filesActivity extends AppCompatActivity {
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);
                         getFileString(fileName);
 
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -603,6 +559,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
+                        Toast.makeText(getApplicationContext(), "Folder failed to connect", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -668,15 +625,18 @@ public class filesActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "File successfully deleted", Toast.LENGTH_SHORT).show();
                         Log.d("Volley Response", response);
                         Log.d("JSON OBJECT", newFileSystem);
                         setFileSystem(newFileSystem);
                         refreshLayout();
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Folder failed to delete", Toast.LENGTH_SHORT).show();
                         refreshLayout();
                         // Handle any errors that occur during the request
                         Log.e("Volley Error", error.toString());
@@ -891,6 +851,7 @@ public class filesActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "File successfully created", Toast.LENGTH_SHORT).show();
                         Log.d("Volley Response", response);
                         setFileSystem(fileSystem);
                         refreshLayout();
@@ -907,6 +868,7 @@ public class filesActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Folder Failed to create", Toast.LENGTH_SHORT).show();
                         // Handle any errors that occur during the request
                         Log.e("Email", email);
                         Log.e("Volley Error", error.toString());
@@ -943,7 +905,7 @@ public class filesActivity extends AppCompatActivity {
                         // Handle any errors that occur during the request
                         Log.e("Email", email);
                         Log.e("Volley Error", error.toString());
-                        Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "File System failed to update", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
