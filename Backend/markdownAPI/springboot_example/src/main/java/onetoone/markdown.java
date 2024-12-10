@@ -260,6 +260,10 @@ public class markdown {
         //if it's owner
         if(file.getId() == user.getId()) {
 
+            r.deleteAll(file);
+
+
+
             if (file == null) {
                 response.put("response", "the file does not exist");
                 return response;
@@ -306,6 +310,8 @@ public class markdown {
             }
         }
         else{
+
+            r.delete(file, user);
 
             String deleted = delete(json, fileName);
             j.updatepath(user.getId(), deleted);

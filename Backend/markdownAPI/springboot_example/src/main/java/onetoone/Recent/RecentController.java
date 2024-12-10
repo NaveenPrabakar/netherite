@@ -76,4 +76,16 @@ public class RecentController {
 
         return ResponseEntity.ok(name);
     }
+
+    //delete for one user
+    @Transactional
+    public void delete(FileEntity f, signEntity s){
+        recentRepository.deleteByFileAndSign(f, s);
+    }
+
+    @Transactional
+    public void deleteAll(FileEntity f){
+        recentRepository.deleteByFileId(f.getId());
+    }
+
 }
