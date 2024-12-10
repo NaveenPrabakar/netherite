@@ -89,7 +89,7 @@ public class OCRActivity extends AppCompatActivity {
         selectBtn = findViewById(R.id.selectBtn);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_image_upload);
+        navigationBar.addNavigationBar();
 
         // select image from gallery
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),

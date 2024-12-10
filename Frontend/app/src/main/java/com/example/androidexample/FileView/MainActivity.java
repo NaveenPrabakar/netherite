@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
             }
         });
 
-        //NavigationBar navigationBar = new NavigationBar(this);
-        //navigationBar.addNavigationBar(R.layout.activity_main);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
     }
 
     public void getFileSystem(String email, String password){

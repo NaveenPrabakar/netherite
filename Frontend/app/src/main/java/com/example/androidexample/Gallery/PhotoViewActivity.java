@@ -66,7 +66,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         loadImage();
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_photoview);
+        navigationBar.addNavigationBar();
 
         goBackButt.setOnClickListener(new View.OnClickListener() {
             @Override

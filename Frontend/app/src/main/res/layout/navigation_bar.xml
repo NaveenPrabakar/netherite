@@ -18,8 +18,8 @@
 
         <ImageButton
             android:id="@+id/ocrButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_camera"
             android:contentDescription="@string/ocr" />
@@ -35,8 +35,8 @@
 
         <ImageButton
             android:id="@+id/homeButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/home"
             android:contentDescription="@string/home" />
@@ -52,8 +52,8 @@
 
         <ImageButton
             android:id="@+id/editButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/navbar_create_note"
             android:contentDescription="@string/create_note" />

@@ -98,6 +98,8 @@ public class filesActivity extends AppCompatActivity {
 
 //        NavigationBar navigationBar = new NavigationBar(this);
 //        navigationBar.addNavigationBar(R.layout.activity_file_view);
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
 
         initializeVariables();
         setupUIComponents();

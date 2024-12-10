@@ -63,7 +63,7 @@ public class VoiceRecordActivity extends AppCompatActivity {
         reject = findViewById(R.id.reject);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_voice_record);
+        navigationBar.addNavigationBar();
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

@@ -52,7 +52,7 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
         msgResponse = findViewById(R.id.err_msg);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_enter_forget_password);
+        navigationBar.addNavigationBar();
 
         Intent intent = getIntent();
         if (intent != null) {

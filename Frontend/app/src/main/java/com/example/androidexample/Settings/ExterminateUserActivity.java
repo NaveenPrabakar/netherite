@@ -47,7 +47,7 @@ public class ExterminateUserActivity extends AppCompatActivity {
         msgResponse = findViewById(R.id.err_msg);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_exterminateuser);
+        navigationBar.addNavigationBar();
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {

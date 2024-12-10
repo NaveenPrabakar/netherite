@@ -61,7 +61,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 //            email.setText(emailIntent);
 //        }
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_changepassword);
+        navigationBar.addNavigationBar();
 
 
         backToMain = findViewById(R.id.back2main);
