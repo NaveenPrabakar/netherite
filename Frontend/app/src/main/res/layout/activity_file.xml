@@ -7,13 +7,13 @@
     android:orientation="vertical"
     tools:context=".FileView.MainActivity">
 
+    <!-- Header Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:padding="10dp">
 
-        <!-- Back Button -->
         <ImageView
             android:id="@+id/back2main"
             android:layout_width="24dp"
@@ -24,7 +24,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- File Name -->
         <TextView
             android:id="@+id/headerTitle"
             android:layout_width="wrap_content"
@@ -39,11 +38,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/text2speech"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
+            android:text="Text To Speech"
+            android:textColor="@color/black"
+            app:cornerRadius="22dp"
+            android:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.946"
@@ -55,179 +57,224 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/scrollView"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginVertical="15dp"
             android:layout_height="0dp"
-            android:fillViewport="true"
-            app:layout_constraintBottom_toTopOf="@+id/butt3"
+            android:layout_margin="15dp"
+            app:cardCornerRadius="22dp"
+            app:cardBackgroundColor="@color/grey"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/grey"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
-                <EditText
-                    android:id="@+id/textViewMarkdown"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginVertical="15dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|top"
-                    android:hint="Click to edit Markdown"
-                    android:inputType="textMultiLine" />
+                    android:layout_weight="0.9">
 
-                <EditText
-                    android:id="@+id/EditMarkdown"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginVertical="15dp"
+                    <ScrollView
+                        android:id="@+id/scrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:fillViewport="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:id="@+id/textViewMarkdown"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="15dp"
+                                android:layout_marginVertical="15dp"
+                                android:background="@android:color/transparent"
+                                android:gravity="start|top"
+                                android:hint="Click to edit Markdown"
+                                android:inputType="textMultiLine" />
+
+                            <EditText
+                                android:id="@+id/EditMarkdown"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="15dp"
+                                android:layout_marginVertical="15dp"
+                                android:background="@android:color/transparent"
+                                android:gravity="start|top"
+                                android:hint="Click out to view Markdown"
+                                android:inputType="textMultiLine" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </ScrollView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/butt3"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|top"
-                    android:hint="Click out to view Markdown"
-                    android:inputType="textMultiLine"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:layout_editor_absoluteX="0dp" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
+                    android:weightSum="3">
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/liveChatButt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:text="Live Chat"
+                        android:textColor="@android:color/black"
+                        app:cornerRadius="22dp"
+                        android:elevation="0dp"
+                        app:backgroundTint="@color/main_teal" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/summarizeButt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:text="Summarize"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black"
+                        app:cornerRadius="22dp"
+                        android:elevation="0dp"
+                        app:backgroundTint="@color/main_teal" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/voiceButt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:text="Voice"
+                        android:textColor="@android:color/black"
+                        app:cornerRadius="22dp"
+                        android:elevation="0dp"
+                        app:backgroundTint="@color/main_teal" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:id="@+id/ChatBoxLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:paddingHorizontal="10dp"
             android:paddingVertical="10dp"
-            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button2"
-
-                android:layout_marginHorizontal="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.15"
-                android:text="V" />
+                android:text="V"
+                android:textColor="@color/black"
+                app:cornerRadius="22dp"
+                android:elevation="0dp" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/AIChatBar"
-
-                android:layout_marginHorizontal="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
+                android:layout_marginHorizontal="10dp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:background="@color/white"
-                android:gravity="start|center"
                 android:hint="Input prompt Here"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:background="@color/white" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button"
-                android:layout_marginHorizontal="5dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:text="AI" />
+                android:text="AI"
+                android:textColor="@color/black"
+                app:cornerRadius="22dp"
+                android:elevation="0dp" />
         </LinearLayout>
 
-        <TextView
+        <!-- Material Card for AI TextView and Buttons -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/AITextView"
             android:layout_width="0dp"
-            android:layout_height="250dp"
-            android:background="@color/white"
-            android:gravity="start|top"
-            android:text="AI Usage"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout" />
+            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/butt3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="10dp"
-            android:weightSum="3"
-            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+                <!-- AI TextView Inside Card -->
+                <TextView
+                    android:id="@+id/AITextBox"
+                    android:layout_width="0dp"
+                    android:layout_height="250dp"
+                    android:background="@color/white"
+                    android:gravity="start|top"
+                    android:text="AI Usage"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/liveChatButt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text="Live Chat" />
+                <!-- Button Layout Inside Card -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
 
-            <Button
-                android:id="@+id/summarizeButt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                    <!-- Accept Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/acceptButt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        app:cornerRadius="22dp"
+                        android:text="Accept" />
 
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text="Summarize" />
+                    <!-- Reject Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/rejectButt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cornerRadius="22dp"
+                        android:text="Reject" />
+                </LinearLayout>
 
-            <Button
-                android:id="@+id/voiceButt"
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text="Voice" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <Button
-                android:id="@+id/acceptButt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Accept" />
-
-            <Button
-                android:id="@+id/rejectButt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Reject" />
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.android.volley.Request;
@@ -64,15 +65,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
     private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
     private EditText mainText, editor, AIInputText;
-    private TextView AIText, fileName;
+    private TextView AITextBox, fileName;
     private Markwon markwon;
     private ImageView back2main;
     private TextWatcher textWatcher;
+    private CardView AIText;
 
     private JSONObject fileSystem, filePath;
     private String email, password, username, aiCount, content = " ", aiURL, source, history = "";
 
-    private BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         editor = findViewById(R.id.EditMarkdown);
         fileName = findViewById(R.id.headerTitle);
         AIText = findViewById(R.id.AITextView);
+        AITextBox = findViewById(R.id.AITextBox);
         liveChatButt = findViewById(R.id.liveChatButt);
         summarizeButt = findViewById(R.id.summarizeButt);
         acceptButt = findViewById(R.id.acceptButt);
@@ -176,7 +178,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private void processAIExtras(Bundle extras) {
         if (extras.containsKey("IMAGETEXT")) {
             AIText.setAlpha(1);
-            AIText.setText(extras.getString("IMAGETEXT"));
+            AITextBox.setText(extras.getString("IMAGETEXT"));
             toggleSummarizeVisibility(false);
         }
         aiURL = extras.getString("AIWSURL", aiURL);
@@ -246,12 +248,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void appendAIResponse() {
-        editor.append("\n\n---\nAI Response: " + AIText.getText() + "\n---\n");
+        editor.append("\n\n---\nAI Response: " + AITextBox.getText() + "\n---\n");
     }
 
     private void clearAIText() {
         AIText.setAlpha(0);
-        AIText.setText("");
+        AITextBox.setText("");
     }
 
     private void toggleSummarizeVisibility(boolean visible) {
@@ -319,7 +321,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private void handleSummarizeHelpResponse(JSONObject response) {
         try {
             AIText.setAlpha(1);
-            AIText.setText(response.getString("reply"));
+            AITextBox.setText(response.getString("reply"));
             aiCount = response.getString("count");
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing summarize help response", e);
@@ -365,7 +367,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
             history += messageContent + ":" + user + " ";
             AIText.setAlpha(1);
-            AIText.setText(messageContent);
+            AITextBox.setText(messageContent);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON message", e);
         }

@@ -43,7 +43,7 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
     /**
      * Button to go back to the note file.
      */
-    private ImageView backButt;
+    private Button backButt;
 
     /**
      * Text view to display the title of the note file.
