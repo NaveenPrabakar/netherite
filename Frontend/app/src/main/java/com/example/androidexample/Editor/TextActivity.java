@@ -79,7 +79,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-
         initializeUI();
         loadUserPreferences();
         setupEditorListeners();
@@ -108,6 +107,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
         mainText.setAlpha(1);
         editor.setAlpha(0);
+
+        AIText.setAlpha(0);
+
     }
 
     private void loadUserPreferences() {
@@ -173,6 +175,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void processAIExtras(Bundle extras) {
         if (extras.containsKey("IMAGETEXT")) {
+            AIText.setAlpha(1);
             AIText.setText(extras.getString("IMAGETEXT"));
             toggleSummarizeVisibility(false);
         }
@@ -183,9 +186,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         if (hasFocus) {
             mainText.setAlpha(0);
             editor.setAlpha(1);
+            AIText.setAlpha(0);
         } else {
             mainText.setAlpha(1);
             editor.setAlpha(0);
+            AIText.setAlpha(0);
         }
     }
 
@@ -245,6 +250,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void clearAIText() {
+        AIText.setAlpha(0);
         AIText.setText("");
     }
 
@@ -312,6 +318,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void handleSummarizeHelpResponse(JSONObject response) {
         try {
+            AIText.setAlpha(1);
             AIText.setText(response.getString("reply"));
             aiCount = response.getString("count");
         } catch (JSONException e) {
@@ -357,6 +364,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             String user = jsonMessage.getString("username");
 
             history += messageContent + ":" + user + " ";
+            AIText.setAlpha(1);
             AIText.setText(messageContent);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON message", e);

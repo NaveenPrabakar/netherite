@@ -55,28 +55,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/textViewMarkdown"
-            android:layout_width="0dp"
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:ems="10"
-            android:gravity="start|top"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/EditMarkdown"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:ems="10"
-            android:gravity="start|top"
-            android:inputType="textMultiLine"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/textViewMarkdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|top"
+                    android:hint="Click to edit Markdown"
+                    android:inputType="textMultiLine" />
+
+                <EditText
+                    android:id="@+id/EditMarkdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|top"
+                    android:hint="Click out to view Markdown"
+                    android:inputType="textMultiLine"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="16dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
 
         <TextView
             android:id="@+id/AITextView"
@@ -100,47 +116,55 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
-            android:id="@+id/liveChatButt"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Live Chat"
-            app:layout_constraintStart_toEndOf="@id/rejectButt"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/summarizeButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Summarize"
-            app:layout_constraintStart_toEndOf="@id/liveChatButt"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <Button
+                android:id="@+id/liveChatButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Live Chat" />
 
-        <Button
-            android:id="@+id/acceptButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Accept"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar" />
+            <Button
+                android:id="@+id/summarizeButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Summarize" />
 
-        <Button
-            android:id="@+id/rejectButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reject"
-            app:layout_constraintStart_toEndOf="@+id/acceptButt"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar" />
+            <Button
+                android:id="@+id/voiceButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Voice" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/voiceButt"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Voice"
-            app:layout_constraintStart_toEndOf="@+id/rejectButt"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar" />
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/acceptButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accept" />
+
+            <Button
+                android:id="@+id/rejectButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reject" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
