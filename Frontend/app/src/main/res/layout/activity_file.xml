@@ -67,37 +67,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.card.MaterialCardView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="22dp"
-                app:cardBackgroundColor="@color/grey">
+                android:background="@color/grey"
+                android:orientation="vertical">
 
-                    <EditText
-                        android:id="@+id/textViewMarkdown"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginVertical="20dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:gravity="start|top"
-                        android:hint="Click to edit Markdown"
-                        android:inputType="textMultiLine" />
+                <EditText
+                    android:id="@+id/textViewMarkdown"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginVertical="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|top"
+                    android:hint="Click to edit Markdown"
+                    android:inputType="textMultiLine" />
 
-                    <EditText
-                        android:id="@+id/EditMarkdown"
-                        android:layout_marginHorizontal="15dp"
-                        android:layout_marginVertical="20dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:gravity="start|top"
-                        android:hint="Click out to view Markdown"
-                        android:inputType="textMultiLine"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:layout_editor_absoluteX="0dp" />
-            </com.google.android.material.card.MaterialCardView>
-
+                <EditText
+                    android:id="@+id/EditMarkdown"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginVertical="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|top"
+                    android:hint="Click out to view Markdown"
+                    android:inputType="textMultiLine"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:layout_editor_absoluteX="0dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
 
