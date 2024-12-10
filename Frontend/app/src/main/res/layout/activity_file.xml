@@ -58,41 +58,97 @@
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="15dp"
             android:layout_height="0dp"
             android:fillViewport="true"
-            app:layout_constraintBottom_toBottomOf="@+id/AITextView"
+            app:layout_constraintBottom_toTopOf="@+id/butt3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:cardCornerRadius="22dp"
+                app:cardBackgroundColor="@color/grey">
 
-                <EditText
-                    android:id="@+id/textViewMarkdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|top"
-                    android:hint="Click to edit Markdown"
-                    android:inputType="textMultiLine" />
+                    <EditText
+                        android:id="@+id/textViewMarkdown"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|top"
+                        android:hint="Click to edit Markdown"
+                        android:inputType="textMultiLine" />
 
-                <EditText
-                    android:id="@+id/EditMarkdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|top"
-                    android:hint="Click out to view Markdown"
-                    android:inputType="textMultiLine"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="16dp" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <EditText
+                        android:id="@+id/EditMarkdown"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|top"
+                        android:hint="Click out to view Markdown"
+                        android:inputType="textMultiLine"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:layout_editor_absoluteX="0dp" />
+            </com.google.android.material.card.MaterialCardView>
+
         </ScrollView>
 
 
+        <LinearLayout
+            android:id="@+id/ChatBoxLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/button2"
+
+                android:layout_marginHorizontal="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.15"
+                android:text="V" />
+
+            <EditText
+                android:id="@+id/AIChatBar"
+
+                android:layout_marginHorizontal="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:background="@color/white"
+                android:gravity="start|center"
+                android:hint="Input prompt Here"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_marginHorizontal="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="AI" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/AITextView"
@@ -103,24 +159,19 @@
             android:text="AI Usage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/AIChatBar" />
+            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout" />
 
-        <EditText
-            android:id="@+id/AIChatBar"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:hint="Input Prompt Here"
-            android:background="@color/white"
-            android:gravity="start|top"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/butt3"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:weightSum="3"
+            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -128,18 +179,32 @@
                 android:id="@+id/liveChatButt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:text="Live Chat" />
 
             <Button
                 android:id="@+id/summarizeButt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:text="Summarize" />
 
             <Button
                 android:id="@+id/voiceButt"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:text="Voice" />
         </LinearLayout>
 
@@ -147,7 +212,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+            app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.1"
             app:layout_constraintStart_toStartOf="parent">
