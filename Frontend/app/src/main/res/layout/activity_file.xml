@@ -185,14 +185,18 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/button2"
+                android:id="@+id/OCRButtTXT"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.15"
-                android:text="V"
                 android:textColor="@color/black"
+                android:elevation="0dp"
                 app:cornerRadius="22dp"
-                android:elevation="0dp" />
+                app:icon="@drawable/ic_camera"
+                app:iconSize="24dp"
+                app:iconGravity="start"
+                app:iconTint="@color/black" />
+
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/AIChatBar"

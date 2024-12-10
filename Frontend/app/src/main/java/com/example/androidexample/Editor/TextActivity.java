@@ -63,7 +63,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
-    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
+    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt, OCRButt;
     private EditText mainText, editor, AIInputText;
     private TextView AITextBox, fileName;
     private Markwon markwon;
@@ -100,7 +100,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         voiceButt = findViewById(R.id.voiceButt);
         ttsButt = findViewById(R.id.text2speech);
         back2main = findViewById(R.id.back2main);
-
+        OCRButt = findViewById(R.id.OCRButtTXT);
 
         markwon = Markwon.builder(this).build();
 
@@ -160,6 +160,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         voiceButt.setOnClickListener(v -> navigateToVoiceActivity());
         back2main.setOnClickListener(v -> navigateToFilesActivity());
         ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
+        OCRButt.setOnClickListener(v -> OCRNavigate());
+    }
+
+    private void OCRNavigate(){
+        Intent intent = new Intent(this, filesActivity.class);
+        startActivity(intent);
     }
 
     private void processIncomingIntent() {
