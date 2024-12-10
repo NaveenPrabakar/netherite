@@ -58,6 +58,7 @@ public class NavigationBar {
         // Set click listeners for navigation
         ocrButton.setOnClickListener(view -> {
             Intent intent = new Intent(activity, OCRActivity.class);
+            intent.putExtra("SOURCE", "files");
             activity.startActivity(intent);
         });
 

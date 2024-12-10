@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import kotlinx.coroutines.android.AndroidExceptionPreHandler;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -85,6 +86,7 @@ public class filesActivity extends AppCompatActivity {
     private LinearLayout rootLayout;
     private LinearLayout pathLayout;
     private LinearLayout fileLayout;
+    private Boolean OCRSwitch;
 
     /**
      * Initializes the activity and sets up the user interface.
@@ -104,6 +106,21 @@ public class filesActivity extends AppCompatActivity {
 
         initializeVariables();
         setupUIComponents();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if(extras != null){
+            try {
+                OCRSwitch = true;
+                String content = extras.getString("IMAGETEXT");
+                String firstLine = content.split("\n")[0];
+                newItem(fileSystem, fileSystem, firstLine, content, "file");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
     }
 
     /**
@@ -123,7 +140,6 @@ public class filesActivity extends AppCompatActivity {
     private void setupUIComponents() {
         goback = findViewById(R.id.goback);
         rootLayout = findViewById(R.id.rootLayout);
-        //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
         recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
@@ -152,11 +168,6 @@ public class filesActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void navigateToOCR() {
-        Intent intent = new Intent(filesActivity.this, OCRActivity.class);
-        startActivity(intent);
     }
 
     private void getRecentFiles()
@@ -216,7 +227,7 @@ public class filesActivity extends AppCompatActivity {
         try {
             String correctedFolderName = newFolderCheck(newFolderName.getText().toString());
             if (!correctedFolderName.isEmpty()){
-                newItem(currentArray, fileSystem, correctedFolderName, type);
+                newItem(currentArray, fileSystem, correctedFolderName, "", type);
             }else{
                 Toast.makeText(getApplicationContext(), "Folder Name is invalid", Toast.LENGTH_SHORT).show();
             }
@@ -788,7 +799,7 @@ public class filesActivity extends AppCompatActivity {
      * @return the updated JSON string representing the current directory
      * @throws JSONException if there is an error parsing the JSON objects
      */
-    private String newItem(String currentArray, String fileSystem , String folderName, String type) throws JSONException {
+    private String newItem(String currentArray, String fileSystem , String folderName, String content, String type) throws JSONException {
         JSONObject currentArrayJS = new JSONObject(currentArray);
         String newKey = currentArrayJS.keys().next();
 
@@ -825,7 +836,7 @@ public class filesActivity extends AppCompatActivity {
             newfolderUpdate(fileSystemJS.toString());
         }else{
             currArrayJS.put(folderName);
-            newFileUpdate(folderName, fileSystemJS.toString());
+            newFileUpdate(folderName, content, fileSystemJS.toString());
         }
         Log.d("JSON ARRAY", currentArray.toString());
         return currentArrayJS.toString();
@@ -864,10 +875,10 @@ public class filesActivity extends AppCompatActivity {
     };
 
 
-    private void newFileUpdate(String fileName, String fileSystem){
+    private void newFileUpdate(String fileName,String content, String fileSystem){
         Uri.Builder builder = Uri.parse(URL_STRING_PUSH).buildUpon();
         builder.appendQueryParameter("fileName", fileName);
-        builder.appendQueryParameter("content", "");
+        builder.appendQueryParameter("content", content);
         builder.appendQueryParameter("json", fileSystem);
         builder.appendQueryParameter("email", email);
         builder.appendQueryParameter("password", password);
@@ -883,6 +894,14 @@ public class filesActivity extends AppCompatActivity {
                         Log.d("Volley Response", response);
                         setFileSystem(fileSystem);
                         refreshLayout();
+                        if(OCRSwitch){
+                            OCRSwitch = false;
+                            Intent i = new Intent(filesActivity.this, TextActivity.class);
+                            i.putExtra("FILEKEY", fileName);
+                            i.putExtra("CONTENT", content);
+                            i.putExtra("AIWSURL", aiURL);
+                            startActivity(i);
+                        }
                     }
                 },
                 new Response.ErrorListener() {

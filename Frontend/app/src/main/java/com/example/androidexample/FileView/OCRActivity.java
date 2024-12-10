@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -44,7 +45,7 @@ public class OCRActivity extends AppCompatActivity {
     Button uploadBtn;
     ImageView mImageView;
     Uri selectiedUri;
-    String email = "takuli@iastate.edu";
+    String email;
     String language = "english";
     private String username;
     private Uri photoUri;
@@ -52,6 +53,7 @@ public class OCRActivity extends AppCompatActivity {
     private String fileSystem;
     private String filePath;
     private String password;
+    private String source;
     // replace this with the actual address
     // 10.0.2.2 to be used for localhost if running springboot on the same host
     private static String UPLOAD_URL = "http://coms-3090-068.class.las.iastate.edu:8080/extractText";
@@ -75,6 +77,13 @@ public class OCRActivity extends AppCompatActivity {
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if(extras != null){
+            source = extras.getString("SOURCE");
+        }
 
         takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
             if (result) {
@@ -129,15 +138,11 @@ public class OCRActivity extends AppCompatActivity {
                     // Handle response
                     //Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                     Log.d("Upload", "Response: " + response);
-                    Intent i = new Intent(OCRActivity.this, TextActivity.class);
-                    i.putExtra("IMAGETEXT", response);
-                    i.putExtra("CONTENT", "");
-                    i.putExtra("FILESYSTEM", fileSystem);
-                    i.putExtra("PATH", "{\"path\": []}");
-                    i.putExtra("EMAIL", email);
-                    i.putExtra("PASSWORD", password);
-                    i.putExtra("USERNAME", username);
-                    startActivity(i);
+                    if(source.equals("text")){
+                        moveToTextActivity(response);
+                    }else{
+                        moveToFilesActivity(response);
+                    }
                 },
                 error -> {
                     // Handle error
@@ -147,6 +152,18 @@ public class OCRActivity extends AppCompatActivity {
         );
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
+    }
+
+    private void moveToFilesActivity(String ImageText){
+        Intent i = new Intent(OCRActivity.this, filesActivity.class);
+        i.putExtra("IMAGETEXT", ImageText);
+        startActivity(i);
+    }
+
+    private void moveToTextActivity(String ImageText){
+        Intent i = new Intent(OCRActivity.this, TextActivity.class);
+        i.putExtra("IMAGETEXT", ImageText);
+        startActivity(i);
     }
 
     /**
