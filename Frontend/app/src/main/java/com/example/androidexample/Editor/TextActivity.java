@@ -179,7 +179,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         editor.setText(content);
 
         fileName.setText(extras.getString("FILEKEY", ""));
-        appendRecordedContent(extras.getString("RECORDED", ""));
         processAIExtras(extras);
     }
 
@@ -189,6 +188,12 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             AITextBox.setText(extras.getString("IMAGETEXT"));
             toggleSummarizeVisibility(false);
         }
+        if (extras.containsKey("RECORDED")) {
+            AIText.setAlpha(1);
+            AITextBox.setText(extras.getString("RECORDED"));
+            toggleSummarizeVisibility(false);
+        }
+
         aiURL = extras.getString("AIWSURL", aiURL);
     }
 
@@ -235,11 +240,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void navigateToVoiceActivity() {
         Intent intent = new Intent(this, VoiceRecordActivity.class);
-        intent.putExtra("EMAIL", email);
-        intent.putExtra("PASSWORD", password);
-        intent.putExtra("USERNAME", username);
-        intent.putExtra("FILESYSTEM", fileSystem.toString());
-        intent.putExtra("PATH", filePath.toString());
+        intent.putExtra("FILEKEY", fileName.getText().toString());
         intent.putExtra("CONTENT", content);
         startActivity(intent);
     }
@@ -249,11 +250,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         startActivity(intent);
     }
 
-    private void appendRecordedContent(String recordedContent) {
-        if (!recordedContent.isEmpty()) {
-            editor.append("   \n   \n" + recordedContent);
-        }
-    }
 
     private void appendAIResponse() {
         editor.append("\n\n---\nAI Response: " + AITextBox.getText() + "\n---\n");

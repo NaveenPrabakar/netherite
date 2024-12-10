@@ -241,9 +241,11 @@
                     android:id="@+id/AITextBox"
                     android:layout_width="0dp"
                     android:layout_height="250dp"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="20dp"
                     android:background="@color/white"
                     android:gravity="start|top"
-                    android:text="AI Usage"
+                    android:text="AI"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
