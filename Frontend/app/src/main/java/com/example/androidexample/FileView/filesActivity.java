@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -118,7 +119,8 @@ public class filesActivity extends AppCompatActivity {
         //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
-        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+
 
         goback.setOnClickListener(view -> handleGoBack());
         //OCRButt.setOnClickListener(view -> navigateToOCR());
