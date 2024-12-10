@@ -7,10 +7,7 @@
     android:orientation="vertical"
     tools:context=".FileView.MainActivity">
 
-<<<<<<< HEAD
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
@@ -41,46 +38,22 @@
             app:layout_constraintStart_toEndOf="@id/back2main"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/back2main"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back to main" />
 
         <Button
             android:id="@+id/text2speech"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tts baby" />
-    </LinearLayout>
->>>>>>> 211168678b27d2c8194c43764b09d4a29ea995c1
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.946"
+            app:layout_constraintStart_toEndOf="@+id/headerTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <EditText
-            android:id="@+id/fileName"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:ems="10"
-            android:hint="Name"
-            android:inputType="text"
-            app:layout_constraintStart_toStartOf="parent"
-<<<<<<< HEAD
-            app:layout_constraintTop_toTopOf="parent"
-            />
-=======
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
->>>>>>> 211168678b27d2c8194c43764b09d4a29ea995c1
 
         <EditText
             android:id="@+id/textViewMarkdown"
@@ -88,17 +61,10 @@
             android:layout_height="0dp"
             android:ems="10"
             android:gravity="start|top"
-<<<<<<< HEAD
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fileName" />
-=======
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName"
-            app:layout_constraintBottom_toTopOf="@id/AITextView" />
->>>>>>> 211168678b27d2c8194c43764b09d4a29ea995c1
 
         <EditText
             android:id="@+id/EditMarkdown"
@@ -107,18 +73,10 @@
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
-<<<<<<< HEAD
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fileName" />
-
-=======
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fileName"
-            app:layout_constraintBottom_toTopOf="@id/AITextView" />
->>>>>>> 211168678b27d2c8194c43764b09d4a29ea995c1
 
         <TextView
             android:id="@+id/AITextView"
