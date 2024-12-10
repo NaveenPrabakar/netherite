@@ -1,6 +1,7 @@
 package com.example.androidexample.FileView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,7 @@ import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketManager;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -72,9 +74,9 @@ public class filesActivity extends AppCompatActivity {
     private List<String> recentFiles;
     private RecyclerView recentFilesView;
 
-    private Button goback;
+    private ImageView goback;
     private Button OCRButt;
-    private Button AutoIndex;
+    private MaterialButton AutoIndex;
     private LinearLayout rootLayout;
     private LinearLayout fileLayout;
 
@@ -116,7 +118,7 @@ public class filesActivity extends AppCompatActivity {
         //OCRButt = findViewById(R.id.OCRButt);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
-        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         goback.setOnClickListener(view -> handleGoBack());
         //OCRButt.setOnClickListener(view -> navigateToOCR());
@@ -216,22 +218,40 @@ public class filesActivity extends AppCompatActivity {
     }
 
     private void createUIButtons(LinearLayout parentLayout){
+        // Create a horizontal LinearLayout for buttons
         LinearLayout newFolderLayout = new LinearLayout(this);
         newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
+        newFolderLayout.setPadding(10, 10, 10, 10);
 
-        Button newFolder = new Button(this);
+        LinearLayout.LayoutParams buttonLayout = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        buttonLayout.setMargins(10, 0, 10, 0);
+
+        // Create the "New Folder" MaterialButton
+        MaterialButton newFolder = new MaterialButton(this);
         newFolder.setText("New Folder");
-        newFolder.setPadding(20, 10, 20, 10);
+        newFolder.setBackgroundColor(Color.parseColor("#B7E7EA")); // Set teal background color
+        newFolder.setTextColor(Color.BLACK);
+        newFolder.setCornerRadius(8); // Rounded corners
+        newFolder.setPadding(20, 10, 20, 10); // Padding inside the button
+        newFolder.setLayoutParams(buttonLayout);
 
-
-        Button newFile = new Button(this);
+        // Create the "New File" MaterialButton
+        MaterialButton newFile = new MaterialButton(this);
         newFile.setText("New File");
-        newFile.setPadding(20, 10, 20, 10);
+        newFile.setBackgroundColor(Color.parseColor("#B7E7EA")); // Set teal background color
+        newFile.setTextColor(Color.BLACK);
+        newFile.setCornerRadius(8); // Rounded corners
+        newFile.setPadding(20, 10, 20, 10); // Padding inside the button
+        newFile.setLayoutParams(buttonLayout);
 
-
+        // Add the buttons to the horizontal LinearLayout
         newFolderLayout.addView(newFolder);
         newFolderLayout.addView(newFile);
 
+        // Create an EditText for the new folder/file name input
         EditText newFolderName = new EditText(this);
         newFolderName.setHint("New Name");
         newFolderName.setPadding(20, 10, 20, 10);

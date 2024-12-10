@@ -53,7 +53,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private final String URL_AI_POST = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/createAIUser";
     private final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/"; // PUT IN A PATH VARIABLE
     private final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
-    private Button back2main;
+    private ImageView back2main;
     private Button saveButt;
     private Button summarizeButt;
     private Button acceptButt;
