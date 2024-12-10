@@ -62,10 +62,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
-    private Button back2main, ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
-    private EditText mainText, editor, fileName, AIInputText;
-    private TextView AIText;
+    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt;
+    private EditText mainText, editor, AIInputText;
+    private TextView AIText, fileName;
     private Markwon markwon;
+    private ImageView back2main;
     private TextWatcher textWatcher;
 
     private JSONObject fileSystem, filePath;
@@ -89,7 +90,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private void initializeUI() {
         mainText = findViewById(R.id.textViewMarkdown);
         editor = findViewById(R.id.EditMarkdown);
-        fileName = findViewById(R.id.fileName);
+        fileName = findViewById(R.id.headerTitle);
         AIText = findViewById(R.id.AITextView);
         liveChatButt = findViewById(R.id.liveChatButt);
         summarizeButt = findViewById(R.id.summarizeButt);
@@ -97,6 +98,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         rejectButt = findViewById(R.id.rejectButt);
         voiceButt = findViewById(R.id.voiceButt);
         ttsButt = findViewById(R.id.text2speech);
+        back2main = findViewById(R.id.back2main);
 
 
         markwon = Markwon.builder(this).build();
@@ -152,7 +154,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         acceptButt.setOnClickListener(v -> acceptAIResponse());
         rejectButt.setOnClickListener(v -> rejectAIResponse());
         voiceButt.setOnClickListener(v -> navigateToVoiceActivity());
-        back2main = findViewById(R.id.back2main);
         back2main.setOnClickListener(v -> navigateToFilesActivity());
         ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
     }
