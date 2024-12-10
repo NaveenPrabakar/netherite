@@ -1,0 +1,177 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FileEntity</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone</a>
+</div>
+
+<h1>Coverage Summary for Class: FileEntity (onetoone)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileEntity</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (7/11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FileEntity$HibernateInstantiator$RRaoDMi3</td>
+  </tr>
+  <tr>
+    <td class="name">FileEntity$HibernateProxy$tU4r4j3S</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (7/11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone;
+&nbsp;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.ManyToMany;
+&nbsp;import jakarta.persistence.JoinTable;
+&nbsp;import jakarta.persistence.JoinColumn;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import onetoone.Access.*;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Set;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Schema(description = &quot;Represents a table that has owners and the files they own.&quot;)
+&nbsp;public class FileEntity {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+<b class="fc">&nbsp;    @ManyToMany(mappedBy = &quot;files&quot;, cascade = CascadeType.ALL)</b>
+&nbsp;    private Set&lt;AccessEntity&gt; accessEntities = new HashSet&lt;&gt;();
+&nbsp;
+&nbsp;    private Long userID;
+&nbsp;
+&nbsp;    private String fileName;
+&nbsp;
+<b class="fc">&nbsp;    public FileEntity() {}</b>
+&nbsp;
+&nbsp;    public FileEntity(String fileName, Long userID)
+<b class="fc">&nbsp;    {</b>
+<b class="fc">&nbsp;        this.fileName = fileName;</b>
+<b class="fc">&nbsp;        this.userID = userID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId(){
+<b class="fc">&nbsp;        return userID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getfileId(){
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName(){
+<b class="nc">&nbsp;        return fileName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Set&lt;AccessEntity&gt; getAccessEntities() {
+<b class="nc">&nbsp;        return accessEntities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addAccessEntity(AccessEntity accessEntity) {
+<b class="nc">&nbsp;        this.accessEntities.add(accessEntity);</b>
+<b class="nc">&nbsp;        accessEntity.getFiles().add(this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 10:30</div>
+</div>
+</body>
+</html>

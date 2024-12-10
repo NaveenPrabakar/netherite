@@ -1,0 +1,401 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OpenAISummarizeAPI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.signupAPI</a>
+</div>
+
+<h1>Coverage Summary for Class: OpenAISummarizeAPI (onetoone.signupAPI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OpenAISummarizeAPI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.5%
+  </span>
+  <span class="absValue">
+    (1/68)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.signupAPI;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import onetoone.signupAPI.signRepository;//need to find the id of user
+&nbsp;import onetoone.signupAPI.signEntity;
+&nbsp;import onetoone.summarizeAPI.OpenAISummarizeAPIRepository;
+&nbsp;import onetoone.summarizeAPI.AI;
+&nbsp;import onetoone.summarizeAPI.summarizeAPIEntity;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.http.HttpEntity;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.HttpMethod;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;//import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;import org.json.JSONObject;
+&nbsp;import org.json.JSONArray;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;//GET method to retrive the times the user use
+&nbsp;//POST-create the user with times they use API
+&nbsp;//PUT-Update the time they use
+&nbsp;//Delete-delete the whole things as 24 hours
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/OpenAIAPIuse&quot;)
+&nbsp;@Tag(name = &quot;AI/Summarize API&quot;, description = &quot;Done By Yi Yun Khor&quot;)
+<b class="fc">&nbsp;public class OpenAISummarizeAPI{</b>
+&nbsp;
+&nbsp;    //api key.....
+&nbsp;    @Value(&quot;${openai.api.key}&quot;)
+&nbsp;    private String openAIKey;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private OpenAISummarizeAPIRepository api;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private signRepository sign;
+&nbsp;
+&nbsp;    //GET method to retrive the times the user use openai api
+&nbsp;    //front end giving the username or usergmail
+&nbsp;    //need to tell front end to use a condition for post and put entity because diff API
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Retrieves the OpenAI API usage count for a specific user by email.
+&nbsp;     *
+&nbsp;     * @param email The email of the user
+&nbsp;     * @return A map containing the usage count or an error message if the user is not found
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get OpenAI API usage count for a user&quot;, description = &quot;Fetches the usage count of OpenAI API for a specific user based on their email&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved usage count&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/getUsageAPICount/{email}&quot;)
+&nbsp;    public Map&lt;String, String&gt;  getUsageAPICount(@PathVariable String email) {
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;        //need to go to signentity to find username in order to find userid
+<b class="nc">&nbsp;        signEntity temp = sign.findByEmail(email);</b>
+<b class="nc">&nbsp;        Long userID = temp.getId();</b>
+&nbsp;
+&nbsp;
+&nbsp;        //use the userid for the apientity table to find the count
+<b class="nc">&nbsp;        summarizeAPIEntity temp2 = api.findByAIUserId(userID);</b>
+&nbsp;
+&nbsp;        //if the user not exist in the table that means user never use it before
+<b class="nc">&nbsp;        if (temp2==null){</b>
+<b class="nc">&nbsp;            response.put(&quot;reply&quot;, &quot;-1&quot;);</b>
+<b class="nc">&nbsp;            return response;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //convert from integer to string
+<b class="nc">&nbsp;        int count=temp2.getUsageAPICount();</b>
+<b class="nc">&nbsp;        String countStr = String.valueOf(count);</b>
+&nbsp;
+<b class="nc">&nbsp;        response.put(&quot;reply&quot;, countStr);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //Post method to create the users entity in AI table (never use before)
+&nbsp;    //using the class created AI.java for requestBody
+&nbsp;    //front end giving json for username,promt and content
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new OpenAI API user entry and makes the first API call.
+&nbsp;     *
+&nbsp;     * @param body The request body containing user&#39;s email and prompt
+&nbsp;     * @return A map with the API response or an error message if the user is not found
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new OpenAI API user&quot;, description = &quot;Creates a new entry for a user in the OpenAI API usage table&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;User created and first API call made&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/createAIUser&quot;)
+&nbsp;    public Map&lt;String, String&gt; getFeedBack1(@RequestBody AI body){
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;        //need to go to signentity to find username in order to find userid
+<b class="nc">&nbsp;        signEntity temp= sign.findByEmail(body.getemail());</b>
+<b class="nc">&nbsp;        Long userID=temp.getId();</b>
+&nbsp;
+&nbsp;        //need to create the table entity
+<b class="nc">&nbsp;        summarizeAPIEntity sm = new summarizeAPIEntity(userID,LocalDateTime.now(),1);</b>
+<b class="nc">&nbsp;        api.save(sm);</b>
+&nbsp;
+&nbsp;        //get the content and promt and pass in using open ai
+&nbsp;        // Call OpenAI API for the first time
+<b class="nc">&nbsp;        String responseString = callOpenAI(body.getPrompt(), body.getContent());</b>
+<b class="nc">&nbsp;        response.put(&quot;reply&quot;, responseString);</b>
+&nbsp;
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;    //Post method to create the users entity in AI table
+&nbsp;    //using the class created AI.java for requestBody
+&nbsp;    //front end giving json for username,promt and content
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the usage count of a user when they make an API call.
+&nbsp;     *
+&nbsp;     * @param body The request body containing user&#39;s email and prompt
+&nbsp;     * @return A map with the API response or an error message if the limit is exceeded
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update usage count&quot;, description = &quot;Increments the usage count for a user making an API call&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Usage count updated successfully&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;429&quot;, description = &quot;You have exceed the daily limit of using Open AI api, please wait for 24 hours later&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/updateAIUser&quot;)
+&nbsp;    public Map&lt;String, String&gt; getFeedBack2(@RequestBody AI body){
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+&nbsp;        //need to go to signentity to find username in order to find userid
+<b class="nc">&nbsp;        signEntity temp= sign.findByEmail(body.getemail());</b>
+<b class="nc">&nbsp;        Long userID=temp.getId();</b>
+&nbsp;
+&nbsp;        //user the userid for the api table to find the count
+<b class="nc">&nbsp;        summarizeAPIEntity temp2=api.findByAIUserId(userID);</b>
+&nbsp;
+<b class="nc">&nbsp;        int count=temp2.getUsageAPICount();</b>
+&nbsp;
+&nbsp;        //check if the count exceed 20 times
+<b class="nc">&nbsp;        if (count&gt;20){</b>
+<b class="nc">&nbsp;            response.put(&quot;reply&quot;, &quot;You have exceed the daily limit of using Open AI api, please wait for 24 hours later&quot;);</b>
+<b class="nc">&nbsp;            return response;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //increment the count and set the usageAPICount
+<b class="nc">&nbsp;        temp2.setUsageAPICount(++count);</b>
+&nbsp;
+<b class="nc">&nbsp;        api.save(temp2);</b>
+&nbsp;
+&nbsp;
+&nbsp;        //get the content and promt and pass in using open ai
+&nbsp;        // Call OpenAI API for the first time
+<b class="nc">&nbsp;        String responseString = callOpenAI(body.getPrompt(), body.getContent());</b>
+<b class="nc">&nbsp;        response.put(&quot;reply&quot;, responseString);</b>
+&nbsp;
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // DELETE method to reset usage count after 24 hours
+&nbsp;    /**
+&nbsp;     * Resets the usage count of OpenAI API calls for a user.
+&nbsp;     *
+&nbsp;     * @param email The email of the user whose usage count will be reset
+&nbsp;     * @return A map indicating the status of the reset operation
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Reset API usage count&quot;, description = &quot;Resets the usage count of OpenAI API calls for a user after 24 hours&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;API usage has been reset for the user.&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The user does not exist&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/resetUsage/{email}&quot;)
+&nbsp;    public Map&lt;String, String&gt; resetUsage(@PathVariable String email) {
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        signEntity user = sign.findByEmail(email);</b>
+<b class="nc">&nbsp;        Long userID = user.getId();</b>
+&nbsp;
+&nbsp;        //find the userentity and information
+<b class="nc">&nbsp;        summarizeAPIEntity temp = api.findByAIUserId(userID);</b>
+<b class="nc">&nbsp;        if (temp == null) {</b>
+<b class="nc">&nbsp;            response.put(&quot;reply&quot;, &quot;The user does not exist&quot;);</b>
+<b class="nc">&nbsp;            return response;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Reset usage count to 0
+<b class="nc">&nbsp;        temp.setUsageAPICount(0);</b>
+<b class="nc">&nbsp;        api.save(temp);</b>
+<b class="nc">&nbsp;        response.put(&quot;reply&quot;, &quot;API usage has been reset for the user.&quot;);</b>
+<b class="nc">&nbsp;        return response;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //helper method
+&nbsp;    /**
+&nbsp;     * Calls the OpenAI API with the given prompt and content.
+&nbsp;     *
+&nbsp;     * @param prompt The prompt text for summarization
+&nbsp;     * @param content The content text to summarize
+&nbsp;     * @return The summarized text from OpenAI
+&nbsp;     */
+&nbsp;    private String callOpenAI(String prompt, String content) {
+<b class="nc">&nbsp;        String openaiApiUrl = &quot;https://api.openai.com/v1/chat/completions&quot;;  // Endpoint for chat-based models</b>
+<b class="nc">&nbsp;        String apiKey = &quot;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&quot;;  // Replace with your OpenAI API key</b>
+&nbsp;
+&nbsp;        // Initialize RestTemplate
+<b class="nc">&nbsp;        RestTemplate restTemplate = new RestTemplate();</b>
+&nbsp;
+&nbsp;        // Set up headers
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.set(&quot;Authorization&quot;, &quot;Bearer &quot; + apiKey);</b>
+<b class="nc">&nbsp;        headers.set(&quot;Content-Type&quot;, &quot;application/json&quot;);</b>
+&nbsp;
+&nbsp;        // Create the request body
+<b class="nc">&nbsp;        JSONObject requestBody = new JSONObject();</b>
+<b class="nc">&nbsp;        requestBody.put(&quot;model&quot;, &quot;gpt-3.5-turbo-0125&quot;);  // Using GPT-3.5 Turbo model</b>
+<b class="nc">&nbsp;        requestBody.put(&quot;messages&quot;, new JSONArray()</b>
+<b class="nc">&nbsp;                .put(new JSONObject().put(&quot;role&quot;, &quot;system&quot;).put(&quot;content&quot;, &quot;You are a helpful assistant.&quot;))</b>
+<b class="nc">&nbsp;                .put(new JSONObject().put(&quot;role&quot;, &quot;user&quot;).put(&quot;content&quot;, prompt + &quot;\n&quot; + content))</b>
+&nbsp;        );
+<b class="nc">&nbsp;        requestBody.put(&quot;max_tokens&quot;, 50);  // Set max tokens for the response</b>
+<b class="nc">&nbsp;        requestBody.put(&quot;temperature&quot;, 0.7);  // Adjust creativity level</b>
+&nbsp;
+&nbsp;        // Create an HTTP entity with headers and body
+<b class="nc">&nbsp;        HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(requestBody.toString(), headers);</b>
+&nbsp;
+&nbsp;        // Make the POST request
+&nbsp;        try {
+<b class="nc">&nbsp;            ResponseEntity&lt;String&gt; response = restTemplate.exchange(</b>
+&nbsp;                    openaiApiUrl,
+&nbsp;                    HttpMethod.POST,
+&nbsp;                    entity,
+&nbsp;                    String.class
+&nbsp;            );
+&nbsp;
+&nbsp;            // Extract the response body
+<b class="nc">&nbsp;            JSONObject responseBody = new JSONObject(response.getBody());</b>
+<b class="nc">&nbsp;            String generatedText = responseBody.getJSONArray(&quot;choices&quot;)</b>
+<b class="nc">&nbsp;                    .getJSONObject(0)</b>
+<b class="nc">&nbsp;                    .getJSONObject(&quot;message&quot;)</b>
+<b class="nc">&nbsp;                    .getString(&quot;content&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            return generatedText.trim();  // Return the trimmed response text</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return &quot;Error calling OpenAI API: &quot; + e.getMessage();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 10:30</div>
+</div>
+</body>
+</html>
