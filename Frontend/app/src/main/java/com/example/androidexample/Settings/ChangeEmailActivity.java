@@ -51,7 +51,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
         msgResponse = findViewById(R.id.err_msg);
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar();
+        navigationBar.addNavigationBar(R.layout.activity_changeemail);
 
         backToMain = findViewById(R.id.back2main);
         backToMain.setOnClickListener(new View.OnClickListener() {
