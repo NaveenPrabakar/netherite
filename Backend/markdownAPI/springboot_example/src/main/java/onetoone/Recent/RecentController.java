@@ -85,7 +85,8 @@ public class RecentController {
 
     @Transactional
     public void deleteAll(FileEntity f){
-        recentRepository.deleteByFileId(f.getId());
+
+        recentRepository.deleteByFile(f);
     }
 
 }

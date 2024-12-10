@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 import onetoone.*;
+import org.springframework.data.repository.query.Param;
 import onetoone.signupAPI.*;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public interface RecentRepo extends JpaRepository<RecentActivity, Long> {
 
     void deleteById(Long id);
 
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM RecentActivity r WHERE r.file.id = :fileId")
-    void deleteByFileId(Long fileId);
+    @Query("SELECT r.id FROM RecentActivity r WHERE r.file.id = :fileId")
+    Long findIdByFileId(@Param("fileId") Long fileId);
+
+    void deleteByFile(FileEntity file);
 }

@@ -262,6 +262,7 @@ public class markdown {
 
             r.deleteAll(file);
 
+            System.out.println("Here");
 
 
             if (file == null) {
