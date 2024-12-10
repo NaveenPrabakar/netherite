@@ -3,6 +3,7 @@ package com.example.androidexample.FileView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -225,27 +226,40 @@ public class filesActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
-    private void createPathButtons(LinearLayout parentLayout, JSONArray path){
+    private void createPathButtons(LinearLayout parentLayout, JSONArray path) {
         parentLayout.removeAllViewsInLayout();
-        LinearLayout newFolderLayout = new LinearLayout(this);
-        newFolderLayout.setOrientation(LinearLayout.HORIZONTAL);
+        parentLayout.setOrientation(LinearLayout.HORIZONTAL);
+        parentLayout.setPadding(16, 16, 16, 16); // Padding around the whole layout
+        //parentLayout.setBackgroundColor(getResources().getColor(R.color.light_teal)); // Background color for the layout
 
-        try{
-            for(int i = 0; i< path.length(); i++){
-                TextView newText = new TextView(this);
+        try {
+            for (int i = 0; i < path.length(); i++) {
                 String folderName = path.getString(i);
-                newText.setText(folderName+"/   ");
+
+                // Create TextView for each folder
+                TextView newText = new TextView(this);
+                newText.setText(folderName + "/");
+                newText.setTextSize(24); // Larger text size
+                newText.setTextColor(getResources().getColor(android.R.color.black)); // Text color
+                newText.setPadding(8, 0, 4, 0); // Spacing between items
+                newText.setTypeface(Typeface.DEFAULT_BOLD); // Bold text
+                newText.setGravity(Gravity.CENTER);
+                newText.setClickable(true);
+                newText.setBackgroundResource(android.R.drawable.list_selector_background); // Ripple effect on click
+
+                // Set click listener to navigate to the folder
                 newText.setOnClickListener(view -> {
                     this.setPath(changePathHandler(folderName, path));
                     refreshLayout();
                 });
+
                 parentLayout.addView(newText);
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             Log.e("JSON Exception", "lol");
         }
-
     }
+
 
     private String changePathHandler(String lastIndex, JSONArray path) {
         try {
