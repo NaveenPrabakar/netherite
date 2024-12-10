@@ -122,7 +122,6 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@+id/scrollView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.8"
             app:layout_constraintStart_toStartOf="parent">
 
             <Button
