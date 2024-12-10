@@ -7,6 +7,7 @@
         <item name="colorPrimary">#B7E7EA</item>
         <item name="colorPrimaryVariant">@color/main_teal</item>
         <item name="colorOnPrimary">@android:color/white</item>
+        <item name="android:statusBarColor">#B7E7EA</item>
     </style>
 
     <!-- Custom Button Style -->

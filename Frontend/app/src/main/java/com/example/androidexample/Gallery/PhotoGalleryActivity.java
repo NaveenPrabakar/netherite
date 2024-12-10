@@ -71,7 +71,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         }
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_photogallery);
+        navigationBar.addNavigationBar();
 
 
         backButt = findViewById(R.id.backButt);

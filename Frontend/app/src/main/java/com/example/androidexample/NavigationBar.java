@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,49 +26,53 @@ public class NavigationBar {
         this.activity = activity;
     }
 
-    public void addNavigationBar(int layoutResId) {
-        // Inflate the provided layout
+    public void addNavigationBar() {
+        // Root layout of the activity
+        ViewGroup rootLayout = (ViewGroup) activity.findViewById(android.R.id.content);
+
+        // Inflate the navigation bar layout
         LayoutInflater inflater = LayoutInflater.from(activity);
-        View mainContent = inflater.inflate(layoutResId, null);
+        View navBar = inflater.inflate(R.layout.navigation_bar, null);
 
-        // Create a FrameLayout as the root container
-        CoordinatorLayout rootLayout = new CoordinatorLayout(activity);
-        rootLayout.setLayoutParams(new CoordinatorLayout.LayoutParams(
+        // Set layout params to position the navigation bar at the bottom
+        FrameLayout.LayoutParams navBarParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-        ));
-
-        // Add the main content to the root layout
-        CoordinatorLayout.LayoutParams contentParams = new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.MATCH_PARENT
+                FrameLayout.LayoutParams.WRAP_CONTENT
         );
-        contentParams.bottomMargin = (int) activity.getResources().getDimension(R.dimen.nav_bar_height); // Reserve space for nav bar
-        rootLayout.addView(mainContent, contentParams);
+        navBarParams.gravity = Gravity.BOTTOM;
 
-        // Create the navigation bar
-        LinearLayout navBarLayout = new LinearLayout(activity);
-        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
-        CoordinatorLayout.LayoutParams navBarParams = new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                (int) activity.getResources().getDimension(R.dimen.nav_bar_height)
-        );
-        navBarParams.gravity = Gravity.BOTTOM; // Align to bottom
-        navBarLayout.setLayoutParams(navBarParams);
-        navBarLayout.setPadding(8, 8, 8, 8);
-        navBarLayout.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
-        navBarLayout.setElevation(4); // Shadow/elevation for the nav bar
-        navBarLayout.setGravity(Gravity.CENTER);
+        // Add the navigation bar to the root layout
+        rootLayout.addView(navBar, navBarParams);
 
-        // Add navigation buttons
-        addNavigationButtons(navBarLayout);
-
-        // Add the nav bar to the root layout
-        rootLayout.addView(navBarLayout);
-
-        // Set the root layout as the content view
-        activity.setContentView(rootLayout);
+        // Set up button listeners
+        setUpNavigationButtonListeners((LinearLayout) navBar);
     }
+
+
+    private void setUpNavigationButtonListeners(LinearLayout navBarLayout) {
+        // Find buttons by their IDs in the inflated nav_bar_layout
+        ImageButton ocrButton = navBarLayout.findViewById(R.id.ocrButton);
+        ImageButton homeButton = navBarLayout.findViewById(R.id.homeButton);
+        ImageButton editButton = navBarLayout.findViewById(R.id.editButton);
+
+        // Set click listeners for navigation
+        ocrButton.setOnClickListener(view -> {
+            Intent intent = new Intent(activity, OCRActivity.class);
+            activity.startActivity(intent);
+        });
+
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(activity, MainActivity.class);
+            activity.startActivity(intent);
+        });
+
+        editButton.setOnClickListener(view -> {
+            Intent intent = new Intent(activity, TextActivity.class);
+            activity.startActivity(intent);
+        });
+    }
+
+
 
     private void addNavigationButtons(LinearLayout navBarLayout) {
         // Create and add buttons

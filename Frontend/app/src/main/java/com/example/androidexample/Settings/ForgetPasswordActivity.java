@@ -50,7 +50,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_forget_password);
+        navigationBar.addNavigationBar();
 
         email = findViewById(R.id.login_email_edt);
         msgResponse = findViewById(R.id.err_msg);

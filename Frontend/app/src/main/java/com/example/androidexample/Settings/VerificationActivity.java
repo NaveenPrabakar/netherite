@@ -43,7 +43,7 @@ public class VerificationActivity extends AppCompatActivity {
         msgResponse = findViewById(R.id.err_msg);
 
         NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar(R.layout.activity_verification);
+        navigationBar.addNavigationBar();
 
         Intent intent = getIntent();
         verificationCode = intent.getStringExtra("verificationCode");
