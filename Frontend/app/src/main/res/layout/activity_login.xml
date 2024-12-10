@@ -1,121 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".FileView.MainActivity"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".FileView.MainActivity">
 
+    <!-- Back to Main Button -->
     <Button
         android:id="@+id/back2main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back to main" />
+        android:text="Back to main"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#1E3C72"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintMarginStart="16dp"
+        app:layout_constraintMarginTop="16dp" />
 
     <TextView
         android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login Example"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="150dp"
-        android:textSize="30dp">
-    </TextView>
+        android:text="Welcome To Netherite"
+        android:textSize="28sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:alpha="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintMarginTop="100dp" />
 
+
+    <!-- Animated Spinner -->
+    <ProgressBar
+        android:id="@+id/login_spinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/loginTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- Error Message -->
     <TextView
         android:id="@+id/err_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="#fc0303"/>
+        android:textColor="#FC0303"
+        app:layout_constraintTop_toBottomOf="@id/loginTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintMarginTop="8dp" />
 
+    <!-- Username Input -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/input_background"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/err_msg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintMarginTop="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="username: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_username"
+            android:contentDescription="Username Icon"
+            app:tint="@android:color/white" />
 
         <EditText
             android:id="@+id/login_username_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username Here">
-        </EditText>
-
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Username"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"
+            android:background="@android:color/transparent"
+            android:paddingStart="8dp" />
     </LinearLayout>
 
+    <!-- Password Input -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/input_background"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/login_username_edt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintMarginTop="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="password: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_password"
+            android:contentDescription="Password Icon"
+            android:tint="@android:color/white" />
 
         <EditText
             android:id="@+id/login_password_edt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Password"
             android:inputType="textPassword"
-            android:layout_height="50dp"
-            android:hint="Enter Password Here">
-        </EditText>
-
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/darker_gray"
+            android:background="@android:color/transparent"
+            android:paddingStart="8dp" />
     </LinearLayout>
 
+    <!-- Buttons (Login, Signup, Forgot Password) -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/login_password_edt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintMarginTop="40dp">
 
         <Button
             android:id="@+id/login_login_btn"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:backgroundTint="#1E3C72"
             android:text="Login"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/login_spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 
         <Button
             android:id="@+id/login_signup_btn"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
+            android:backgroundTint="#2A5298"
             android:text="Signup"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/forget_password"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
+            android:backgroundTint="#4A90E2"
             android:text="Forgot"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
-
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

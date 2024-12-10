@@ -11,6 +11,15 @@
         android:layout_height="wrap_content"
         android:text="SELECT IMAGE" />
 
+    <Button
+        android:id="@+id/captureBtn"
+        android:layout_marginTop="10dp"
+        android:layout_width="180sp"
+        android:layout_height="wrap_content"
+        android:text="TAKE PICTURE"
+        />
+
+
 
     <ImageView
         android:id="@+id/imageSelView"

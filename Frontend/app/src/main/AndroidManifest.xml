@@ -8,6 +8,8 @@
 
     <!--Permission for recording audio and storage of audio in users device-->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
 
     <application

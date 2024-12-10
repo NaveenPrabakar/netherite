@@ -2,12 +2,19 @@ package com.example.androidexample.FileView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.example.androidexample.Editor.TextActivity;
@@ -39,14 +47,15 @@ public class OCRActivity extends AppCompatActivity {
     String email = "takuli@iastate.edu";
     String language = "english";
     private String username;
-
+    private Uri photoUri;
+    private ActivityResultLauncher<Uri> takePicture;
     private String fileSystem;
     private String filePath;
     private String password;
     // replace this with the actual address
     // 10.0.2.2 to be used for localhost if running springboot on the same host
     private static String UPLOAD_URL = "http://coms-3090-068.class.las.iastate.edu:8080/extractText";
-
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private ActivityResultLauncher<String> mGetContent;
 
 
@@ -54,30 +63,6 @@ public class OCRActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
-
-//        Intent intent = getIntent();
-//        Bundle extras = intent.getExtras();
-//
-//        if(extras != null) {
-//            try {
-//                fileSystem = extras.getString("FILESYSTEM");
-//                filePath = extras.getString("PATH");
-//                email = extras.getString("EMAIL");
-//                username = extras.getString("USERNAME");
-//                password = extras.getString("PASSWORD");
-//                //Log.d("EMAIL", extras.getString("EMAIL"));
-//                Log.d("PASSWORD", extras.getString("PASSWORD"));
-//                Log.d("FILESYSTEM", extras.getString("FILESYSTEM"));
-//                Log.d("PATH", extras.getString("PATH"));
-//
-//
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }else{
-//            filePath = "{\"path\": []}";
-//            fileSystem = "{\"root\": [] }";
-//        }
 
         email = UserPreferences.getEmail(this);
         username = UserPreferences.getUsername(this);
@@ -90,6 +75,22 @@ public class OCRActivity extends AppCompatActivity {
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
+
+        takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
+            if (result) {
+                // Photo was successfully captured
+                if (photoUri != null) {
+                    mImageView.setImageURI(photoUri);
+                    selectiedUri = photoUri; // Set the captured image as the selected one
+                }
+            } else {
+                Log.e("Camera", "Photo capture failed");
+            }
+        });
+
+        Button captureBtn = findViewById(R.id.captureBtn);
+        captureBtn.setOnClickListener(v -> checkAndRequestCameraPermission());
+
 
         // select image from gallery
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -181,80 +182,43 @@ public class OCRActivity extends AppCompatActivity {
         return null;
     }
 
-    public void addNavigationBar(Activity activity, int layoutResId) {
-        // Inflate the provided layout
-        LayoutInflater inflater = LayoutInflater.from(activity);
-        View mainContent = inflater.inflate(layoutResId, null);
-
-        // Create a FrameLayout as the root container
-        FrameLayout rootLayout = new FrameLayout(activity);
-        rootLayout.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-        ));
-
-        // Add the main content to the root layout
-        rootLayout.addView(mainContent);
-
-        // Create the navigation bar
-        LinearLayout navBarLayout = new LinearLayout(activity);
-        navBarLayout.setOrientation(LinearLayout.HORIZONTAL);
-        FrameLayout.LayoutParams navBarParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-        );
-        navBarParams.gravity = Gravity.BOTTOM; // Align to bottom
-        navBarLayout.setLayoutParams(navBarParams);
-        navBarLayout.setPadding(8, 8, 8, 8);
-        navBarLayout.setBackgroundColor(activity.getResources().getColor(android.R.color.white));
-        navBarLayout.setElevation(4); // Shadow/elevation for the nav bar
-        navBarLayout.setGravity(Gravity.CENTER);
-
-        // Add navigation buttons
-        ImageButton micButton = createNavButton(activity, R.drawable.mic, "Mic");
-        ImageButton homeButton = createNavButton(activity, R.drawable.home, "Home");
-        ImageButton editButton = createNavButton(activity, R.drawable.navbar_create_note, "Edit");
-
-        navBarLayout.addView(micButton);
-        navBarLayout.addView(homeButton);
-        homeButton.setOnClickListener(view -> {
-            Intent intent = new Intent(OCRActivity.this, MainActivity.class);
-            startActivity(intent);
-        });
-        navBarLayout.addView(editButton);
-        editButton.setOnClickListener(view -> {
-            Intent intent = new Intent(OCRActivity.this, TextActivity.class);
-            startActivity(intent);
-        });
-
-        // Add the nav bar to the root layout
-        rootLayout.addView(navBarLayout);
-
-        // Set the root layout as the content view
-        activity.setContentView(rootLayout);
+    private Uri createImageUri() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "photo_" + System.currentTimeMillis() + ".jpg");
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        return getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
+    private void checkAndRequestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
+            openCamera(); // Call the method to open the camera
+        }
+    }
 
-    /**
-     * Helper function to create individual navigation buttons.
-     *
-     * @param activity           The current activity context.
-     * @param iconResId          The drawable resource ID for the icon.
-     * @param contentDescription A description for accessibility.
-     * @return The created ImageButton.
-     */
-    private static ImageButton createNavButton(Activity activity, int iconResId, String contentDescription) {
-        ImageButton navButton = new ImageButton(activity);
-        navButton.setLayoutParams(new LinearLayout.LayoutParams(
-                0, // Equal spacing
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1 // Weight for equal distribution
-        ));
-        navButton.setImageResource(iconResId);
-        //navButton.setBackgroundResource(android.R.attr.selectableItemBackgroundBorderless); // Touch feedback
-        navButton.setContentDescription(contentDescription);
-        navButton.setPadding(8, 8, 8, 8); // Add padding for spacing
-        navButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // Adjust scaling
-        return navButton;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera(); // Permission granted, open the camera
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openCamera() {
+        photoUri = createImageUri();
+        if (photoUri != null) {
+            takePicture.launch(photoUri);
+        } else {
+            Log.e("Camera", "Failed to create image URI");
+        }
     }
 }
