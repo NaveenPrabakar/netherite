@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import onetoone.*;
 import onetoone.loginAPI.*;
@@ -69,6 +70,9 @@ public class RecentController {
         for(RecentActivity r : userRecents){
             name.add(r.getFileEntity().getName());
         }
+
+        Collections.reverse(name);
+
 
         return ResponseEntity.ok(name);
     }
