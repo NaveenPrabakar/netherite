@@ -82,7 +82,7 @@ public class LiveMail {
 
             signEntity signs = s.findByEmail(toUser);
             String filesystem = j.getSystem(signs.getId());
-            Session se = map.get("toUser");
+            Session se = map.get(toUser);
             broadcast(filesystem, se);
         }
         else{
