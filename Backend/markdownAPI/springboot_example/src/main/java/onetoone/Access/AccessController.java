@@ -83,7 +83,6 @@ public class AccessController{
         }
 
         FileEntity file = files.findByFileName(docName);
-
         if(file.getId() != sign.getId()){
             return ResponseEntity.badRequest().body("The user does not have this file");
         }
