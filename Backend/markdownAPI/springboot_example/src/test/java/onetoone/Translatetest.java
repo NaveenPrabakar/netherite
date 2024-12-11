@@ -3,6 +3,7 @@ package onetoone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import onetoone.textToSpeech.Text;
+import onetoone.translateAi.translateEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,20 @@ public class Translatetest {
                 .post("/translateText/translate");
 
         assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testclass(){
+
+        long te = 1;
+        translateEntity t = new translateEntity(te, "hello");
+        t.settranslateFile("hello");
+        t.setTranslateId(te);
+        t.settranslateUserId(te);
+
+        assertEquals(te, t.getTranslateId());
+        assertEquals(te, t.gettranslateUserId());
+        assertEquals("hello", t.gettranslateFile());
     }
 
 }

@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.loginAPI.logs;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -184,6 +185,15 @@ public class loginTest {
                 .put("/userLogin/resetPassword");
 
         assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testclass(){
+        logs l = new logs("n@gmail.com", "p");
+
+        logs le = new logs("n@gmail.com");
+
+        assertEquals("n@gmail.com", l.getemail());
     }
 
 

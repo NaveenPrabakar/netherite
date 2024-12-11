@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.Recent.RecentActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

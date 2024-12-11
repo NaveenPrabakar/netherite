@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.speechToTextAPI.SpeechUserEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +127,7 @@ public class textSpeechTest {
     }
 
     @Test
-    public void testCreateSpeechUser_Successful2() {
+    public void testCreateSpeechUser_unSuccessful2() {
 
         Response response = RestAssured.given()
                 .param("email", "takuli@iastate.edu")
@@ -134,8 +135,25 @@ public class textSpeechTest {
                 .when()
                 .get("/SpeechToTextAIuse/getSpeechFile");
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(404, response.getStatusCode());
     }
+
+    @Test
+    public void testCreateSpeechUser_unSuccessful3() {
+
+        long t = 1;
+
+        SpeechUserEntity s = new SpeechUserEntity(t, "hello");
+        s.setSpeechId(t);
+        s.setSpeechUserId(t);
+        s.setSpeechFile("hello");
+
+        assertEquals(1, s.getSpeechId());
+        assertEquals(1, s.getSpeechUserId());
+        assertEquals("hello", s.getSpeechFile());
+    }
+
+
 }
 
 

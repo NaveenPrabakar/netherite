@@ -88,5 +88,23 @@ public class imageTest {
         String extractedText = response.getBody().asString();
         System.out.println("Extracted Text: " + extractedText);
     }
+
+    @Test
+    public void testExtractText_Success3() {
+        // Mock image file for testin
+
+        Response response = RestAssured.given()
+                .pathParam("email", "Nvnprabakar@gmail.com")
+                .pathParam("fileName", "Screenshot 2024-10-27 213319.png")
+                .when()
+                .delete("/deleteImage/{email}/{fileName}");
+
+        assertEquals(200, response.getStatusCode());
+        // Assert the response body contains expected text
+        // Update this to the expected text from the image
+        String extractedText = response.getBody().asString();
+        System.out.println("Extracted Text: " + extractedText);
+    }
+
 }
 

@@ -33,7 +33,7 @@ public class signTest {
         String requestBody = """
                 {
                     "username" : "tests",
-                    "email": "MoreTestsssss@example.com",
+                    "email": "MohgvvreTASASsestsssss@example.com",
                     "password": "passwords"
                 }
                 """;

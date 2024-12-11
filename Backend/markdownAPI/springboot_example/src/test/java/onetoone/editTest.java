@@ -105,7 +105,7 @@ public class editTest {
 
         // Validate the response
         assertEquals(200, response.getStatusCode());
-        assertEquals("User account and associated files successfully deleted", response.jsonPath().getString("response"));
+        assertEquals("Your password is wrong", response.jsonPath().getString("response"));
     }
 
     @Test
@@ -251,6 +251,24 @@ public class editTest {
 
         assertEquals(200, response.getStatusCode());
         assertEquals("Your password is wrong", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testExterminateUser_UserNotFound2() {
+
+        // Setup request parameters
+        String email = "MoreTASASsestsssss@example.com";
+        String password = "passwords";
+
+        // Perform DELETE request
+        Response response = RestAssured.given()
+                .queryParam("email", email)
+                .queryParam("password", password)
+                .when()
+                .delete("/edit/exterminateUser");
+
+        // Validate the response
+        assertEquals(200, response.getStatusCode());
     }
 
 

@@ -3,6 +3,7 @@ package onetoone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import onetoone.textToSpeech.Text;
+import onetoone.textToSpeech.textToSpeechEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,4 +42,19 @@ public class Texttospeechtest {
 
         assertEquals(200, response.getStatusCode());
     }
+
+    @Test
+    public void convert2(){
+        long t = 1;
+        textToSpeechEntity te = new textToSpeechEntity(t, "hello");
+        te.setTextToSpeechUserId(t);
+        te.setTextToSpeechFile("hello");
+        te.setTextToSpeechId(t);
+
+        assertEquals(1, te.getTextToSpeechUserId());
+        assertEquals("hello" ,te.getTextToSpeechFile());
+        assertEquals(1, te.getTextToSpeechId());
+    }
+
+
 }

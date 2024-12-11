@@ -84,7 +84,15 @@ public class OpenAISummarizeAPI{
 
         //need to go to signentity to find username in order to find userid
         signEntity temp = sign.findByEmail(email);
+
+        if(temp == null){
+            response.put("repsonse", "email does not exist");
+            return response;
+        }
+
         Long userID = temp.getId();
+
+
 
 
         //use the userid for the apientity table to find the count

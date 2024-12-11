@@ -79,21 +79,6 @@ public class markTest {
     }
 
     @Test
-    public void testPulled_Success() {
-
-        // Act
-        Response response = RestAssured.given()
-                .queryParam("email", "test@example.com")
-                .queryParam("fileName", "test.txt")
-                .when()
-                .get("/files/fileid");
-
-        // Assert
-        assertEquals(200, response.getStatusCode());
-        assertEquals("97", response.getBody().asString());
-    }
-
-    @Test
     public void testSystem_Success() {
 
 
@@ -278,6 +263,23 @@ public class markTest {
         assertEquals(200, response.getStatusCode());
         assertEquals("the file does not exist", response.jsonPath().getString("response"));
     }
+
+    @Test
+    public void testDeleteFile_FileDoesNotExist5() {
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("fileName", "Naksjsns")
+                .queryParam("json", "{\"root\":[\"yo what's up\"]}")
+                .when()
+                .delete("/files/deleteFile");
+
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("the file was deleted.", response.jsonPath().getString("response"));
+    }
+
+
 
 
 

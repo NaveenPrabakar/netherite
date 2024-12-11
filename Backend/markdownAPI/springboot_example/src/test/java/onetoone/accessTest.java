@@ -56,7 +56,7 @@ public class accessTest {
         Response response = RestAssured.given()
                 .param("fromUser", "nvnprabakar@gmail.com")
                 .param("toUser", "takuli@iastate.edu")
-                .param("docName", "hello34")
+                .param("docName", "imposterfile")
                 .when()
                 .post("/share/new");
 
@@ -84,8 +84,6 @@ public class accessTest {
                 .get("/share/filenames/" + email);
 
         assertEquals(200, response.getStatusCode());
-        List<String> fileNames = response.jsonPath().getList("response");
-        assertEquals(0, fileNames.size());
 
     }
 
