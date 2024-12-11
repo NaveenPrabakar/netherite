@@ -42,12 +42,16 @@ public class NavigationBar {
                 FrameLayout.LayoutParams.WRAP_CONTENT
         );
         navBarParams.gravity = Gravity.BOTTOM;
+        navBarParams.bottomMargin = 30; // Adjust as needed
+        navBarParams.topMargin = 20; // Adjust as needed
+        navBarParams.leftMargin = 25; // Adjust as needed
+        navBarParams.rightMargin = 25; // Adjust as needed
 
         // Add the navigation bar to the root layout
         rootLayout.addView(navBar, navBarParams);
 
         // Set up button listeners
-        setUpNavigationButtonListeners((LinearLayout) navBar);
+        setUpNavigationButtonListeners((LinearLayout) navBar.findViewById(R.id.navbarMAINMAINMAIN));
     }
 
 
