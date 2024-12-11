@@ -33,7 +33,6 @@ public class DocServer {
     private static final Path location = Paths.get("root");
 
 
-
     @Autowired
     public void setFileRepository(FileRepository repo) {
         f = repo;  // we are setting the static variable
@@ -65,14 +64,13 @@ public class DocServer {
         String fileName = sessionFileMap.get(session);
         logger.info("[onMessage] File: " + fileName + " Content: " + content);
 
-        // Convert the file name to a long value and fetch the document from the repository
         Long l = Long.parseLong(fileName);
         Optional<FileEntity> allOptional = f.findById(l);
         FileEntity all = allOptional.orElse(null);
         Path filePath = location.resolve(all.getName());
         Files.write(filePath, content.getBytes());
 
-        broadcast(content, session);
+        broadcast(content, fileName, session);
     }
 
 
@@ -105,16 +103,21 @@ public class DocServer {
      * broadcast class to display message to all users
      * @param message
      */
-    private void broadcast(String message, Session skipSession) {
+    private void broadcast(String message, String fileName, Session skipSession) {
         sessionFileMap.keySet().forEach(session -> {
             if (session != skipSession) {
                 try {
-                    session.getBasicRemote().sendText(message);
+
+                    if(sessionFileMap.get(session).equals(fileName)){
+                        session.getBasicRemote().sendText(message);
+                    }
+
                 } catch (IOException e) {
                     logger.error("[Broadcast Exception] " + e.getMessage());
                 }
             }
-        });
+        }
+        );
     }
 }
 
