@@ -280,6 +280,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void navigateToFilesActivity() {
+        WebSocketManager.getInstance().disconnectWebSocket();
         Intent intent = new Intent(this, filesActivity.class);
         startActivity(intent);
     }
