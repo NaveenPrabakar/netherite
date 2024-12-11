@@ -1,11 +1,6 @@
 package onetoone.ImageToText;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.web.multipart.MultipartFile;
@@ -277,6 +272,29 @@ public class TesseractTest {
 
         } catch (Exception e) {
             return "Error occurred: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping("/deleteImage/{email}/{fileName}")
+    public ResponseEntity<String> deleteImage(@PathVariable String email, @PathVariable String fileName) {
+        String uploadDir = "uploaded_images/";
+        File fileToDelete = new File(uploadDir + fileName);
+
+        signEntity s = logs.findByEmail(email);
+
+        if (!fileToDelete.exists()) {
+            return ResponseEntity.status(404).body("File not found: " + fileName);
+        }
+
+        try {
+            if (fileToDelete.delete()) {
+                im.deletes(s, fileName);
+                return ResponseEntity.ok("File deleted successfully: " + fileName);
+            } else {
+                return ResponseEntity.status(500).body("Failed to delete file: " + fileName);
+            }
+        } catch (SecurityException e) {
+            return ResponseEntity.status(500).body("Permission denied: Unable to delete file.");
         }
     }
 }

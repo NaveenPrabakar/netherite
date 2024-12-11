@@ -13,4 +13,9 @@ public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
     @Query("SELECT i.fileName FROM ImageEntity i WHERE i.sign = :sign")
     List<String> findImageNamesByUser(@Param("sign") signEntity sign);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ImageEntity i WHERE i.sign = :sign AND i.fileName = :fileId")
+    void deletes(@Param("sign") signEntity sign, @Param("fileId") String fileId);
 }
