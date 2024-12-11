@@ -43,7 +43,7 @@ public class UserPreferences {
         Log.d("UserPreferences", "User details saved:");
     }
 
-    public static void removeUserDetails(View.OnClickListener context){
+    public static void removeUserDetails(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.apply();

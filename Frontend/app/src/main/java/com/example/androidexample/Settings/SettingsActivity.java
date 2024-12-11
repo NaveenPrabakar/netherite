@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate to MainActivity
-                UserPreferences.removeUserDetails(this);
+                UserPreferences.removeUserDetails(SettingsActivity.this);
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
