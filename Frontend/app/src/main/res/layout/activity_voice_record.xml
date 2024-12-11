@@ -1,121 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--XML code for activity_main.xml-->
-<RelativeLayout
+<!--XML code for activity_main.xml using ConstraintLayout-->
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     tools:context=".FileView.MainActivity">
 
-    <!--Heading Text View-->
-    <TextView
-        android:id="@+id/txthead"
+    <!-- Header Section -->
+
+    <!-- Header Section -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerVoice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text=" string/audio_recorder"
-        android:textAlignment="center"
-        android:textSize="30sp" />
+        android:background="@android:color/white"
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
 
-    <!--This will display the status of our app when
-        we will record some audio and play that audio-->
+        <ImageView
+            android:id="@+id/backToTextActivity"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/headerTitleVoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Title Here lol"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:drawablePadding="8dp"
+            app:layout_constraintStart_toEndOf="@id/backToTextActivity"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <TextView
         android:id="@+id/idTVstatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="Recorder is Ready"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerVoice" />
+
+    <TextView
+        android:id="@+id/txthead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/idTVstatus" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:text=" string/status"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+        android:layout_marginVertical="20dp"
+        android:gravity="center|center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <!--Linear Layout for adding textviews
-        in horizontal manner-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardPlay"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginHorizontal="20dp"
+            android:backgroundTint="@color/main_teal"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="4dp">
+
+            <ImageButton
+                android:id="@+id/btnPlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_play" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardRecord"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginHorizontal="20dp"
+            android:backgroundTint="@color/main_teal"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="4dp">
+
+            <ImageButton
+                android:id="@+id/btnRecord"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:src="@drawable/mic" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginVertical="50dp"
+        android:gravity="bottom|center|center_vertical"
         android:orientation="horizontal"
-        android:weightSum="4">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <!--Textview to start audio recording
-            drawableTop will add above mic image-->
-        <TextView
-            android:id="@+id/btnRecord"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text=" string/start_recording"
-            android:textAlignment="center" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/accept"
+            android:layout_width="wrap_content"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="Accept"/>
 
-        <!--Textview to stop audio recording
-            drawableTop will add above mic image-->
-        <TextView
-            android:id="@+id/btnStop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text=" string/stop_recording"
-            android:textAlignment="center" />
-
-        <!--Textview to play audio that is recorded
-            drawableTop will add above mic image-->
-        <TextView
-            android:id="@+id/btnPlay"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text=" string/play_recording"
-            android:textAlignment="center" />
-
-        <!--Textview to pause the play of audio recording
-            drawableTop will add above mic image-->
-        <TextView
-            android:id="@+id/btnStopPlay"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:lines="2"
-            android:padding="5dp"
-            android:text=" string/stop_playing"
-            android:textAlignment="center" />
-
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reject"
+            android:layout_width="wrap_content"
+            android:layout_height="68dp"
+            android:text="Reject" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/accept"
-        android:layout_width="129dp"
-        android:layout_height="68dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="56dp"
-        android:layout_marginEnd="224dp"
-        android:layout_marginBottom="55dp"
-        android:text="Accept" />
-
-    <Button
-        android:id="@+id/reject"
-        android:layout_width="129dp"
-        android:layout_height="68dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="222dp"
-        android:layout_marginEnd="58dp"
-        android:layout_marginBottom="56dp"
-        android:text="reject" />
-
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

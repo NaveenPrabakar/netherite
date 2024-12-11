@@ -1,121 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".FileView.MainActivity"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical">
-
-    <Button
-        android:id="@+id/back2main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back to main" />
-
-    <TextView
-        android:id="@+id/loginTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login Example"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="150dp"
-        android:textSize="30dp">
-    </TextView>
-
-    <TextView
-        android:id="@+id/err_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="#fc0303"/>
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- App Icon -->
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:translationX="33dp"
+            android:translationY="140dp"
+            android:contentDescription="App Logo"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/icon" />
+
+        <!-- Animated Title -->
         <TextView
+            android:id="@+id/loginTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="username: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:layout_marginBottom="24dp"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="4"
+            android:shadowRadius="10"
+            android:text="Welcome to Netherite"
+            android:textColor="@android:color/black"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/login_username_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username Here">
-        </EditText>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Username Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="password: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:layout_marginBottom="16dp"
+            app:boxStrokeColor="@color/teal_primary"
+            app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Body1">
 
-        <EditText
-            android:id="@+id/login_password_edt"
-            android:layout_width="wrap_content"
-            android:inputType="textPassword"
-            android:layout_height="50dp"
-            android:hint="Enter Password Here">
-        </EditText>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_username_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
+        <!-- Password Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:boxStrokeColor="@color/teal_primary"
+            app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Body1">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_password_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <!-- Buttons -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/login_login_btn"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/main_teal"
             android:text="Login"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:textColor="@android:color/black"
+            app:cornerRadius="22dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/login_signup_btn"
-            android:layout_width="120dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="Signup"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/main_teal"
+            android:text="Sign Up"
+            android:textColor="@android:color/black"
+            app:cornerRadius="22dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/forget_password"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="Forgot"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/teal_700"
+            android:text="Forgot Password?"
+            android:textColor="@android:color/black"
+            app:cornerRadius="22dp" />
+
+        <!-- Loading Spinner -->
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

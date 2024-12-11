@@ -2,14 +2,25 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -17,10 +28,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.Settings.ForgetPasswordActivity;
 import com.example.androidexample.Volleys.VolleySingleton;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,13 +45,15 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText usernameEditText;  // define username edittext variable
-    private EditText passwordEditText;  // define password edittext variable
-    private Button loginButton;         // define login button variable
-    private Button signupButton;
-    private Button forgetPassword;
-    private TextView err_msg;// define signup button variable
-    private Button back2main;
+    private TextInputEditText usernameEditText;
+    private TextInputEditText passwordEditText;
+    private MaterialButton loginButton;
+    private MaterialButton signupButton;
+    private MaterialButton forgetPasswordButton;
+    private ProgressBar loadingSpinner;
+
+
+
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
     private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
 
@@ -48,65 +64,55 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);            // link to Login activity XML
 
-        /* initialize UI elements */
+        // Initialize UI components
         usernameEditText = findViewById(R.id.login_username_edt);
         passwordEditText = findViewById(R.id.login_password_edt);
-        err_msg = findViewById(R.id.err_msg);
+        loginButton = findViewById(R.id.login_login_btn);
+        signupButton = findViewById(R.id.login_signup_btn);
+        forgetPasswordButton = findViewById(R.id.forget_password);
+        loadingSpinner = findViewById(R.id.loading_spinner);
 
-        loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
-        signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
-        forgetPassword = findViewById(R.id.forget_password);
-        /* click listener on login button pressed */
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        TextView loginTitle = findViewById(R.id.loginTitle);
+        ImageView appLogo = findViewById(R.id.appLogo);
 
-                /* grab strings from user inputs */
-                String email = usernameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
+        usernameEditText.setText("takuli@iastate.edu");
+        passwordEditText.setText("admin123!");
 
-                /* when login button is pressed, use intent to switch to Login Activity */
+        ObjectAnimator translateX = ObjectAnimator.ofFloat(appLogo, "translationX", 0f);
+        ObjectAnimator translateY = ObjectAnimator.ofFloat(appLogo, "translationY", 0f);
 
-                makeJsonObjReq(email, password);
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(loginTitle, "alpha", 0f, 1f);
+//        fadeIn.setDuration(2000);
+//        fadeIn.start();
 
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(translateX, translateY, fadeIn);
+        animatorSet.setDuration(3000);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
 
-            }
+        animatorSet.start();
+
+        Glide.with(this).asGif().load(R.raw.enchanted_netherite_leggings).into(appLogo);
+
+        appLogo.setScaleX(0.0f);
+        appLogo.setScaleY(0.0f);
+        appLogo.animate().scaleX(1.0f).scaleY(1.0f).setDuration(1500).start();
+
+        // Set up button click listeners
+        loginButton.setOnClickListener(v -> attemptLogin());
+
+        signupButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+            startActivity(intent);
         });
 
-        /* click listener on signup button pressed */
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /* when signup button is pressed, use intent to switch to Signup Activity */
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(intent);  // go to SignupActivity
-            }
-        });
-
-        back2main = findViewById(R.id.back2main);
-        back2main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /* when signup button is pressed, use intent to switch to Signup Activity */
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);  // go to SignupActivity
-            }
-        });
-
-        forgetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /* when signup button is pressed, use intent to switch to Signup Activity */
-                Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
-                startActivity(intent);  // go to SignupActivity
-            }
+        forgetPasswordButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
     private void makeJsonObjReq(String email, String password) {
-        Log.d("WORKS", "WTF");
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("email", email);
@@ -115,90 +121,66 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsonObjGet = new JsonObjectRequest(
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
                 Request.Method.POST,
                 URL_JSON_OBJECT,
                 requestBody,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        JSONObject resp = response;
-                        try {
-                            Log.d("Volley Response", resp.getString("response"));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        err_msg.setText(response.toString());
-                        try {
-                            if (resp.getString("response").equals("ok")){
-                                getFileSystem(email, password, resp.getString("userName"));
-                            }
-                            else{
-                                err_msg.setText(resp.getString("response"));
-                            }
-
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                        err_msg.setText(error.toString());
-                    }
-                }
+                response -> handleLoginResponse(response),
+                error -> handleLoginError(error)
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-//                headers.put("Authorization", "Bearer YOUR_ACCESS_TOKEN");
-//                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-//                params.put("param1", "value1");
-//                params.put("param2", "value2");
-                return params;
+                return new HashMap<>();
             }
         };
 
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjGet);
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjReq);
     }
 
-    public void getFileSystem(String email, String password, String username){
-        Uri.Builder builder = Uri.parse(URL_STRING_REQ).buildUpon();
-        builder.appendQueryParameter("email", email);
-        builder.appendQueryParameter("password", password);
-        String url = builder.build().toString();
+    private void attemptLogin() {
+        // Get user input
+        String email = usernameEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("File System from Server", response);
-                        UserPreferences.saveUserDetails(LoginActivity.this, username, email, password, response, "{\"path\": [\"root\"]}");
-                        Intent i = new Intent(LoginActivity.this, filesActivity.class);
-                        startActivity(i);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle any errors that occur during the request
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
-        );
+        // Validate input
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Adding request to request queue
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        // Show loading spinner
+        loadingSpinner.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false);
+
+        // Make network request
+        makeJsonObjReq(email, password);
     }
 
+    private void handleLoginResponse(JSONObject response) {
+        loadingSpinner.setVisibility(View.GONE);
+        loginButton.setEnabled(true);
+
+        try {
+            String serverResponse = response.getString("response");
+            if ("ok".equals(serverResponse)) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                UserPreferences.saveUserDetails(LoginActivity.this, response.getString("userName"), usernameEditText.getText().toString(), passwordEditText.getText().toString(), "", "");
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error parsing response", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleLoginError(VolleyError error) {
+        loadingSpinner.setVisibility(View.GONE);
+        loginButton.setEnabled(true);
+
+        Log.e("LoginError", error.toString());
+        Toast.makeText(this, "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
+    }
 }
