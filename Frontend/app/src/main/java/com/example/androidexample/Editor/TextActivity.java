@@ -12,6 +12,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -19,12 +21,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -32,6 +36,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.FileView.OCRActivity;
 import java.io.File;
@@ -40,16 +45,20 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
+import com.example.androidexample.Settings.ChangeEmailActivity;
+import com.example.androidexample.Settings.SettingsActivity;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.AudioRecieve;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
 import com.example.androidexample.NavigationBar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.editor.MarkwonEditor;
@@ -63,7 +72,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
-    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt, OCRButt;
+    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt, OCRButt, translateButt;
     private EditText mainText, editor, AIInputText;
     private TextView AITextBox, fileName;
     private Markwon markwon;
@@ -74,6 +83,9 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private JSONObject fileSystem, filePath;
     private String email, password, username, aiCount, content = " ", aiURL, source, history = "";
 
+    private String[] languages = {"English", "Spanish", "French", "German", "Italian", "Japanese", "Korean", "Chinese"};
+
+    private String translatedString = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +113,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         ttsButt = findViewById(R.id.text2speech);
         back2main = findViewById(R.id.back2main);
         OCRButt = findViewById(R.id.OCRButtTXT);
+        translateButt = findViewById(R.id.translateButt);
 
         markwon = Markwon.builder(this).build();
 
@@ -161,6 +174,28 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         back2main.setOnClickListener(v -> navigateToFilesActivity());
         ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
         OCRButt.setOnClickListener(v -> OCRNavigate());
+        translateButt.setOnClickListener(v -> {
+            // Create and show the popup
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Select Language")
+                    .setItems(languages, (dialog, which) -> {
+                        // Handle language selection
+                        String selectedLanguage = languages[which];
+                        Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
+                        AIText.setAlpha(1);
+
+                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
+                            AITextBox.setText(translatedText);
+                            toggleSummarizeVisibility(true);
+                        })
+                                .exceptionally(throwable -> {
+                                    Log.e("Translation Error", throwable.toString());
+                                    Toast.makeText(this, "I fucked up!", Toast.LENGTH_SHORT).show();
+                                    return null;
+                                });
+                    })
+                    .show();
+        });
     }
 
     private void OCRNavigate(){
@@ -460,5 +495,43 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         }
     }
 
+    /**
+     * Translates a given string and returns that string translated into a desired language.
+     * @param prompt
+     * @param content
+     */
+    private CompletableFuture<String> translateString(String prompt, String content)
+    {
+        CompletableFuture<String> futureString = new CompletableFuture<>();
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                UserPreferences.getUrlTranslate(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Response Translated", response);
+                        futureString.complete(response);
+                        Log.d("Translated String is", translatedString);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("prompt", prompt);
+                params.put("text", content);
+                return params;
+            }
+        };
+        Log.d("Plz Don't Be Empty", translatedString);
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        return futureString;
+    }
 
 }
