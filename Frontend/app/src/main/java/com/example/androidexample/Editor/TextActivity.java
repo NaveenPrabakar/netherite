@@ -1,5 +1,4 @@
 package com.example.androidexample.Editor;
-import android.app.Activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,24 +7,16 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -37,28 +28,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.volley.toolbox.StringRequest;
-import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.FileView.OCRActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import com.example.androidexample.FileView.filesActivity;
 import com.example.androidexample.R;
-import com.example.androidexample.Settings.ChangeEmailActivity;
-import com.example.androidexample.Settings.SettingsActivity;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.AudioRecieve;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
-import com.example.androidexample.NavigationBar;
-import com.example.androidexample.WebSockets.WebSocketManager3;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import io.noties.markwon.Markwon;
@@ -73,7 +57,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
-    private Button ttsButt, summarizeButt, acceptButt, rejectButt, voiceButt, OCRButt, translateButt;
+    private Button ttsButt, summarizeButt, acceptButt, rejectButt, voiceButt, OCRButt, translateButt, AIButton;
     private EditText mainText, editor, AIInputText;
     private TextView AITextBox, fileName;
     private Markwon markwon;
@@ -115,6 +99,8 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         ttsButt = findViewById(R.id.text2speech);
         back2main = findViewById(R.id.back2main);
         OCRButt = findViewById(R.id.OCRButtTXT);
+        AIButton = findViewById(R.id.AIbutton);
+        AIInputText = findViewById(R.id.AIChatBar);
 
 
         markwon = Markwon.builder(this).build();
@@ -154,6 +140,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 content = s.toString();
                 updateParsedOutput(content);
+                
                 WebSocketManager.getInstance().sendMessage(content);
             }
 
@@ -185,7 +172,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                         Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
                         AIText.setAlpha(1);
 
-                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
+                        promptString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
                             AITextBox.setText(translatedText);
                             toggleSummarizeVisibility(false);
                         })
@@ -196,6 +183,18 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                                 });
                     })
                     .show();
+        });
+        AIButton.setOnClickListener(v -> {
+            if (!AIInputText.getText().toString().isEmpty()){
+                AIText.setAlpha(1);
+                promptString(AIInputText.getText().toString(), mainText.getText().toString()).thenAccept(promptResult -> {
+                    AITextBox.setText(promptResult);
+                    toggleSummarizeVisibility(false);
+                });
+            }else{
+                Toast.makeText(this, "Please enter a prompt!", Toast.LENGTH_SHORT).show();
+            }
+
         });
     }
 
@@ -502,7 +501,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
      * @param prompt
      * @param content
      */
-    private CompletableFuture<String> translateString(String prompt, String content)
+    private CompletableFuture<String> promptString(String prompt, String content)
     {
         CompletableFuture<String> futureString = new CompletableFuture<>();
         StringRequest stringRequest = new StringRequest(
