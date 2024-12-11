@@ -276,14 +276,6 @@
                         android:layout_height="wrap_content"
                         app:cornerRadius="22dp"
                         android:text="Reject" />
-
-                    <!-- Translate Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/translateButt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cornerRadius="22dp"
-                        android:text="Translate" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

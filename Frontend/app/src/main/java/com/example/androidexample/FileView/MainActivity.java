@@ -33,6 +33,7 @@ import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
+import com.example.androidexample.WebSockets.WebSocketManager3;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
-        WebSocketManager.getInstance().connectWebSocket(URL_FSWS);
+        WebSocketManager3.getInstance().connectWebSocket(URL_FSWS);
 
         getFileSystem(email, password);
     }
