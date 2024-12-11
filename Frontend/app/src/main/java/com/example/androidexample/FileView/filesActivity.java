@@ -592,6 +592,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                         Log.d("Volley Response", response);
                         Log.d("JSON OBJECT", newFileSystem);
                         sendUpdateToWebSocket();
+                        setFileSystem(newFileSystem);
                     }
                 },
                 new Response.ErrorListener() {
@@ -824,6 +825,8 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                         Toast.makeText(getApplicationContext(), "File successfully created", Toast.LENGTH_SHORT).show();
                         Log.d("Volley Response", response);
                         sendUpdateToWebSocket();
+                        setFileSystem(fileSystem);
+                        refreshLayout();
                         if(OCRSwitch){
                             OCRSwitch = false;
                             Intent i = new Intent(filesActivity.this, TextActivity.class);

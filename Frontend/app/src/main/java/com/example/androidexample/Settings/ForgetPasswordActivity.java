@@ -15,7 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.LoginActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
@@ -50,9 +50,6 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar();
-
         email = findViewById(R.id.login_email_edt);
         msgResponse = findViewById(R.id.err_msg);
 
@@ -61,7 +58,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ForgetPasswordActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(ForgetPasswordActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
