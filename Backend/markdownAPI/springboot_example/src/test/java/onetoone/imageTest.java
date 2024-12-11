@@ -69,5 +69,24 @@ public class imageTest {
         // Assert the response contains expected filenames
         System.out.println("Image Names: " + response.jsonPath().getList("$"));
     }
+
+    @Test
+    public void testExtractText_Success2() {
+        // Mock image file for testing
+        File testImage = new File("C:/Users/nvnpr/OneDrive/Pictures/Screenshots/Screenshot 2024-12-10 203113.png");
+
+        Response response = RestAssured.given()
+                .multiPart("image", testImage)
+                .pathParam("email", "nvnprabakar@gmail.com")
+                .pathParam("language", "eng")
+                .when()
+                .post("/extractText/{email}/{language}");
+
+        assertEquals(200, response.getStatusCode());
+        // Assert the response body contains expected text
+        // Update this to the expected text from the image
+        String extractedText = response.getBody().asString();
+        System.out.println("Extracted Text: " + extractedText);
+    }
 }
 

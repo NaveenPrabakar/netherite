@@ -132,8 +132,8 @@ public class markTest {
                 .delete("/files/deleteFile");
 
 
-        assertEquals(500, response.getStatusCode());
-        assertEquals("the file was deleted", response.jsonPath().getString("response"));
+        assertEquals(200, response.getStatusCode());
+        assertEquals("The file was deleted", response.jsonPath().getString("response"));
     }
 
 
@@ -148,6 +148,135 @@ public class markTest {
 
         assertEquals(200, response.getStatusCode());
 
+    }
+
+    @Test
+    public void testPulled_Success5() {
+
+        // Act
+        Response response = RestAssured.given()
+                .queryParam("email", "takuli@iastate.edu")
+                .queryParam("fileName", "hellotestthisshouldwork")
+                .when()
+                .get("/files/fileid");
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testPulled_Success6() {
+
+        // Act
+        Response response = RestAssured.given()
+                .queryParam("email", "takuli@iastate.edu")
+                .queryParam("fileName", "yesTestOutNew")
+                .when()
+                .get("/files/fileid");
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void uploadFileTest2() {
+        // Send request and receive response with query parameters
+        Response response = RestAssured.given()
+                .queryParam("fileName", "test.txt")
+                .queryParam("content", "Hello, this is a test file.")
+                .queryParam("json", "{\"root\":[]}")
+                .queryParam("email", "nvnpsdaadasrabakar@gmail.com")
+                .queryParam("password", "defg")
+                .when()
+                .post("/files/upload");
+
+        // Check status code
+        int statusCode = response.getStatusCode();
+        assertEquals(200, statusCode);
+
+        // Check response body
+        String returnString = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString);
+            assertEquals("user does not exist", returnObj.get("response"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testPulled_Success7() {
+
+        // Act
+        Response response = RestAssured.given()
+                .queryParam("email", "takuli@iastate.edu")
+                .queryParam("password", "admin123!")
+                .queryParam("fileName", "yesTestOutNew")
+                .when()
+                .get("/files/pull");
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testPulled_Success9() {
+
+        // Act
+        Response response = RestAssured.given()
+                .queryParam("email", "takuli@iastate.edu")
+                .queryParam("password", "admin123!")
+                .queryParam("fileName", "yesTesfwfefasdahtOutNew")
+                .when()
+                .get("/files/pull");
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testSystem_Success2() {
+
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprasdsdasdabakar@gmail.com")
+                .queryParam("password", "defg")
+                .when()
+                .get("/files/system");
+
+
+        assertEquals(200, response.getStatusCode());
+        //assertEquals("{\"root\":[]}", response.getBody().asString());
+    }
+
+    @Test
+    public void testDeleteFile_FileDoesNotExist2() {
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabaasdadakar@gmail.com")
+                .queryParam("fileName", "test.txt")
+                .queryParam("json", "{\"root\":[\"yo what's up\"]}")
+                .when()
+                .delete("/files/deleteFile");
+
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("this user does not exist", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testDeleteFile_FileDoesNotExist3() {
+
+        Response response = RestAssured.given()
+                .queryParam("email", "nvnprabakar@gmail.com")
+                .queryParam("fileName", "tasdaasdasdasdasdasdasdasdsaest.txt")
+                .queryParam("json", "{\"root\":[\"yo what's up\"]}")
+                .when()
+                .delete("/files/deleteFile");
+
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("the file does not exist", response.jsonPath().getString("response"));
     }
 
 

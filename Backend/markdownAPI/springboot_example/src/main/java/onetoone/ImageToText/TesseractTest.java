@@ -78,7 +78,7 @@ public class TesseractTest {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("/usr/share/tesseract/tessdata");
+        tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
 
         tesseract.setLanguage(language.substring(0,3));
         tesseract.setPageSegMode(3);
@@ -96,7 +96,28 @@ public class TesseractTest {
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            if(!extension.equals("jpeg") && !extension.equals("jpg")){
+            if(originalFilename.contains("jpg")){
+
+                originalFilename = originalFilename.replace(".jpg", ".png");
+                ImageEntity i = new ImageEntity (s, originalFilename);
+                im.save(i);
+
+                Path tempFile = Files.createTempFile("ocr-", extension);
+                String uploadDir = "uploaded_images/";
+
+                File uploadDirFile = new File(uploadDir);
+
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs(); // Create the directory if it doesn't exist
+                }
+
+                File savedImageFile = new File(uploadDir + originalFilename);
+                Files.copy(tempFile, savedImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+
+                Files.delete(tempFile);
+
+
                 return ResponseEntity.ok(callGeminiApiWithImage(image));
             }
 

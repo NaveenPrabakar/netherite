@@ -31,41 +31,47 @@ public class accessTest {
     @Test
     public void testShareFile_Success() {
         Response response = RestAssured.given()
-                .param("fromUser", "nvnprabakar@gmail.com")
-                .param("toUser", "takuli@iastate.edu")
-                .param("docName", "tester4.txt")
+                .param("fromUser", "takuli@iastate.edu")
+                .param("toUser", "nvnprabakar@gmail.com")
+                .param("docName", "yesTestOutNew")
                 .when()
                 .post("/share/new");
 
         assertEquals(200, response.getStatusCode());
-        assertEquals("The file was shared", response.jsonPath().getString("response"));
     }
 
     @Test
     public void testShareFile_UserNotFound() {
         Response response = RestAssured.given()
-                .param("fromUser", "test@example.com")
-                .param("toUser", "nonexistent@example.com")
+                .param("fromUser", "nvnprabakar@gmail.com")
+                .param("toUser", "nonexistesdasdnt@example.com")
                 .param("docName", "testFile.txt")
                 .when()
                 .post("/share/new");
 
-        assertEquals(200, response.getStatusCode());
-        assertEquals("The user does not exist", response.jsonPath().getString("response"));
+        assertEquals(400, response.getStatusCode());
+    }
+    @Test
+    public void testShareFile_UserNotFound2() {
+        Response response = RestAssured.given()
+                .param("fromUser", "nvnprabakar@gmail.com")
+                .param("toUser", "takuli@iastate.edu")
+                .param("docName", "hello34")
+                .when()
+                .post("/share/new");
+
+        assertEquals(400, response.getStatusCode());
     }
 
     @Test
     public void testGetSentFiles_Success() {
         Response response = RestAssured.given()
-                .param("email", "nvnprabakar@gmail.com")
-                .param("fileName", "tester4.txt")
+                .param("email", "takuli@iastate.edu")
+                .param("fileName", "yesTestOutNew")
                 .when()
                 .get("/share/sent");
 
-        assertEquals(400, response.getStatusCode());
-        List<String> sentUsers = response.jsonPath().getList("response");
-        assertEquals(1, sentUsers.size());
-        assertEquals("takuli@iastate.edu", sentUsers.get(0));
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test

@@ -127,6 +127,134 @@ public class editTest {
         assertEquals("Email is wrong", response.jsonPath().getString("response"));
     }
 
+    @Test
+    public void testChangeUsername_Fail() {
+        String requestBody = """
+            {
+                "email": "asaasaaprabakar@gmail.com",
+                "password": "def"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changeusername/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("user profile does not exist", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testChangeUsername_Fail2() {
+        String requestBody = """
+            {
+                "email": "nvnprabakar@gmail.com",
+                "password": "defsdasdsadas"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changeusername/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("password is incorrect", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testChangeUsername_Fail3() {
+        String requestBody = """
+            {
+                "email": "nvnprabakar@gmail.com",
+                "password": "defsdasdsadas"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changepassword/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Your password is wrong", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testChangeUsername_Fail4() {
+        String requestBody = """
+            {
+                "email": "sas@gmail.com",
+                "password": "defsdasdsadas"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changepassword/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("your email or password is wrong", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testChangeUsername_Fail5() {
+        String requestBody = """
+            {
+                "email": "sas@gmail.com",
+                "password": "defsdasdsadas"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changeemail/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Your email or password is wrong", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void testChangeUsername_Fail6() {
+        String requestBody = """
+            {
+                "email": "nvnprabakar@gmail.com",
+                "password": "defsdasdsadas"
+            }
+            """;
+
+        String newUsername = "newUsername123";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/edit/changeemail/" + newUsername);
+
+        assertEquals(200, response.getStatusCode());
+        assertEquals("Your password is wrong", response.jsonPath().getString("response"));
+    }
+
+
+
 
 
 }

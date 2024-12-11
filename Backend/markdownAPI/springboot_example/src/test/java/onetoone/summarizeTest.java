@@ -76,4 +76,56 @@ public class summarizeTest {
 
         assertEquals(200, response.getStatusCode());
     }
+
+    @Test
+    public void gpt2(){
+
+        Response response = RestAssured.given()
+                .pathParam("email", "bruh123@gmail.com")
+                .get("/OpenAIAPIuse/getUsageAPICount/{email}");
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void gpt3(){
+        String email = "nicholaspribadi.1209@gmail.com";
+        String prompt = "Summarize this content";
+        String content = "This is the content to be summarized.";
+
+        AI requestBody = new AI(email, prompt, content);
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .put("/OpenAIAPIuse/updateAIUser");
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void gpt5(){
+
+        Response response = RestAssured.given()
+                .pathParam("email", "nicholaspribadi.1209@gmail.com")
+                .delete("/OpenAIAPIuse/resetUsage/{email}");
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void gpt6(){
+
+        Response response = RestAssured.given()
+                .pathParam("email", "imposter@gmail.com")
+                .delete("/OpenAIAPIuse/resetUsage/{email}");
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+
+
+
+
+
 }

@@ -125,9 +125,17 @@ public class textSpeechTest {
         //assertEquals("You have successfully registered", response.jsonPath().getString("Response"));
     }
 
+    @Test
+    public void testCreateSpeechUser_Successful2() {
 
+        Response response = RestAssured.given()
+                .param("email", "takuli@iastate.edu")
+                .param("speechFile", "New Recording 18.m4a")
+                .when()
+                .get("/SpeechToTextAIuse/getSpeechFile");
 
-
+        assertEquals(200, response.getStatusCode());
+    }
 }
 
 

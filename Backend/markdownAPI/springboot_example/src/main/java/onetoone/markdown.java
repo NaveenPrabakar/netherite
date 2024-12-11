@@ -150,12 +150,13 @@ public class markdown {
 
 
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
-        String temp = Long.toString(fileEntity.getfileId());
         signEntity user = logs.findByEmail(email);
 
         if (fileEntity == null) {
             return "response: file does not exist";
         }
+
+        String temp = Long.toString(fileEntity.getfileId());
 
         try {
             Path filePath = location.resolve(fileName);
@@ -257,6 +258,11 @@ public class markdown {
 
         FileEntity file = fileRepository.findByFileName(fileName);
 
+        if (file == null) {
+            response.put("response", "the file does not exist");
+            return response;
+        }
+
         //if it's owner
         if(file.getId() == user.getId()) {
 
@@ -264,11 +270,6 @@ public class markdown {
 
             System.out.println("Here");
 
-
-            if (file == null) {
-                response.put("response", "the file does not exist");
-                return response;
-            }
 
             Path filePath = location.resolve(fileName);
 

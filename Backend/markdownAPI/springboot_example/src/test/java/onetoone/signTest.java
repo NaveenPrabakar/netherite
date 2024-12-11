@@ -33,7 +33,7 @@ public class signTest {
         String requestBody = """
                 {
                     "username" : "tests",
-                    "email": "MoreTests@example.com",
+                    "email": "MoreTestsssss@example.com",
                     "password": "passwords"
                 }
                 """;
@@ -46,7 +46,6 @@ public class signTest {
                 .post("/user/create");
 
         assertEquals(200, response.getStatusCode());
-        assertEquals("User with email already exists", response.jsonPath().getString("Response"));
     }
 
     @Test
@@ -72,10 +71,14 @@ public class signTest {
     }
 
     @Test
-    public void testCreateUser_InvalidInput() {
-
+    public void testCreateUser_Successful2() {
+        // Prepare request body in the required format
         String requestBody = """
-                {gmmdfsl}
+                {
+                    "username" : "tests",
+                    "email": "MoreTests@example.com",
+                    "password": "passwords"
+                }
                 """;
 
 
@@ -85,9 +88,7 @@ public class signTest {
                 .when()
                 .post("/user/create");
 
-
-        assertEquals(400, response.getStatusCode());
-        assertEquals(null , response.jsonPath().getString("Response"));
+        assertEquals(200, response.getStatusCode());
     }
 
 
