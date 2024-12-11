@@ -148,7 +148,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         rootLayout = findViewById(R.id.rootLayout);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
-        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         pathLayout = findViewById(R.id.paths);
         newFolderNameUI = findViewById(R.id.newTextField);
         newFileUI = findViewById(R.id.newFile);

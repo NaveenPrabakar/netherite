@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,13 +76,17 @@ public class RecentFilePopulator extends RecyclerView.Adapter<RecentFilePopulato
         holder.textViewFileName.setText(fileNames.get(position));
         // Click the photo file name to actually view it.
         holder.itemView.setOnClickListener(v -> {
-//            Intent i = new Intent(context, TextActivity.class);
-////            i.putExtra("FILENAME", photoNames.get(position));
-////            i.putExtra("EMAIL", email);
-////            i.putExtra("USERNAME", username);
-////            i.putExtra("PASSWORD", password);
-//            context.startActivity(i);
             getFile(fileNames.get(position));
+        });
+        holder.itemView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                // Example: Scale down the view slightly
+                holder.itemView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.scale));
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                // Return to normal scale
+                holder.itemView.clearAnimation();
+            }
+            return false;
         });
     }
 
