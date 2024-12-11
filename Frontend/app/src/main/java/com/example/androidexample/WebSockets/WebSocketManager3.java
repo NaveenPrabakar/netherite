@@ -80,7 +80,7 @@ public class WebSocketManager3 {
     public void sendMessage(String message) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
-            Log.d("WebSocket", "Sent message: " + message);
+            Log.d("WebSocket3", "Sent message: " + message);
         }
     }
 
