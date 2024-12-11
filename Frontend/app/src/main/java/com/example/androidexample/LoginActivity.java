@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
+    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
 
 
 
@@ -70,6 +71,9 @@ public class LoginActivity extends AppCompatActivity {
 
         TextView loginTitle = findViewById(R.id.loginTitle);
         ImageView appLogo = findViewById(R.id.appLogo);
+
+        usernameEditText.setText("takuli@iastate.edu");
+        passwordEditText.setText("admin123!");
 
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(loginTitle, "alpha", 0f, 1f);
         fadeIn.setDuration(2000);
@@ -91,43 +95,6 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
             startActivity(intent);
         });
-
-//        /* click listener on login button pressed */
-//        loginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                /* grab strings from user inputs */
-//                String email = usernameEditText.getText().toString();
-//                String password = passwordEditText.getText().toString();
-//
-//                /* when login button is pressed, use intent to switch to Login Activity */
-//
-//                makeJsonObjReq(email, password);
-//
-//
-//            }
-//        });
-
-//        /* click listener on signup button pressed */
-//        signupButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                /* when signup button is pressed, use intent to switch to Signup Activity */
-//                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-//                startActivity(intent);  // go to SignupActivity
-//            }
-//        });
-//
-//        forgetPassword.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                /* when signup button is pressed, use intent to switch to Signup Activity */
-//                Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
-//                startActivity(intent);  // go to SignupActivity
-//            }
-//        });
     }
 
     private void makeJsonObjReq(String email, String password) {

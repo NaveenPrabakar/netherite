@@ -5,12 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 public class UserPreferences {
-    private final static String PREF_NAME = "AppPreferences";
-    private final static String KEY_USERNAME = "username";
-    private final static String KEY_EMAIL = "email";
-    private final static String KEY_PASSWORD = "password";
-    private final static String KEY_FILESYSTEM = "filesystem";
-    private final static String KEY_FILEPATH = "filepath";
+    private static final String PREF_NAME = "AppPreferences";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_PASSWORD = "password";
+    private static final String KEY_FILESYSTEM = "filesystem";
+    private static final String KEY_FILEPATH = "filepath";
 
     /*
     * OUR URLS

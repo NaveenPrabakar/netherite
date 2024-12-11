@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChangeEmailActivity extends AppCompatActivity {
-    private Button backToMain;
+    private ImageView backToMain;
     private Button changeEmail;
     private EditText password;
     private EditText n_email;
@@ -53,12 +54,12 @@ public class ChangeEmailActivity extends AppCompatActivity {
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
 
-        backToMain = findViewById(R.id.back2main);
+        backToMain = findViewById(R.id.back2settings);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ChangeEmailActivity.this, MainActivity.class);
+                Intent intent = new Intent(ChangeEmailActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });

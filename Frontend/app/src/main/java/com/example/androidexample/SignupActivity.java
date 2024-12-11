@@ -188,3 +188,4 @@ public class SignupActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjPost);
     };
 }
+

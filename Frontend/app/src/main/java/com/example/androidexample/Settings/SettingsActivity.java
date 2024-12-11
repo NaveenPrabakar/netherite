@@ -21,10 +21,6 @@ public class SettingsActivity extends AppCompatActivity {
     private Button changeEmail;
     private Button forgetPassword;
     private Button deleteUser;
-    //private EditText username;
-    //private EditText email;
-    //private EditText password;
-    private TextView msgResponse;
 
     /**
      * Initializes the activity and sets up the UI components for accessing account settings.
@@ -37,19 +33,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        msgResponse = findViewById(R.id.err_msg);
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
-
-        backToMain = findViewById(R.id.back2main);
-        backToMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
 
         changeUsername = findViewById(R.id.change_username);
         changeUsername.setOnClickListener(new View.OnClickListener() {

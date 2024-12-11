@@ -119,9 +119,6 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                 OCRSwitch = true;
                 String content = extras.getString("IMAGETEXT");
                 String firstLine = content.split("\n")[0];
-                username = extras.getString("USERNAME");
-                password = extras.getString("PASSWORD");
-                email = extras.getString("EMAIL");
                 newItem(fileSystem, fileSystem, firstLine, content, "file");
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -151,7 +148,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         rootLayout = findViewById(R.id.rootLayout);
         AutoIndex = findViewById(R.id.AutoIndex);
         recentFilesView = findViewById(R.id.recentFilesView);
-        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recentFilesView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         pathLayout = findViewById(R.id.paths);
         newFolderNameUI = findViewById(R.id.newTextField);
         newFileUI = findViewById(R.id.newFile);

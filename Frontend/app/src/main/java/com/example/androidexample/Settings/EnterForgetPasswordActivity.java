@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,12 +28,10 @@ import java.util.Map;
 public class EnterForgetPasswordActivity extends AppCompatActivity {
 
     // Button takes you back home
-    private Button backToMain;
+    private ImageView backToMain;
     private Button changePassword;
     private TextView email;
     private EditText n_password;
-    private TextView msgResponse;
-    private String new_password;
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/resetPassword";
 
@@ -49,7 +48,6 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
 
         email = findViewById(R.id.login_email_edt);
         n_password = findViewById(R.id.new_password_edt);
-        msgResponse = findViewById(R.id.err_msg);
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
@@ -62,7 +60,7 @@ public class EnterForgetPasswordActivity extends AppCompatActivity {
 
         }
 
-        backToMain = findViewById(R.id.back2main);
+        backToMain = findViewById(R.id.back2settings);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
