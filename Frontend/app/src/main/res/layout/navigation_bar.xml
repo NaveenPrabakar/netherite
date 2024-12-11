@@ -10,7 +10,7 @@
 
     <!-- Microphone Icon -->
     <ImageButton
-        android:id="@+id/ocrButton"
+        android:id="@+id/NAVocrButton"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
@@ -22,7 +22,7 @@
 
     <!-- Edit Icon -->
     <ImageButton
-        android:id="@+id/galleryNavButt"
+        android:id="@+id/NAVgalleryNavButt"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
@@ -33,7 +33,7 @@
     <!-- Settings Icon -->
 
     <ImageButton
-        android:id="@+id/homeButton"
+        android:id="@+id/NAVhomeButton"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
@@ -42,7 +42,7 @@
         android:src="@drawable/home" />
 
     <ImageButton
-        android:id="@+id/editButton"
+        android:id="@+id/NAVeditButton"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"
@@ -51,7 +51,7 @@
         android:src="@drawable/navbar_create_note" />
 
     <ImageButton
-        android:id="@+id/settingsButt"
+        android:id="@+id/NAVsettingsButt"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_weight="1"

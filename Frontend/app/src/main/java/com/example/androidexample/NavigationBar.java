@@ -53,11 +53,11 @@ public class NavigationBar {
 
     private void setUpNavigationButtonListeners(LinearLayout navBarLayout) {
         // Find buttons by their IDs in the inflated nav_bar_layout
-        ImageButton ocrButton = navBarLayout.findViewById(R.id.ocrButton);
-        ImageButton homeButton = navBarLayout.findViewById(R.id.homeButton);
-        ImageButton editButton = navBarLayout.findViewById(R.id.editButton);
-        ImageButton galleryNavButt = navBarLayout.findViewById(R.id.galleryNavButt);
-        ImageButton settingsButt = navBarLayout.findViewById(R.id.settingsButt);
+        ImageButton ocrButton = navBarLayout.findViewById(R.id.NAVocrButton);
+        ImageButton homeButton = navBarLayout.findViewById(R.id.NAVhomeButton);
+        ImageButton editButton = navBarLayout.findViewById(R.id.NAVeditButton);
+        ImageButton galleryNavButt = navBarLayout.findViewById(R.id.NAVgalleryNavButt);
+        ImageButton settingsButt = navBarLayout.findViewById(R.id.NAVsettingsButt);
 
         // Set click listeners for navigation
         ocrButton.setOnClickListener(view -> {

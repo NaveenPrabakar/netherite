@@ -65,8 +65,8 @@ public class PhotoViewActivity extends AppCompatActivity {
         // Needs to wait for image to fully load though.
         loadImage();
 
-//        NavigationBar navigationBar = new NavigationBar(this);
-//        navigationBar.addNavigationBar();
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
 
         goBackButt.setOnClickListener(new View.OnClickListener() {
             @Override
