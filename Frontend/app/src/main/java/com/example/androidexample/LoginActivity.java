@@ -39,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView err_msg;// define signup button variable
     private Button back2main;
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
 
 
 
@@ -132,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                         err_msg.setText(response.toString());
                         try {
                             if (resp.getString("response").equals("ok")){
+                                UserPreferences.saveUserDetails(LoginActivity.this, email, password, resp.getString("userName"), "", "");
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
