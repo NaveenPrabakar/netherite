@@ -9,6 +9,7 @@
     <color name="teal_50">#E0F7FA</color> <!-- Soft teal for the background -->
     <color name="teal_200">#80DEEA</color> <!-- Ripple effect color -->
     <color name="teal_700">#00796B</color> <!-- Text and icon color -->
-    <color name="main_teal">#B7E7EA</color>
+    <color name="main_teal">#D6F4F5</color>
     <color name="light_gray">#D1D1D1</color>
+    <color name="transparent_teal">#2567BEB8</color>
 </resources>

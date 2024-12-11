@@ -13,6 +13,7 @@ import com.example.androidexample.LoginActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
+import com.google.android.material.textview.MaterialTextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -25,6 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
     private Button deleteUser;
     private Button logout;
 
+    private MaterialTextView username;
+    private MaterialTextView email;
+
     /**
      * Initializes the activity and sets up the UI components for accessing account settings.
      *
@@ -35,6 +39,12 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        username = findViewById(R.id.username_field);
+        email = findViewById(R.id.email_field);
+
+        username.setText(UserPreferences.getUsername(SettingsActivity.this));
+        email.setText(UserPreferences.getEmail(SettingsActivity.this));
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();

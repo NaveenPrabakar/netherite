@@ -22,8 +22,8 @@
         <!-- App Icon -->
         <ImageView
             android:id="@+id/appLogo"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="16dp"
             android:contentDescription="App Logo"
             android:scaleType="centerCrop"
@@ -84,7 +84,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/main_teal"
             android:text="Login"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:cornerRadius="22dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -94,7 +94,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/main_teal"
             android:text="Sign Up"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:cornerRadius="22dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -104,7 +104,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/teal_700"
             android:text="Forgot Password?"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:cornerRadius="22dp" />
 
         <!-- Loading Spinner -->
