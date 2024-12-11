@@ -56,8 +56,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         password = UserPreferences.getPassword(this);
 
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar();
+//        NavigationBar navigationBar = new NavigationBar(this);
+//        navigationBar.addNavigationBar();
 
 
         backButt = findViewById(R.id.backButt);

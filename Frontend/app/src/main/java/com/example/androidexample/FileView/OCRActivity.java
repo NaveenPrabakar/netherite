@@ -76,8 +76,8 @@ public class OCRActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.imageSelView);
         selectBtn = findViewById(R.id.selectBtn);
 
-        NavigationBar navigationBar = new NavigationBar(this);
-        navigationBar.addNavigationBar();
+//        NavigationBar navigationBar = new NavigationBar(this);
+//        navigationBar.addNavigationBar();
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();

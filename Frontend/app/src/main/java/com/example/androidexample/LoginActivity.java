@@ -182,6 +182,7 @@ public class LoginActivity extends AppCompatActivity {
             String serverResponse = response.getString("response");
             if ("ok".equals(serverResponse)) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                UserPreferences.saveUserDetails(LoginActivity.this, response.getString("userName"), usernameEditText.getText().toString(), passwordEditText.getText().toString(), "", "");
                 startActivity(intent);
                 finish();
             } else {
