@@ -58,6 +58,7 @@ import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
 import com.example.androidexample.NavigationBar;
+import com.example.androidexample.WebSockets.WebSocketManager3;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import io.noties.markwon.Markwon;
@@ -91,6 +92,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
+        WebSocketManager.getInstance().setWebSocketListener(this);
 
         initializeUI();
         loadUserPreferences();

@@ -72,6 +72,9 @@ public class LoginActivity extends AppCompatActivity {
         TextView loginTitle = findViewById(R.id.loginTitle);
         ImageView appLogo = findViewById(R.id.appLogo);
 
+        usernameEditText.setText("takuli@iastate.edu");
+        passwordEditText.setText("admin123!");
+
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(loginTitle, "alpha", 0f, 1f);
         fadeIn.setDuration(2000);
         fadeIn.start();
