@@ -103,7 +103,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_view);
-
+        WebSocketManager3.getInstance().setWebSocketListener(this);
 //        NavigationBar navigationBar = new NavigationBar(this);
 //        navigationBar.addNavigationBar(R.layout.activity_file_view);
         NavigationBar navigationBar = new NavigationBar(this);
@@ -916,10 +916,12 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         try {
             JSONObject PathObj = new JSONObject(path);
             JSONArray pathArray = PathObj.getJSONArray("path");
-            toggleBackButton(pathArray);
-            createPathButtons(pathLayout, pathArray);
+            runOnUiThread(()->{
+                toggleBackButton(pathArray);
+                createPathButtons(pathLayout, pathArray);
+                rootLayout.removeAllViewsInLayout();
+            });
             currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
-            rootLayout.removeAllViewsInLayout();
             runOnUiThread(() -> createUI(rootLayout));
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -975,6 +977,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
 
     @Override
     public void onWebSocketMessage(String message) {
+        Log.d("WebSocket3", "New ws recieved " + message);
         setFileSystem(message);
         refreshLayout();
     }
@@ -1010,6 +1013,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         if (pathArray.length() == 1){
             goback.setVisibility(View.INVISIBLE);
             setConstraintToEdge();
+
         }else{
             goback.setVisibility(View.VISIBLE);
             restorePathsOriginalPosition();
