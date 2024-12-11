@@ -22,8 +22,8 @@
         <!-- App Icon -->
         <ImageView
             android:id="@+id/appLogo"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="16dp"
             android:contentDescription="App Logo"
             android:scaleType="centerCrop"
@@ -36,9 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:shadowColor="#80000000"
-            android:shadowDx="4"
+            android:shadowDx="2"
             android:shadowDy="4"
-            android:shadowRadius="4"
+            android:shadowRadius="15"
             android:text="Signup to Netherite"
             android:textColor="@android:color/black"
             android:textSize="32sp"
@@ -118,7 +118,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/main_teal"
             android:text="Login"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:cornerRadius="22dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -128,7 +128,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/main_teal"
             android:text="Sign Up"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             app:cornerRadius="22dp" />
 
         <TextView

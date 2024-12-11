@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.example.androidexample.FileView.MainActivity;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.google.android.material.button.MaterialButton;
@@ -62,6 +63,8 @@ public class SignupActivity extends AppCompatActivity {
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(loginTitle, "alpha", 0f, 1f);
         fadeIn.setDuration(2000);
         fadeIn.start();
+
+        Glide.with(this).asGif().load(R.raw.enchanted_netherite_leggings).into(appLogo);
 
         appLogo.setScaleX(0.0f);
         appLogo.setScaleY(0.0f);

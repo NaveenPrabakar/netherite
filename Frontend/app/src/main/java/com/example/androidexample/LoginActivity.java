@@ -2,6 +2,7 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -76,9 +78,19 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText.setText("takuli@iastate.edu");
         passwordEditText.setText("admin123!");
 
+        ObjectAnimator translateX = ObjectAnimator.ofFloat(appLogo, "translationX", 0f);
+        ObjectAnimator translateY = ObjectAnimator.ofFloat(appLogo, "translationY", 0f);
+
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(loginTitle, "alpha", 0f, 1f);
-        fadeIn.setDuration(2000);
-        fadeIn.start();
+//        fadeIn.setDuration(2000);
+//        fadeIn.start();
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(translateX, translateY, fadeIn);
+        animatorSet.setDuration(3000);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        animatorSet.start();
 
         Glide.with(this).asGif().load(R.raw.enchanted_netherite_leggings).into(appLogo);
 
