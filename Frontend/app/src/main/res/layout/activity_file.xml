@@ -62,7 +62,7 @@
             android:layout_height="0dp"
             android:layout_margin="15dp"
             app:cardCornerRadius="22dp"
-            app:cardBackgroundColor="@color/grey"
+            app:cardBackgroundColor="@color/light_gray"
             app:cardElevation="0dp"
             app:strokeWidth="0dp"
             app:layout_constraintBottom_toTopOf="@+id/ChatBoxLayout"

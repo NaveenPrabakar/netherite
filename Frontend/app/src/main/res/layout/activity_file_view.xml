@@ -48,6 +48,7 @@
             android:text="AutoIndex"
             android:backgroundTint="@color/main_teal"
             android:textColor="@android:color/black"
+            android:layout_marginRight="15dp"
             app:cornerRadius="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -79,6 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginHorizontal="15dp"
             android:padding="5dp">
 
             <!-- EditText for New Folder/File Name -->
@@ -98,11 +100,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="0dp">
+                android:gravity="center_horizontal"
+                android:padding="0dp"
+                android:weightSum="2">
 
                 <!-- New Folder Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/newFolder"
+                    app:cornerRadius="20dp"
+                    app:cardElevation="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
@@ -113,11 +119,12 @@
                     android:paddingBottom="10dp"
                     android:text="New Folder"
                     android:textColor="@android:color/black"
-                    app:cornerRadius="8dp" />
+                    android:layout_weight="1"/>
 
                 <!-- New File Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/newFile"
+                    app:cardElevation="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/main_teal"
@@ -127,7 +134,8 @@
                     android:paddingBottom="10dp"
                     android:text="New File"
                     android:textColor="@android:color/black"
-                    app:cornerRadius="8dp" />
+                    app:cornerRadius="20dp"
+                    android:layout_weight="1"/>
 
             </LinearLayout>
         </LinearLayout>
