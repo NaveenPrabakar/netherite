@@ -419,8 +419,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
     private void deleteFolder(JSONObject nestedObject) {
         try {
             JSONObject jsObj = fileDeletor(new JSONObject(fileSystem), new JSONObject(path), nestedObject.toString());
-            setFileSystem(jsObj.toString());
-            newfolderUpdate(fileSystem);
+            newfolderUpdate(jsObj.toString());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -550,8 +549,9 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
-                        JSONObject obj = new JSONObject();
                         sendUpdateToWebSocket();
+                        setFileSystem(fs.toString());
+                        refreshLayout();
                     }
                 },
                 new Response.ErrorListener() {
@@ -592,7 +592,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                         Log.d("Volley Response", response);
                         Log.d("JSON OBJECT", newFileSystem);
                         sendUpdateToWebSocket();
-                        setFileSystem(newFileSystem);
+                        newfolderUpdate(newFileSystem);
                     }
                 },
                 new Response.ErrorListener() {
