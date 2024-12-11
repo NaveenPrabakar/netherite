@@ -549,17 +549,9 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                     @Override
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
-                        setFileSystem(fs);
                         Toast.makeText(getApplicationContext(), "Folder Updated", Toast.LENGTH_SHORT).show();
                         JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("fromUser", email);
-                            obj.put("toUser", email);
-                            obj.put("type", "share");
-                            WebSocketManager3.getInstance().sendMessage(obj.toString());
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                        sendUpdateToWebSocket();
                     }
                 },
                 new Response.ErrorListener() {
@@ -599,9 +591,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                         Toast.makeText(getApplicationContext(), "File successfully deleted", Toast.LENGTH_SHORT).show();
                         Log.d("Volley Response", response);
                         Log.d("JSON OBJECT", newFileSystem);
-                        setFileSystem(newFileSystem);
-                        refreshLayout();
-
+                        sendUpdateToWebSocket();
                     }
                 },
                 new Response.ErrorListener() {
@@ -833,16 +823,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                     public void onResponse(String response) {
                         Toast.makeText(getApplicationContext(), "File successfully created", Toast.LENGTH_SHORT).show();
                         Log.d("Volley Response", response);
-                        setFileSystem(fileSystem);
-                        JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("fromUser", email);
-                            obj.put("toUser", email);
-                            obj.put("type", "share");
-                            WebSocketManager3.getInstance().sendMessage(obj.toString());
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                        sendUpdateToWebSocket();
                         if(OCRSwitch){
                             OCRSwitch = false;
                             Intent i = new Intent(filesActivity.this, TextActivity.class);
@@ -1017,6 +998,18 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         }else{
             goback.setVisibility(View.VISIBLE);
             restorePathsOriginalPosition();
+        }
+    }
+
+    private void sendUpdateToWebSocket(){
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("fromUser", email);
+            obj.put("toUser", email);
+            obj.put("type", "share");
+            WebSocketManager3.getInstance().sendMessage(obj.toString());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 }
