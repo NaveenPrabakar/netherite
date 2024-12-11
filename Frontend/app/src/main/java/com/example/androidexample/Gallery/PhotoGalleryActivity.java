@@ -40,7 +40,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
     private String username;
     private String password;
-    private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
+    private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/";
+    //private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
     private Button backButt;
     private List<String> photos;
     private RecyclerView galleryView;
@@ -90,11 +91,14 @@ public class PhotoGalleryActivity extends AppCompatActivity {
          */
         OkHttpClient client = new OkHttpClient();
 
+        // Create the photo list real quick
+        String photoList = getPhotoList + email;
+
         /*
         * It's a request to access the client url.
          */
         Request request = new Request.Builder()
-                .url(getPhotoList).build();
+                .url(photoList).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override

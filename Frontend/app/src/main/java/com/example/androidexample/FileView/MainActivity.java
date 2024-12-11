@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity{
     private final String URL_FILESYSTEM_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
     private final String URL_FSWS = "ws://coms-3090-068.class.las.iastate.edu:8080/Mail";
 
-    private String username = "takulibruh";
-    private String email = "takuli@iastate.edu";
-    private String password = "admin123!";
+    private String username;
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
