@@ -113,7 +113,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         ttsButt = findViewById(R.id.text2speech);
         back2main = findViewById(R.id.back2main);
         OCRButt = findViewById(R.id.OCRButtTXT);
-        translateButt = findViewById(R.id.translateButt);
+        //translateButt = findViewById(R.id.translateButt);
 
         markwon = Markwon.builder(this).build();
 
@@ -174,28 +174,28 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         back2main.setOnClickListener(v -> navigateToFilesActivity());
         ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
         OCRButt.setOnClickListener(v -> OCRNavigate());
-        translateButt.setOnClickListener(v -> {
-            // Create and show the popup
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle("Select Language")
-                    .setItems(languages, (dialog, which) -> {
-                        // Handle language selection
-                        String selectedLanguage = languages[which];
-                        Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
-                        AIText.setAlpha(1);
-
-                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
-                            AITextBox.setText(translatedText);
-                            toggleSummarizeVisibility(false);
-                        })
-                                .exceptionally(throwable -> {
-                                    Log.e("Translation Error", throwable.toString());
-                                    Toast.makeText(this, "I fucked up!", Toast.LENGTH_SHORT).show();
-                                    return null;
-                                });
-                    })
-                    .show();
-        });
+//        translateButt.setOnClickListener(v -> {
+//            // Create and show the popup
+//            new MaterialAlertDialogBuilder(this)
+//                    .setTitle("Select Language")
+//                    .setItems(languages, (dialog, which) -> {
+//                        // Handle language selection
+//                        String selectedLanguage = languages[which];
+//                        Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
+//                        AIText.setAlpha(1);
+//
+//                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
+//                            AITextBox.setText(translatedText);
+//                            toggleSummarizeVisibility(false);
+//                        })
+//                                .exceptionally(throwable -> {
+//                                    Log.e("Translation Error", throwable.toString());
+//                                    Toast.makeText(this, "I fucked up!", Toast.LENGTH_SHORT).show();
+//                                    return null;
+//                                });
+//                    })
+//                    .show();
+//        });
     }
 
     private void OCRNavigate(){

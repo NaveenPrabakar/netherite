@@ -50,6 +50,7 @@ public class UserPreferences {
     // Used in RecentFiles
     private static final String URL_RECENT_FILES = "http://coms-3090-068.class.las.iastate.edu:8080/recent"; // where the params are the email. i.e ../takuli@iastate.edu
 
+    private static final String URL_TRANSLATE = "http://coms-3090-068.class.las.iastate.edu:8080/translateText/translate";
 
 
     public static void saveUserDetails(Context context, String username, String email, String password, String fileSystem, String filePath) {
@@ -114,4 +115,7 @@ public class UserPreferences {
     public static String getUrlFilesPull() {
         return URL_STRING_REQ;
     }
+
+    public static String getUrlTranslate()
+    {return URL_TRANSLATE;}
 }
