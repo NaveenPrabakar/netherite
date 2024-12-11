@@ -124,6 +124,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
             }
 
         }
+        sendOpenMessage();
 
     }
 
@@ -898,13 +899,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         try {
             JSONObject PathObj = new JSONObject(path);
             JSONArray pathArray = PathObj.getJSONArray("path");
-            if (pathArray.length() == 1){
-                goback.setVisibility(View.INVISIBLE);
-                setConstraintToEdge();
-            }else{
-                goback.setVisibility(View.VISIBLE);
-                restorePathsOriginalPosition();
-            }
+            toggleBackButton(pathArray);
             createPathButtons(pathLayout, pathArray);
             currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
             rootLayout.removeAllViewsInLayout();
@@ -959,19 +954,6 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
 
     @Override
     public void onWebSocketOpen(ServerHandshake handshakedata) {
-        try {
-            // Create a JSON payload for credentials
-            JSONObject credentials = new JSONObject();
-            credentials.put("email", email);
-            credentials.put("type", "cred");
-            WebSocketManager.getInstance().sendMessage(credentials.toString());
-
-            // Send the credentials securely to the server
-            System.out.println("Credentials sent: " + credentials.toString());
-
-        } catch (Exception e) {
-            System.err.println("Error sending credentials: " + e.getMessage());
-        }
     }
 
     @Override
@@ -993,5 +975,29 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
     @Override
     public void onWebSocketError(Exception ex) {
 
+    }
+
+    private void sendOpenMessage(){
+        // Create a JSON payload for credentials
+        JSONObject credentials = new JSONObject();
+        try {
+            credentials.put("email", email);
+            credentials.put("type", "cred");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        WebSocketManager.getInstance().sendMessage(credentials.toString());
+    }
+
+    private void toggleBackButton(JSONArray pathArray){
+        if (pathArray.length() == 1){
+            goback.setVisibility(View.INVISIBLE);
+            recentFilesView.setVisibility(View.VISIBLE);
+            setConstraintToEdge();
+        }else{
+            goback.setVisibility(View.VISIBLE);
+            recentFilesView.setVisibility(View.INVISIBLE);
+            restorePathsOriginalPosition();
+        }
     }
 }

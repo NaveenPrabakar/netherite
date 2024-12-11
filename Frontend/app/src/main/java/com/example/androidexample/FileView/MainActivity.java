@@ -35,6 +35,7 @@ import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
 
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity{
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
         WebSocketManager.getInstance().connectWebSocket(URL_FSWS);
+
         getFileSystem(email, password);
     }
 
