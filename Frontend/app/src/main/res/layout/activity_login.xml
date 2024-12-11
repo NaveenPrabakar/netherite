@@ -1,124 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".FileView.MainActivity"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
 
-    <Button
-        android:id="@+id/back2main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back to main" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <!-- Animated Title -->
-    <TextView
-        android:id="@+id/loginTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Netherite"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:alpha="0" />
-
-    <TextView
-        android:id="@+id/err_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="#fc0303"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="username: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-        <EditText
-            android:id="@+id/login_username_edt"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:hint="Enter Username Here">
-        </EditText>
+            <!-- App Icon -->
+            <ImageView
+                android:id="@+id/appLogo"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src="@mipmap/icon"
+                android:contentDescription="App Logo"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop" />
 
-    </LinearLayout>
+            <!-- Animated Title -->
+            <TextView
+                android:id="@+id/loginTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome to Netherite"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:shadowColor="#80000000"
+                android:shadowDx="4"
+                android:shadowDy="4"
+                android:shadowRadius="4"
+                android:layout_marginBottom="24dp" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
+            <!-- Username Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:boxStrokeColor="@color/teal_primary"
+                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Body1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="password: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_username_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/login_password_edt"
-            android:layout_width="wrap_content"
-            android:inputType="textPassword"
-            android:layout_height="50dp"
-            android:hint="Enter Password Here">
-        </EditText>
+            <!-- Password Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:boxStrokeColor="@color/teal_primary"
+                app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Body1">
 
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+            <!-- Buttons -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/main_teal"
+                android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/login_login_btn"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="Login"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_signup_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sign Up"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/main_teal"
+                android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/login_signup_btn"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="Signup"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/forget_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/teal_700"
+                android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/forget_password"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="Forgot"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            <!-- Loading Spinner -->
+            <ProgressBar
+                android:id="@+id/loading_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:visibility="gone" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>
