@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,11 +39,13 @@ import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
+import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +59,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 
-public class filesActivity extends AppCompatActivity {
+public class filesActivity extends AppCompatActivity implements WebSocketListener {
     private final String URL_STRING_PUSH = "http://coms-3090-068.class.las.iastate.edu:8080/files/upload";
     private final String URL_STRING_PULL = "http://coms-3090-068.class.las.iastate.edu:8080/files/pull";
     private final String URL_ID_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/fileid";
@@ -79,7 +83,7 @@ public class filesActivity extends AppCompatActivity {
     private RecyclerView recentFilesView;
 
     private ImageView goback;
-    private Button OCRButt, newFileUI, newFolderUI;
+    private Button newFileUI, newFolderUI;
     private EditText newFolderNameUI;
 
     private MaterialButton AutoIndex;
@@ -148,7 +152,6 @@ public class filesActivity extends AppCompatActivity {
         newFileUI = findViewById(R.id.newFile);
         newFolderUI = findViewById(R.id.newFolder);
 
-
         goback.setOnClickListener(view -> handleGoBack());
         AutoIndex.setOnClickListener(view -> autoIndexAPI(fileSystem));
 
@@ -176,8 +179,7 @@ public class filesActivity extends AppCompatActivity {
         }
     }
 
-    private void getRecentFiles()
-    {
+    private void getRecentFiles() {
         /*
          * Creates a new HTTP client so that I can get the list of photo names from 'getPhotoList'.
          */
@@ -255,14 +257,17 @@ public class filesActivity extends AppCompatActivity {
 
                 // Create TextView for each folder
                 TextView newText = new TextView(this);
-                newText.setText(folderName + " / ");
+                if (folderName.equals("root")){
+                    newText.setText("Home / " );
+                }else{
+                    newText.setText(folderName + " / ");
+                }
                 newText.setTextSize(24); // Larger text size
                 newText.setTextColor(getResources().getColor(android.R.color.black)); // Text color
                 newText.setPadding(8, 0, 4, 0); // Spacing between items
                 newText.setTypeface(Typeface.DEFAULT_BOLD); // Bold text
                 newText.setGravity(Gravity.CENTER);
                 newText.setClickable(true);
-                newText.setBackgroundResource(android.R.drawable.list_selector_background); // Ripple effect on click
 
                 // Set click listener to navigate to the folder
                 newText.setOnClickListener(view -> {
@@ -498,7 +503,7 @@ public class filesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("Volley Response", response);
                         int id = Integer.parseInt(response);
-                        Toast.makeText(getApplicationContext(), "Folder Successfully connected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "File Successfully connected", Toast.LENGTH_SHORT).show();
 
                         String serverUrl = URL_WS + id;
                         aiURL = URL_AIWS + id + "/" + username;
@@ -625,8 +630,18 @@ public class filesActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Volley Response", response);
-                        Toast.makeText(getApplicationContext(), "File Shared", Toast.LENGTH_SHORT).show();
+                        try{
+                            Log.d("Volley Response", response);
+                            Toast.makeText(getApplicationContext(), "File Shared", Toast.LENGTH_SHORT).show();
+                            JSONObject obj = new JSONObject();
+                            obj.put("fromUser", fromUser);
+                            obj.put("toUser", toUser);
+                            obj.put("type", "share");
+                            WebSocketManager.getInstance().sendMessage(obj.toString());
+                        }catch(Exception e){
+                            Log.e("JSON Error", e.toString());
+                        }
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -790,7 +805,6 @@ public class filesActivity extends AppCompatActivity {
         return new JSONObject("{\"" + internalKey + "\" : " + currArrayJS.toString() + '}');
     };
 
-
     private void newFileUpdate(String fileName,String content, String fileSystem){
         Uri.Builder builder = Uri.parse(URL_STRING_PUSH).buildUpon();
         builder.appendQueryParameter("fileName", fileName);
@@ -884,6 +898,13 @@ public class filesActivity extends AppCompatActivity {
         try {
             JSONObject PathObj = new JSONObject(path);
             JSONArray pathArray = PathObj.getJSONArray("path");
+            if (pathArray.length() == 1){
+                goback.setVisibility(View.INVISIBLE);
+                setConstraintToEdge();
+            }else{
+                goback.setVisibility(View.VISIBLE);
+                restorePathsOriginalPosition();
+            }
             createPathButtons(pathLayout, pathArray);
             currentArray = goToPath(String.valueOf(pathArray), fileSystem).toString();
             rootLayout.removeAllViewsInLayout();
@@ -891,5 +912,86 @@ public class filesActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void setConstraintToEdge() {
+        ConstraintLayout constraintLayout = findViewById(R.id.constraintLayoutHeaderFileView);
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+        // Remove old constraint
+        constraintSet.clear(R.id.paths, ConstraintSet.START);
+
+        // Connect 'paths' start to parent start
+        constraintSet.connect(
+                R.id.paths, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0
+        );
+
+        // Keep the end constraint of paths as before
+        constraintSet.connect(
+                R.id.paths, ConstraintSet.END, R.id.AutoIndex, ConstraintSet.START, 0
+        );
+
+        // Apply the changes
+        constraintSet.applyTo(constraintLayout);
+    }
+
+    private void restorePathsOriginalPosition() {
+        ConstraintLayout constraintLayout = findViewById(R.id.constraintLayoutHeaderFileView);
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(constraintLayout);
+
+        // Clear previous constraints
+        constraintSet.clear(R.id.paths, ConstraintSet.START);
+
+        // Connect 'paths' start back to 'goback'
+        constraintSet.connect(
+                R.id.paths, ConstraintSet.START, R.id.goback, ConstraintSet.END, 22
+        );
+
+        // Maintain the end constraint
+        constraintSet.connect(
+                R.id.paths, ConstraintSet.END, R.id.AutoIndex, ConstraintSet.START, 0
+        );
+
+        // Apply changes
+        constraintSet.applyTo(constraintLayout);
+    }
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        try {
+            // Create a JSON payload for credentials
+            JSONObject credentials = new JSONObject();
+            credentials.put("email", email);
+            credentials.put("type", "cred");
+            WebSocketManager.getInstance().sendMessage(credentials.toString());
+
+            // Send the credentials securely to the server
+            System.out.println("Credentials sent: " + credentials.toString());
+
+        } catch (Exception e) {
+            System.err.println("Error sending credentials: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onWebSocketMessage(String message) {
+        setFileSystem(message);
+        refreshLayout();
+    }
+
+    @Override
+    public void onWebSocketJsonMessage(JSONObject jsonMessage) {
+
+    }
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+
+    }
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+
     }
 }

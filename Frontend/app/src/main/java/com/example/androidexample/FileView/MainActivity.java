@@ -32,6 +32,7 @@ import com.example.androidexample.SignupActivity;
 import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
+import com.example.androidexample.WebSockets.WebSocketManager;
 
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
@@ -39,6 +40,8 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity{
     // the whole ass system full of paths
     private final String URL_FILESYSTEM_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
+    private final String URL_FSWS = "ws://coms-3090-068.class.las.iastate.edu:8080/Mail";
+
     private String username = "takulibruh";
     private String email = "takuli@iastate.edu";
     private String password = "admin123!";
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity{
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
+        WebSocketManager.getInstance().connectWebSocket(URL_FSWS);
         getFileSystem(email, password);
     }
 
