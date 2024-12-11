@@ -41,6 +41,7 @@ import com.example.androidexample.UserPreferences;
 import com.example.androidexample.Volleys.VolleySingleton;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager;
+import com.example.androidexample.WebSockets.WebSocketManager3;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -638,7 +639,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                             obj.put("fromUser", fromUser);
                             obj.put("toUser", toUser);
                             obj.put("type", "share");
-                            WebSocketManager.getInstance().sendMessage(obj.toString());
+                            WebSocketManager3.getInstance().sendMessage(obj.toString());
                         }catch(Exception e){
                             Log.e("JSON Error", e.toString());
                         }
@@ -986,17 +987,15 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        WebSocketManager.getInstance().sendMessage(credentials.toString());
+        WebSocketManager3.getInstance().sendMessage(credentials.toString());
     }
 
     private void toggleBackButton(JSONArray pathArray){
         if (pathArray.length() == 1){
             goback.setVisibility(View.INVISIBLE);
-            recentFilesView.setVisibility(View.VISIBLE);
             setConstraintToEdge();
         }else{
             goback.setVisibility(View.VISIBLE);
-            recentFilesView.setVisibility(View.INVISIBLE);
             restorePathsOriginalPosition();
         }
     }
