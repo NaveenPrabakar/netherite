@@ -3,6 +3,7 @@ package com.example.androidexample;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
 
 public class UserPreferences {
     private static final String PREF_NAME = "AppPreferences";
@@ -38,6 +39,13 @@ public class UserPreferences {
         editor.putString(KEY_PASSWORD, password);
         editor.putString(KEY_FILESYSTEM, fileSystem);
         editor.putString(KEY_FILEPATH, filePath);
+        editor.apply();
+        Log.d("UserPreferences", "User details saved:");
+    }
+
+    public static void removeUserDetails(View.OnClickListener context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.apply();
         Log.d("UserPreferences", "User details saved:");
     }

@@ -9,8 +9,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.LoginActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -21,6 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button changeEmail;
     private Button forgetPassword;
     private Button deleteUser;
+    private Button logout;
 
     /**
      * Initializes the activity and sets up the UI components for accessing account settings.
@@ -35,6 +38,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
+
+        logout = findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create an Intent to navigate to MainActivity
+                UserPreferences.removeUserDetails(this);
+                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         changeUsername = findViewById(R.id.change_username);
         changeUsername.setOnClickListener(new View.OnClickListener() {
