@@ -72,7 +72,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private static final String URL_AI_DELETE = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/resetUsage/";
     private static final String URL_AI_PUT = "http://coms-3090-068.class.las.iastate.edu:8080/OpenAIAPIuse/updateAIUser";
     private static final String URL_TEXT_TO_SPEECH = "http://coms-3090-068.class.las.iastate.edu:8080/textToSpeech/synthesizer";
-    private Button ttsButt, summarizeButt, acceptButt, liveChatButt, rejectButt, voiceButt, OCRButt, translateButt;
+    private Button ttsButt, summarizeButt, acceptButt, rejectButt, voiceButt, OCRButt, translateButt;
     private EditText mainText, editor, AIInputText;
     private TextView AITextBox, fileName;
     private Markwon markwon;
@@ -105,7 +105,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         fileName = findViewById(R.id.headerTitle);
         AIText = findViewById(R.id.AITextView);
         AITextBox = findViewById(R.id.AITextBox);
-        liveChatButt = findViewById(R.id.liveChatButt);
+        translateButt = findViewById(R.id.translateButt);
         summarizeButt = findViewById(R.id.summarizeButt);
         acceptButt = findViewById(R.id.acceptButt);
         rejectButt = findViewById(R.id.rejectButt);
@@ -113,7 +113,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         ttsButt = findViewById(R.id.text2speech);
         back2main = findViewById(R.id.back2main);
         OCRButt = findViewById(R.id.OCRButtTXT);
-        //translateButt = findViewById(R.id.translateButt);
+
 
         markwon = Markwon.builder(this).build();
 
@@ -166,7 +166,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void setupButtons() {
-        liveChatButt.setOnClickListener(v -> navigateToChatActivity());
         summarizeButt.setOnClickListener(v -> startSummarization());
         acceptButt.setOnClickListener(v -> acceptAIResponse());
         rejectButt.setOnClickListener(v -> rejectAIResponse());
@@ -174,28 +173,28 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         back2main.setOnClickListener(v -> navigateToFilesActivity());
         ttsButt.setOnClickListener(v -> sendStringAndReceiveAudioMultipart(mainText.getText().toString()));
         OCRButt.setOnClickListener(v -> OCRNavigate());
-//        translateButt.setOnClickListener(v -> {
-//            // Create and show the popup
-//            new MaterialAlertDialogBuilder(this)
-//                    .setTitle("Select Language")
-//                    .setItems(languages, (dialog, which) -> {
-//                        // Handle language selection
-//                        String selectedLanguage = languages[which];
-//                        Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
-//                        AIText.setAlpha(1);
-//
-//                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
-//                            AITextBox.setText(translatedText);
-//                            toggleSummarizeVisibility(false);
-//                        })
-//                                .exceptionally(throwable -> {
-//                                    Log.e("Translation Error", throwable.toString());
-//                                    Toast.makeText(this, "I fucked up!", Toast.LENGTH_SHORT).show();
-//                                    return null;
-//                                });
-//                    })
-//                    .show();
-//        });
+        translateButt.setOnClickListener(v -> {
+            // Create and show the popup
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Select Language")
+                    .setItems(languages, (dialog, which) -> {
+                        // Handle language selection
+                        String selectedLanguage = languages[which];
+                        Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
+                        AIText.setAlpha(1);
+
+                        translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
+                            AITextBox.setText(translatedText);
+                            toggleSummarizeVisibility(false);
+                        })
+                                .exceptionally(throwable -> {
+                                    Log.e("Translation Error", throwable.toString());
+                                    Toast.makeText(this, "I fucked up!", Toast.LENGTH_SHORT).show();
+                                    return null;
+                                });
+                    })
+                    .show();
+        });
     }
 
     private void OCRNavigate(){
