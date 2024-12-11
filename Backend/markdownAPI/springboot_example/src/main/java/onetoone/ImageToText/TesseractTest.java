@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +37,7 @@ import java.net.URI;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import javax.imageio.ImageIO;
 
 
 @RestController
@@ -74,7 +76,7 @@ public class TesseractTest {
             @ApiResponse(responseCode = "500", description = "Error processing the image")
     })
     @PostMapping("/extractText/{email}/{language}")
-    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) {
+    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) throws IOException {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
@@ -84,6 +86,8 @@ public class TesseractTest {
         tesseract.setPageSegMode(3);
 
         signEntity s = logs.findByEmail(email);
+
+        BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
 
 
         try {
@@ -98,7 +102,6 @@ public class TesseractTest {
 
             if(originalFilename.contains("jpg")){
 
-                originalFilename = originalFilename.replace(".jpg", ".png");
                 ImageEntity i = new ImageEntity (s, originalFilename);
                 im.save(i);
 
@@ -112,7 +115,7 @@ public class TesseractTest {
                 }
 
                 File savedImageFile = new File(uploadDir + originalFilename);
-                Files.copy(tempFile, savedImageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                ImageIO.write(bufferedImage, extension.replace(".", ""), savedImageFile);
 
 
                 Files.delete(tempFile);
