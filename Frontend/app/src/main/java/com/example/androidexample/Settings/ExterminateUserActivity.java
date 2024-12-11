@@ -1,12 +1,14 @@
 package com.example.androidexample.Settings;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ExterminateUserActivity extends AppCompatActivity {
-    private Button backToMain;
+    private ImageView backToMain;
     private Button exterminateUser;
     private EditText password;
     private EditText email;
@@ -49,12 +51,12 @@ public class ExterminateUserActivity extends AppCompatActivity {
         NavigationBar navigationBar = new NavigationBar(this);
         navigationBar.addNavigationBar();
 
-        backToMain = findViewById(R.id.back2main);
+        backToMain = findViewById(R.id.back2settings);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ExterminateUserActivity.this, MainActivity.class);
+                Intent intent = new Intent(ExterminateUserActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });
