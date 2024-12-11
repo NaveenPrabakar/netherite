@@ -519,8 +519,6 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
                         Log.d("Instance URL", aiURL);
                         WebSocketManager.getInstance().connectWebSocket(serverUrl);
                         getFileString(fileName);
-
-
                     }
                 },
                 new Response.ErrorListener() {
