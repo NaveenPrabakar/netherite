@@ -186,7 +186,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
                         translateString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
                             AITextBox.setText(translatedText);
-                            toggleSummarizeVisibility(true);
+                            toggleSummarizeVisibility(false);
                         })
                                 .exceptionally(throwable -> {
                                     Log.e("Translation Error", throwable.toString());
