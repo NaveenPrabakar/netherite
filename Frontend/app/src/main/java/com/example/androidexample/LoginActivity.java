@@ -52,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private static final String URL_JSON_OBJECT = "http://coms-3090-068.class.las.iastate.edu:8080/userLogin/searchemail";
-    private final String URL_STRING_REQ = "http://coms-3090-068.class.las.iastate.edu:8080/files/system";
 
 
 
