@@ -6,17 +6,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
+
+import java.util.Set;
 
 public class VerificationActivity extends AppCompatActivity {
 
     // Button takes you back home
-    private Button backToMain;
+    private ImageView backToMain;
     private Button verificationButton;
     private EditText o_password;
     private EditText verification;
@@ -41,6 +45,9 @@ public class VerificationActivity extends AppCompatActivity {
         verification = findViewById(R.id.verification_code);
         msgResponse = findViewById(R.id.err_msg);
 
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
+
         Intent intent = getIntent();
         verificationCode = intent.getStringExtra("verificationCode");
         email = intent.getStringExtra("EMAIL");
@@ -51,7 +58,7 @@ public class VerificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(VerificationActivity.this, MainActivity.class);
+                Intent intent = new Intent(VerificationActivity.this, SettingsActivity.class);
                 intent.putExtra("EMAIL", email);
                 startActivity(intent);
             }

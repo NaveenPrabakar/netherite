@@ -9,7 +9,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.LoginActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
+import com.google.android.material.textview.MaterialTextView;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -20,10 +24,10 @@ public class SettingsActivity extends AppCompatActivity {
     private Button changeEmail;
     private Button forgetPassword;
     private Button deleteUser;
-    //private EditText username;
-    //private EditText email;
-    //private EditText password;
-    private TextView msgResponse;
+    private Button logout;
+
+    private MaterialTextView username;
+    private MaterialTextView email;
 
     /**
      * Initializes the activity and sets up the UI components for accessing account settings.
@@ -36,14 +40,22 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        msgResponse = findViewById(R.id.err_msg);
+        username = findViewById(R.id.username_field);
+        email = findViewById(R.id.email_field);
 
-        backToMain = findViewById(R.id.back2main);
-        backToMain.setOnClickListener(new View.OnClickListener() {
+        username.setText(UserPreferences.getUsername(SettingsActivity.this));
+        email.setText(UserPreferences.getEmail(SettingsActivity.this));
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
+
+        logout = findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                // Create an Intent to navigate to MainActivity
+                UserPreferences.removeUserDetails(SettingsActivity.this);
+                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });

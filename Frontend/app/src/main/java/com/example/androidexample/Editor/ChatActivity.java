@@ -11,7 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.WebSockets.WebSocketListener;
 import com.example.androidexample.WebSockets.WebSocketManager2;
@@ -41,6 +44,11 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
      * Button to go back to the note file.
      */
     private Button backButt;
+
+    /**
+     * Text view to display the title of the note file.
+     */
+    private TextView headerTitle;
     /**
      * Text box to enter the user's message.
      */
@@ -85,6 +93,9 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
                 aiUrl = extras.getString("AIWSURL");
             }
         }
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
 
         WebSocketManager2.getInstance().connectWebSocket(aiUrl);
         WebSocketManager2.getInstance().setWebSocketListener(ChatActivity.this);

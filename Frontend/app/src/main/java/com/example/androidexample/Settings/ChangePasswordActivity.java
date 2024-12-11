@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.Volleys.VolleySingleton;
 
@@ -27,7 +29,7 @@ import java.util.Map;
 public class ChangePasswordActivity extends AppCompatActivity {
 
     // Button takes you back home
-    private Button backToMain;
+    private ImageView backToMain;
     private Button changePassword;
     private EditText o_password;
     private EditText email;
@@ -59,13 +61,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
 //            //Log.d("Email", intent.getStringExtra("EMAIL"));
 //            email.setText(emailIntent);
 //        }
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
 
-        backToMain = findViewById(R.id.back2main);
+
+        backToMain = findViewById(R.id.back2settings);
         backToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Create an Intent to navigate back to MainActivity
-                Intent intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                Intent intent = new Intent(ChangePasswordActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });

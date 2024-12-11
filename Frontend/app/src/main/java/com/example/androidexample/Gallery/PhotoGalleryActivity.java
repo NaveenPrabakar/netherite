@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidexample.FileView.MainActivity;
+import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
+import com.example.androidexample.UserPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Call;
@@ -38,7 +40,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private String email;
     private String username;
     private String password;
-    private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/nvnprabakar@gmail.com";
+    private final String getPhotoList = "http://coms-3090-068.class.las.iastate.edu:8080/getImageNamesByUser/";
     private Button backButt;
     private List<String> photos;
     private RecyclerView galleryView;
@@ -47,27 +49,15 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photogallery);
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
 
-        if (extras != null)
-        {
-            if (extras.getString("EMAIL") != null)
-            {
-                email = extras.getString("EMAIL");
-                Log.d("EMAIL",email);
-            }
-            if (extras.getString("USERNAME") != null)
-            {
-                username = extras.getString("USERNAME");
-                Log.d("username",username);
-            }
-            if (extras.getString("PASSWORD") != null)
-            {
-                password = extras.getString("PASSWORD");
-                Log.d("password",password);
-            }
-        }
+        email = UserPreferences.getEmail(this);
+        username = UserPreferences.getUsername(this);
+        password = UserPreferences.getPassword(this);
+
+
+        NavigationBar navigationBar = new NavigationBar(this);
+        navigationBar.addNavigationBar();
+
 
         backButt = findViewById(R.id.backButt);
         backButt.setOnClickListener(new View.OnClickListener() {
@@ -100,11 +90,13 @@ public class PhotoGalleryActivity extends AppCompatActivity {
          */
         OkHttpClient client = new OkHttpClient();
 
+        String photoList = getPhotoList + email;
+
         /*
         * It's a request to access the client url.
          */
         Request request = new Request.Builder()
-                .url(getPhotoList).build();
+                .url(photoList).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override

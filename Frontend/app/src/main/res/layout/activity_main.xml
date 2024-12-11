@@ -1,138 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".FileView.MainActivity"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/main_msg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="50dp"
-        android:text="Hello World"
-        android:textColor="#000000"
-        android:textSize="50dp"></TextView>
+    android:layout_height="match_parent"
+    android:background="@color/light_teal"
+    tools:context="FileView.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="217dp">
+        android:layout_height="match_parent">
 
-
-        <Button
-            android:id="@+id/loginButt"
+        <!-- App Title -->
+        <TextView
+            android:id="@+id/app_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="48dp"
+            android:text="Netherite"
+            android:textColor="@color/teal_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.062" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
-            android:id="@+id/makeFile"
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/app_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Make File"
-            app:layout_constraintBottom_toTopOf="@+id/signupButt"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:text="Organize your thoughts, anytime."
+            android:textColor="@color/teal_secondary"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/app_title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginButt"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
+        <!-- Main Buttons -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginButt"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Login"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_primary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/app_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/signupButt"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Signup"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.487"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_primary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/loginButt"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/makeFile" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/galleryButt"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gallery"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_secondary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/signupButt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Additional Buttons -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/FileView"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="File View"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_secondary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/galleryButt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/makeFile"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Make File"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_secondary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/FileView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settingsButt"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Settings"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_secondary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/makeFile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/OCRButt"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="OCR"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/teal_secondary"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/settingsButt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Email and Password Display -->
+        <TextView
+            android:id="@+id/emailDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="84dp"
-            android:text="file view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.488"
+            android:layout_marginTop="32dp"
+            android:text="Email: user@example.com"
+            android:textColor="@color/teal_primary"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/OCRButt"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/makeFile" />
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signupButt">
-
-            <TextView
-                android:id="@+id/usernameDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="username: "
-                android:textColor="#000000"
-                android:textSize="20dp"></TextView>
-
-        </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/passwordDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="password "
-            android:textColor="#000000"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:text="Password: ******"
+            android:textColor="@color/teal_primary"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/emailDisplay"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TextView>
-
-        <Button
-            android:id="@+id/settingsButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="19dp"
-            android:text="Settings"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
-            android:id="@+id/OCRButt"
+        <!-- Footer Links -->
+        <TextView
+            android:id="@+id/footer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="13dp"
-            android:layout_marginBottom="10dp"
-            android:text="OCR"
+            android:layout_marginTop="32dp"
+            android:text="Trademark: Among us among us"
+            android:textColor="@color/teal_secondary"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
-            android:id="@+id/galleryButt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="35dp"
-            android:text="Gallery"
-            app:layout_constraintBottom_toBottomOf="@+id/settingsButt"
-            app:layout_constraintEnd_toEndOf="@+id/OCRButt"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</com.google.android.material.card.MaterialCardView>

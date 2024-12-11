@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:anroid="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/note_item_background"
+    android:gravity="center_vertical"
+    android:elevation="2dp">
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginHorizontal="12dp"
+        android:src="@drawable/ic_file_icon"
+        app:tint="@color/teal_700"/>
+
+    <!-- File Name Text -->
+    <TextView
+        android:id="@+id/fileTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:text="Note Name"
+        android:textSize="16sp"
+        android:textColor="@color/teal_700"
+        android:background="?attr/selectableItemBackground"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- Username Input -->
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/toUser"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:padding="8dp"
+        android:textSize="14sp"
+        android:background="@drawable/edittext_background"
+        android:layout_marginEnd="8dp" />
+
+    <!-- Share Button -->
+    <ImageButton
+        android:id="@+id/shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/ic_share"
+        android:tint="@color/teal_700"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/share_note" />
+
+    <!-- Delete Button -->
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/ic_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete_note" />
+</LinearLayout>

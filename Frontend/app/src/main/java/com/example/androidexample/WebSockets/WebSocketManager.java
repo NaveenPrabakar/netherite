@@ -80,6 +80,7 @@ public class WebSocketManager {
     public void sendMessage(String message) {
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
+            Log.d("WebSocket1", "Sent message: " + message);
         }
     }
 

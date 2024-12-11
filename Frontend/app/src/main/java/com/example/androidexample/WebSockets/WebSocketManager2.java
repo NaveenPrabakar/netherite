@@ -80,7 +80,7 @@ public class WebSocketManager2 {
      * @param message The message to be sent to the WebSocket server.
      */
     public void sendMessage(String message) {
-        Log.d("Websocket", "Sending message: " + message);
+        Log.d("Websocket2", "Sending message: " + message);
 
         if (webSocketClient.isClosed())
         {
@@ -88,7 +88,7 @@ public class WebSocketManager2 {
         }
         if (webSocketClient != null && webSocketClient.isOpen()) {
             webSocketClient.send(message);
-            Log.d("Websocket", "Message sent: " + message);
+            Log.d("Websocket2", "Message sent: " + message);
         }
     }
 
