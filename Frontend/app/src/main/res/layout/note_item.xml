@@ -35,7 +35,8 @@
     <!-- Username Input -->
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/toUser"
-        android:layout_width="120dp"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
         android:layout_height="wrap_content"
         android:hint="Username"
         android:padding="8dp"

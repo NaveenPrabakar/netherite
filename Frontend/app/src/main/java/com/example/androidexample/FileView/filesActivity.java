@@ -1,8 +1,9 @@
 package com.example.androidexample.FileView;
 
+import static android.view.View.GONE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,9 +32,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.androidexample.Editor.TextActivity;
-import com.example.androidexample.Editor.VoiceRecordActivity;
-import com.example.androidexample.Gallery.GalleryPopulator;
-import com.example.androidexample.Gallery.PhotoGalleryActivity;
 import com.example.androidexample.NavigationBar;
 import com.example.androidexample.R;
 import com.example.androidexample.UserPreferences;
@@ -50,11 +47,11 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -356,6 +353,8 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         ImageButton deleteButton = noteItem.findViewById(R.id.deleteButton);
         ImageButton shareButton = noteItem.findViewById(R.id.shareButton);
         EditText toUser = noteItem.findViewById(R.id.toUser);
+        AtomicBoolean power9000 = new AtomicBoolean(false);
+        toUser.setVisibility(View.GONE);
 
         // Set the note name or data for the TextView
         fileTextView.setText(fileName);
@@ -377,8 +376,16 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         });
 
         shareButton.setOnClickListener(view -> {
-            String username = toUser.getText().toString();
-            shareToUser(email, username, fileName); // Call your existing method
+            if (power9000.get()){
+                String username = toUser.getText().toString();
+                shareToUser(email, username, fileName); // Call your existing method
+                toUser.setVisibility(View.GONE);
+            }else{
+                power9000.set(true);
+                toUser.setVisibility(View.VISIBLE);
+            }
+
+
         });
 
         // Add the note item to the parent layout
@@ -964,6 +971,7 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
         Log.d("WebSocket3", "New ws recieved " + message);
         setFileSystem(message);
         refreshLayout();
+        Toast.makeText(getApplicationContext(), "New File Updated", Toast.LENGTH_LONG).show();
     }
 
     @Override
