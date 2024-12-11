@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.loginAPI.logs;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +47,7 @@ public class loginTest {
                 .post("/userLogin/searchemail");
 
         //assertEquals(200, response.getStatusCode());
-        assertEquals("ok", response.jsonPath().getString("response"));
+        assertEquals("Password is incorrect", response.jsonPath().getString("response"));
     }
 
     @Test
@@ -107,4 +108,95 @@ public class loginTest {
         //assertEquals(200, response.getStatusCode());
         assertEquals("Password has been reset successfully.", response.jsonPath().getString("responses"));
     }
+
+    @Test
+    public void getEmail_Successful() {
+        // Prepare request body in the required format
+        String requestBody = """
+                {
+                    "email": "nvnprabakar@gmail.com",
+                    "password": "def"
+                }
+                """;
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .post("/userLogin/forgotPassword");
+
+        assertEquals(200, response.getStatusCode());
+
+    }
+
+    @Test
+    public void findEmail_Successful2() {
+        // Prepare request body in the required format
+        String requestBody = """
+                {
+                    "email": "MoreTests@example.com",
+                    "password": "newpassword123"
+                }
+                """;
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .post("/userLogin/searchemail");
+
+        //assertEquals(200, response.getStatusCode());
+        assertEquals("ok", response.jsonPath().getString("response"));
+    }
+
+    @Test
+    public void getEmail_Successful2() {
+        // Prepare request body in the required format
+        String requestBody = """
+                {
+                    "email": "nvnsadadaprabakar@gmail.com",
+                    "password": "def"
+                }
+                """;
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .post("/userLogin/forgotPassword");
+
+        assertEquals(200, response.getStatusCode());
+
+    }
+
+    @Test
+    public void resetPassword_SuccessfulReset2() {
+        String requestBody = """
+            {
+                "email": "MoreTesdadasts@example.com",
+                "password": "newpassword123"
+            }
+            """;
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(requestBody)
+                .when()
+                .put("/userLogin/resetPassword");
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testclass(){
+        logs l = new logs("n@gmail.com", "p");
+
+        logs le = new logs("n@gmail.com");
+
+        assertEquals("n@gmail.com", l.getemail());
+    }
+
+
+
+
 }

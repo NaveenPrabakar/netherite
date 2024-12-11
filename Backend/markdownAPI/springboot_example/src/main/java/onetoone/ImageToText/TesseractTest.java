@@ -1,14 +1,11 @@
 package onetoone.ImageToText;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +32,7 @@ import java.net.URI;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import javax.imageio.ImageIO;
 
 
 @RestController
@@ -74,16 +71,18 @@ public class TesseractTest {
             @ApiResponse(responseCode = "500", description = "Error processing the image")
     })
     @PostMapping("/extractText/{email}/{language}")
-    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) {
+    public ResponseEntity<String> extractText(@RequestParam("image") MultipartFile image, @PathVariable String email, @PathVariable String language) throws IOException {
 
         // Initialize Tesseract instance
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("/usr/share/tesseract/tessdata");
+        tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
 
         tesseract.setLanguage(language.substring(0,3));
         tesseract.setPageSegMode(3);
 
         signEntity s = logs.findByEmail(email);
+
+        BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
 
 
         try {
@@ -96,7 +95,27 @@ public class TesseractTest {
 
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 
-            if(!extension.equals("jpeg") && !extension.equals("jpg")){
+            if(originalFilename.contains("jpg")){
+
+                ImageEntity i = new ImageEntity (s, originalFilename);
+                im.save(i);
+
+                Path tempFile = Files.createTempFile("ocr-", extension);
+                String uploadDir = "uploaded_images/";
+
+                File uploadDirFile = new File(uploadDir);
+
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs(); // Create the directory if it doesn't exist
+                }
+
+                File savedImageFile = new File(uploadDir + originalFilename);
+                ImageIO.write(bufferedImage, extension.replace(".", ""), savedImageFile);
+
+
+                Files.delete(tempFile);
+
+
                 return ResponseEntity.ok(callGeminiApiWithImage(image));
             }
 
@@ -253,6 +272,29 @@ public class TesseractTest {
 
         } catch (Exception e) {
             return "Error occurred: " + e.getMessage();
+        }
+    }
+
+    @DeleteMapping("/deleteImage/{email}/{fileName}")
+    public ResponseEntity<String> deleteImage(@PathVariable String email, @PathVariable String fileName) {
+        String uploadDir = "uploaded_images/";
+        File fileToDelete = new File(uploadDir + fileName);
+
+        signEntity s = logs.findByEmail(email);
+
+        if (!fileToDelete.exists()) {
+            return ResponseEntity.status(404).body("File not found: " + fileName);
+        }
+
+        try {
+            if (fileToDelete.delete()) {
+                im.deletes(s, fileName);
+                return ResponseEntity.ok("File deleted successfully: " + fileName);
+            } else {
+                return ResponseEntity.status(500).body("Failed to delete file: " + fileName);
+            }
+        } catch (SecurityException e) {
+            return ResponseEntity.status(500).body("Permission denied: Unable to delete file.");
         }
     }
 }

@@ -2,6 +2,7 @@ package onetoone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import onetoone.speechToTextAPI.SpeechUserEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ public class textSpeechTest {
     @Test
     public void testExtractText_Success() {
         // Mock speech file for testing
-        File testSpeech = new File("/Users/annabelle/Desktop/New Recording 20.m4a");
+        File testSpeech = new File("C:/Users/nvnpr/Downloads/audio.mp3");
 
         Response response = RestAssured.given()
                 .header("Content-Type", "multipart/form-data")
@@ -49,7 +50,7 @@ public class textSpeechTest {
     @Test
     public void testExtractTextWrongFileType_Failed() {
         // Mock speech file for testing
-        File testSpeech = new File("/Users/annabelle/Desktop/Screenshot 2024-11-17 at 1.18.18 AM.png");
+        File testSpeech = new File("C:/Users/nvnpr/OneDrive/Pictures/Screenshots/Screenshot 2024-12-09 014707.png");
 
         Response response = RestAssured.given()
                 .header("Content-Type", "multipart/form-data")
@@ -68,7 +69,7 @@ public class textSpeechTest {
     public void testCreateSpeechUser_Successful() {
 
         // Mock speech file for testing
-        File testSpeech = new File("/Users/annabelle/Desktop/New Recording 20.m4a");
+        File testSpeech = new File("C:/Users/nvnpr/Downloads/audio.mp3");
 //        String email = "asiandeady5@gmail.com";
 
         Response response = RestAssured.given()
@@ -87,7 +88,7 @@ public class textSpeechTest {
     public void testCreateWrongFileType_Failed() {
 
         // Mock speech file for testing
-        File testSpeech = new File("/Users/annabelle/Desktop/Screenshot 2024-11-17 at 1.18.18 AM.png");
+        File testSpeech = new File("C:/Users/nvnpr/OneDrive/Pictures/Screenshots/Screenshot 2024-12-09 014707.png");
 //        String email = "asiandeady5@gmail.com";
 
         Response response = RestAssured.given()
@@ -108,12 +109,12 @@ public class textSpeechTest {
     public void testCreateNonSpeechUser_Fail() {
 
         // Mock speech file for testing
-        File testSpeech = new File("/Users/annabelle/Desktop/New Recording 20.m4a");
+        File testSpeech = new File("C:/Users/nvnpr/Downloads/audio.mp3");
 //        String email = "asiandeady5@gmail.com";
 
         Response response = RestAssured.given()
                 .header("Content-Type", "multipart/form-data")
-                .pathParam("email", "as@gmail.com")
+                .pathParam("email", "asbakar@gmail.com")
                 .multiPart("audio", testSpeech)
                 .when()
                 .post("/SpeechToTextAIuse/createSpeechUser/{email}");
@@ -125,7 +126,32 @@ public class textSpeechTest {
         //assertEquals("You have successfully registered", response.jsonPath().getString("Response"));
     }
 
+    @Test
+    public void testCreateSpeechUser_unSuccessful2() {
 
+        Response response = RestAssured.given()
+                .param("email", "takuli@iastate.edu")
+                .param("speechFile", "New Recording 18.m4a")
+                .when()
+                .get("/SpeechToTextAIuse/getSpeechFile");
+
+        assertEquals(404, response.getStatusCode());
+    }
+
+    @Test
+    public void testCreateSpeechUser_unSuccessful3() {
+
+        long t = 1;
+
+        SpeechUserEntity s = new SpeechUserEntity(t, "hello");
+        s.setSpeechId(t);
+        s.setSpeechUserId(t);
+        s.setSpeechFile("hello");
+
+        assertEquals(1, s.getSpeechId());
+        assertEquals(1, s.getSpeechUserId());
+        assertEquals("hello", s.getSpeechFile());
+    }
 
 
 }

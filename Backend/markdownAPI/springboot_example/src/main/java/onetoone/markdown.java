@@ -40,7 +40,6 @@ import org.json.*;
 import onetoone.*;
 import onetoone.Access.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import onetoone.Recent.*;
 
 
@@ -151,12 +150,13 @@ public class markdown {
 
 
         FileEntity fileEntity = fileRepository.findByFileName(fileName);
-        String temp = Long.toString(fileEntity.getfileId());
         signEntity user = logs.findByEmail(email);
 
         if (fileEntity == null) {
             return "response: file does not exist";
         }
+
+        String temp = Long.toString(fileEntity.getfileId());
 
         try {
             Path filePath = location.resolve(fileName);
@@ -258,13 +258,18 @@ public class markdown {
 
         FileEntity file = fileRepository.findByFileName(fileName);
 
+        if (file == null) {
+            response.put("response", "the file does not exist");
+            return response;
+        }
+
         //if it's owner
         if(file.getId() == user.getId()) {
 
-            if (file == null) {
-                response.put("response", "the file does not exist");
-                return response;
-            }
+            r.deleteAll(file);
+
+            System.out.println("Here");
+
 
             Path filePath = location.resolve(fileName);
 
@@ -307,6 +312,8 @@ public class markdown {
             }
         }
         else{
+
+            r.delete(file, user);
 
             String deleted = delete(json, fileName);
             j.updatepath(user.getId(), deleted);

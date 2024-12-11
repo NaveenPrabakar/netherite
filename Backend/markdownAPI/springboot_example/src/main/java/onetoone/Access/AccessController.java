@@ -69,6 +69,10 @@ public class AccessController{
         signEntity sign2 = logs.findByEmail(toUser);
         signEntity sign = logs.findByEmail(fromUser);
 
+        if(sign2 == null){
+            return ResponseEntity.badRequest().body("The user does not exist");
+        }
+
         String jsons = json.getSystem(sign2.getId());
 
         System.out.println(jsons);
@@ -76,14 +80,7 @@ public class AccessController{
         String updates = updateJson(jsons, docName);
         json.updatepath(sign2.getId(), updates);
 
-
-
-        if(sign2 == null){
-            return ResponseEntity.badRequest().body("The user does not exist");
-        }
-
         FileEntity file = files.findByFileName(docName);
-
         if(file.getId() != sign.getId()){
             return ResponseEntity.badRequest().body("The user does not have this file");
         }

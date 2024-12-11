@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import onetoone.*;
 import onetoone.loginAPI.*;
@@ -70,6 +71,22 @@ public class RecentController {
             name.add(r.getFileEntity().getName());
         }
 
+        Collections.reverse(name);
+
+
         return ResponseEntity.ok(name);
     }
+
+    //delete for one user
+    @Transactional
+    public void delete(FileEntity f, signEntity s){
+        recentRepository.deleteByFileAndSign(f, s);
+    }
+
+    @Transactional
+    public void deleteAll(FileEntity f){
+
+        recentRepository.deleteByFile(f);
+    }
+
 }
