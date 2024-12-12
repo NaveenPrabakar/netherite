@@ -104,14 +104,10 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
 
         markwon = Markwon.builder(this).build();
-
-        acceptButt.setVisibility(View.INVISIBLE);
-        rejectButt.setVisibility(View.INVISIBLE);
-
         mainText.setAlpha(1);
         editor.setAlpha(0);
 
-        AIText.setAlpha(0);
+        toggleSummarizeVisibility(true);
 
     }
 
@@ -170,7 +166,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                         // Handle language selection
                         String selectedLanguage = languages[which];
                         Toast.makeText(this, "Selected: " + selectedLanguage, Toast.LENGTH_SHORT).show();
-                        AIText.setAlpha(1);
 
                         promptString(selectedLanguage, mainText.getText().toString()).thenAccept(translatedText -> {
                             AITextBox.setText(translatedText);
@@ -186,7 +181,6 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         });
         AIButton.setOnClickListener(v -> {
             if (!AIInputText.getText().toString().isEmpty()){
-                AIText.setAlpha(1);
                 promptString(AIInputText.getText().toString(), mainText.getText().toString()).thenAccept(promptResult -> {
                     AITextBox.setText(promptResult);
                     toggleSummarizeVisibility(false);
@@ -201,6 +195,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     private void OCRNavigate(){
         Intent intent = new Intent(this, OCRActivity.class);
         intent.putExtra("SOURCE", "text");
+        intent.putExtra("CONTENT", content);
         intent.putExtra("FILEKEY", fileName.getText().toString());
         startActivity(intent);
     }
@@ -219,12 +214,10 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void processAIExtras(Bundle extras) {
         if (extras.containsKey("IMAGETEXT")) {
-            AIText.setAlpha(1);
             AITextBox.setText(extras.getString("IMAGETEXT"));
             toggleSummarizeVisibility(false);
         }
         if (extras.containsKey("RECORDED")) {
-            AIText.setAlpha(1);
             AITextBox.setText(extras.getString("RECORDED"));
             toggleSummarizeVisibility(false);
         }
@@ -236,11 +229,11 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         if (hasFocus) {
             mainText.setAlpha(0);
             editor.setAlpha(1);
-            AIText.setAlpha(0);
+            toggleSummarizeVisibility(true);
         } else {
             mainText.setAlpha(1);
             editor.setAlpha(0);
-            AIText.setAlpha(0);
+            toggleSummarizeVisibility(true);
         }
     }
 
@@ -292,15 +285,14 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
     }
 
     private void clearAIText() {
-        AIText.setAlpha(0);
+        toggleSummarizeVisibility(true);
         AITextBox.setText("");
     }
 
     private void toggleSummarizeVisibility(boolean visible) {
-        summarizeButt.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-        voiceButt.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         acceptButt.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
         rejectButt.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        AIText.setAlpha(visible ? 0 : 1);
     }
 
     private String updateParsedOutput(String markdown) {
@@ -317,8 +309,15 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                 method,
                 URL + email,
                 null,
-                response -> handleSummarizeResponse(method, contentToSummarize, email, prompt, response),
-                this::logVolleyError
+                response -> {
+                    Toast.makeText(getApplicationContext(), "Successfully requested", Toast.LENGTH_SHORT).show();
+                    handleSummarizeResponse(method, contentToSummarize, email, prompt, response);
+
+                },
+                error -> {
+                    Log.e(TAG, "Error retrieving request", error);
+                    Toast.makeText(getApplicationContext(), "Summarize request failed", Toast.LENGTH_SHORT).show();
+                }
         );
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
     }
@@ -349,8 +348,14 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     method,
                     URL,
                     requestBody,
-                    response -> handleSummarizeHelpResponse(response),
-                    this::logVolleyError
+                    response -> {
+                        Toast.makeText(getApplicationContext(), "Successfully requested", Toast.LENGTH_SHORT).show();
+                        handleSummarizeHelpResponse(response);
+                        },
+                    error -> {
+                        Log.e(TAG, "Error retrieving request", error);
+                        Toast.makeText(getApplicationContext(), "Summarize prompting failed", Toast.LENGTH_SHORT).show();
+                    }
             );
             VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(summarizePost);
         } catch (JSONException e) {
@@ -360,7 +365,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void handleSummarizeHelpResponse(JSONObject response) {
         try {
-            AIText.setAlpha(1);
+            toggleSummarizeVisibility(false);
             AITextBox.setText(response.getString("reply"));
             aiCount = response.getString("count");
         } catch (JSONException e) {
@@ -370,6 +375,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
 
     private void logVolleyError(VolleyError error) {
         Log.e(TAG, "Volley Error", error);
+        Toast.makeText(this, "Error retrieving request", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -406,7 +412,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
             String user = jsonMessage.getString("username");
 
             history += messageContent + ":" + user + " ";
-            AIText.setAlpha(1);
+            toggleSummarizeVisibility(false);
             AITextBox.setText(messageContent);
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON message", e);
@@ -457,7 +463,7 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
                     URL_TEXT_TO_SPEECH,
                     requestBody.toString(),
                     response -> handleAudioResponseMultipart(response),
-                    error -> Log.e(TAG, "Error sending request: " + error.toString())
+                    this::logVolleyError
             );
 
             // Add the request to the Volley request queue
@@ -507,20 +513,13 @@ public class TextActivity extends AppCompatActivity implements WebSocketListener
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
                 UserPreferences.getUrlTranslate(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Response Translated", response);
-                        futureString.complete(response);
-                        Log.d("Translated String is", translatedString);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                    }
-                }
+                response -> {
+                    Log.d("Response Translated", response);
+                    futureString.complete(response);
+                    Log.d("Translated String is", translatedString);
+                    Toast.makeText(getApplicationContext(), "Successfully retrieved prompt result", Toast.LENGTH_SHORT).show();
+                    },
+                this::logVolleyError
         ) {
             @Override
             protected Map<String, String> getParams() {

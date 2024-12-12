@@ -183,9 +183,11 @@ public class filesActivity extends AppCompatActivity implements WebSocketListene
          * Creates a new HTTP client so that I can get the list of photo names from 'getPhotoList'.
          */
         OkHttpClient client = new OkHttpClient();
-
         String filesUrl = UserPreferences.getUrlRecentFiles();
-        filesUrl += "/" + email;
+
+        Uri.Builder builder = Uri.parse(filesUrl).buildUpon();
+        builder.appendQueryParameter("email", email);
+        filesUrl = builder.build().toString();
 
         Log.d("URLRecent", filesUrl);
 

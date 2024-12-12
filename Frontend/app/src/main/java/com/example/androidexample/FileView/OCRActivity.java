@@ -55,6 +55,7 @@ public class OCRActivity extends AppCompatActivity {
     private String password;
     private String fileKey;
     private String source;
+    private String content;
     // replace this with the actual address
     // 10.0.2.2 to be used for localhost if running springboot on the same host
     private static String UPLOAD_URL = "http://coms-3090-068.class.las.iastate.edu:8080/extractText";
@@ -85,6 +86,7 @@ public class OCRActivity extends AppCompatActivity {
         if(extras != null){
             source = extras.getString("SOURCE", "files");
             fileKey = extras.getString("FILEKEY", "");
+            content = extras.getString("CONTENT", "");
         }
 
         takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
@@ -165,6 +167,7 @@ public class OCRActivity extends AppCompatActivity {
     private void moveToTextActivity(String ImageText){
         Intent i = new Intent(OCRActivity.this, TextActivity.class);
         i.putExtra("IMAGETEXT", ImageText);
+        i.putExtra("CONTENT", content);
         i.putExtra("FILEKEY", fileKey);
         startActivity(i);
     }
