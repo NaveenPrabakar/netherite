@@ -242,7 +242,7 @@ public class OpenAISummarizeAPI{
      */
     private String callOpenAI(String prompt, String content) {
         String openaiApiUrl = "https://api.openai.com/v1/chat/completions";  // Endpoint for chat-based models
-        String apiKey = "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";  // Replace with your OpenAI API key
+        String apiKey = "";  // Replace with your OpenAI API key
 
         // Initialize RestTemplate
         RestTemplate restTemplate = new RestTemplate();
