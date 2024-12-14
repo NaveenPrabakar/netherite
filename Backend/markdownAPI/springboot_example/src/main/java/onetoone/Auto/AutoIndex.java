@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class AutoIndex {
 
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAXgDC5yw5RKrNo4tyXeCIfGGstAgzId4c";
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
 
     @PostMapping("/auto")
