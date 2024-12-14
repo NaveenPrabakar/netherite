@@ -45,7 +45,7 @@ public class TesseractTest {
     @Autowired
     private ImageRepository im;
 
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAXgDC5yw5RKrNo4tyXeCIfGGstAgzId4c";
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
     private static final String prompt = "Convert this image to text and replicate the format best as possible";
 
     private ArrayList<String> types = new ArrayList<>(Arrays.asList("jpeg", "jpg", "png", "gif"));
